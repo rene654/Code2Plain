@@ -9,6 +9,8 @@ from code2plain.service import Code2PlainService
 
 mcp = FastMCP(
     "Code2Plain",
+    stateless_http=True,
+    json_response=True,
 )
 
 service = Code2PlainService()
@@ -29,5 +31,13 @@ def explain_code(code: str) -> dict[str, Any]:
     return service.explain_code(code)
 
 
+def main() -> None:
+    mcp.run(
+        transport="streamable-http",
+        host="0.0.0.0",
+        port=8000,
+    )
+
+
 if __name__ == "__main__":
-    mcp.run()
+    main()

@@ -1,4 +1,4 @@
-from code2plain.mcp.server import explain_code
+from code2plain.mcp.server import explain_code, mcp
 
 
 def test_mcp_explain_code_contract():
@@ -12,7 +12,6 @@ df = pd.read_excel("orders.xlsx")
     assert isinstance(result, dict)
     assert "summary" in result
     assert "sections" in result
-
     assert len(result["sections"]) == 2
 
     first = result["sections"][0]
@@ -21,3 +20,8 @@ df = pd.read_excel("orders.xlsx")
     assert first["color_tag"]
     assert first["what_it_does"]
     assert first["what_to_learn"]
+
+
+def test_mcp_is_configured_for_http():
+    assert mcp.settings.stateless_http is True
+    assert mcp.settings.json_response is True
