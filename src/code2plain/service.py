@@ -3,19 +3,19 @@ from __future__ import annotations
 from dataclasses import asdict
 from typing import Any
 
-from src.code2plain.engine.explanation_engine import ExplanationEngine
+from code2plain.engine.explanation_engine import ExplanationEngine
 
 
 class Code2PlainService:
     """
     Stable application interface for Code2Plain.
 
-    Future consumers:
+    Consumers:
     - ChatGPT / MCP
     - Ralph OS
-    - Desktop overlay
-    - Browser extension
-    - Other AI providers
+    - Browser overlay
+    - Desktop UI
+    - Future AI providers
     """
 
     def __init__(

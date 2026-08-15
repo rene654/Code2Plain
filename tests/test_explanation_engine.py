@@ -1,4 +1,4 @@
-from src.code2plain.engine.explanation_engine import ExplanationEngine
+from code2plain.engine.explanation_engine import ExplanationEngine
 
 
 def test_assignment():

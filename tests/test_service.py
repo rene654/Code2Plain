@@ -1,4 +1,4 @@
-from src.code2plain.service import Code2PlainService
+from code2plain.service import Code2PlainService
 
 
 def test_service_returns_serializable_structure():
