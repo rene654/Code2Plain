@@ -222,3 +222,4 @@ __marimo__/
 # Apple Push Notification signing keys
 AuthKey_*.p8
 *.p8
+code2plain_devices.db

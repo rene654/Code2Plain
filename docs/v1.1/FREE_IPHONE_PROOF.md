@@ -99,3 +99,27 @@ JSON:
 
 The physical proof therefore preserves localized Code2Plain
 content without weakening the user-facing text.
+
+## Full learning pipeline proof — Phase 10.7A.5
+
+The physical proof is no longer limited to a hardcoded test
+notification.
+
+Code2Plain now validates the complete learning delivery path:
+
+Learning observations
+→ SessionLearningTracker
+→ AdaptiveSessionDigestBuilder
+→ EntitlementService
+→ DeviceRegistry
+→ NotificationDispatcher
+→ NtfyNotificationProvider
+→ physical iPhone
+
+The ntfy adapter remains temporary.
+
+The learning, entitlement, device, and dispatcher layers are
+the same architectural layers intended for native APNs.
+
+This proves the product behavior before paid Apple
+distribution is activated.
