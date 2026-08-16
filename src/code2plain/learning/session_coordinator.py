@@ -3,9 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 
+from code2plain.learning.adaptive_digest import (
+    AdaptiveSessionDigestBuilder,
+)
 from code2plain.learning.digest import (
     SessionDigest,
-    SessionDigestBuilder,
 )
 from code2plain.learning.profile_store import (
     LearningProfileStore,
@@ -56,7 +58,7 @@ class LearningSessionCoordinator:
         )
 
         self.digest_builder = (
-            SessionDigestBuilder(
+            AdaptiveSessionDigestBuilder(
                 language
             )
         )

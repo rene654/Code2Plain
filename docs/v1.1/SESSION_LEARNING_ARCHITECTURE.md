@@ -90,3 +90,42 @@ the inactivity clock resets from the new activity timestamp.
 
 The first implementation deliberately uses a small number of
 deterministic signals rather than complex behavioral inference.
+
+
+## Phase 10.3 — Adaptive learning digest
+
+The session digest is now personalized using the persistent
+LearningProfile.
+
+The learner does not manually select what to study.
+
+Code2Plain scores concepts using:
+
+- pedagogical importance
+- current learning status
+- historical exposure count
+- concepts actually used during the current session
+
+The system deliberately deprioritizes familiar concepts when
+more valuable new or practicing concepts are available.
+
+Example:
+
+FILTER
+- familiar
+- repeated many times
+
+HANDLE ERROR
+- new
+
+Result:
+
+Code2Plain prioritizes HANDLE ERROR.
+
+This implements the progression:
+
+REMEMBER
+→ ADAPT
+
+The scoring system remains deterministic and requires no
+additional LLM call.
