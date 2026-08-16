@@ -1,3 +1,9 @@
+from code2plain.devices.ntfy_models import (
+    NtfyEndpoint,
+)
+from code2plain.devices.ntfy_registry import (
+    NtfyEndpointRegistry,
+)
 from code2plain.devices.apple_registration import (
     ApplePushRegistrationResult,
     ApplePushRegistrationService,
@@ -17,6 +23,8 @@ from code2plain.devices.registry import (
 )
 
 __all__ = [
+    "NtfyEndpoint",
+    "NtfyEndpointRegistry",
     "ApplePushRegistrationResult",
     "ApplePushRegistrationService",
     "ApplePushEndpoint",

@@ -1,3 +1,6 @@
+from code2plain.notifications.ntfy_provider import (
+    NtfyNotificationProvider,
+)
 from code2plain.notifications.apns_auth import (
     APNsAuthConfig,
     APNsJWTProvider,
@@ -25,6 +28,7 @@ from code2plain.notifications.provider import (
 )
 
 __all__ = [
+    "NtfyNotificationProvider",
     "APNsAuthConfig",
     "APNsDeliveryError",
     "APNsJWTProvider",

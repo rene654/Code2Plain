@@ -141,3 +141,13 @@ pairing token
 The next production step is creating the signed Xcode project,
 enabling Push Notifications, configuring the real bundle ID,
 and testing on a physical iPhone.
+
+## Zero-cost physical validation
+
+Before activating paid Apple distribution, Code2Plain may use
+NtfyNotificationProvider as a temporary physical-delivery
+adapter.
+
+This does not replace the native Apple implementation.
+
+Native APNs remains the intended production Apple channel.
