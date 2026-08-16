@@ -1371,3 +1371,504 @@ button {
     }
 
 }
+
+
+/* ==========================================================
+   PHASE 8.3 — VISUAL CONCEPT LEARNING
+   ========================================================== */
+
+.concept-visual {
+    margin-top: 20px;
+
+    padding:
+        16px;
+
+    border:
+        1px dashed
+        color-mix(
+            in srgb,
+            var(--active-color) 36%,
+            #d8d1c4
+        );
+
+    border-radius: 14px;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--active-color) 6%,
+            rgba(255, 255, 255, 0.75)
+        );
+
+    overflow: hidden;
+}
+
+
+.concept-visual.visual-enter {
+    animation:
+        visualEnter
+        420ms
+        cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        )
+        both;
+}
+
+
+@keyframes visualEnter {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(7px)
+            scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+/* ==========================================================
+   GENERIC FLOW
+   ========================================================== */
+
+.visual-flow {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    min-height: 88px;
+}
+
+
+.visual-node,
+.visual-file {
+    min-width: 92px;
+
+    padding:
+        11px 12px;
+
+    border:
+        1px solid
+        #d9d4ca;
+
+    border-radius:
+        10px;
+
+    background:
+        rgba(255, 255, 255, 0.82);
+
+    color:
+        var(--ink-soft);
+
+    text-align: center;
+
+    font-size: 11px;
+
+    font-weight: 750;
+
+    box-shadow:
+        0 5px 15px
+        rgba(67, 60, 49, 0.06);
+}
+
+
+.visual-node.emphasized {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--active-color) 55%,
+            #d9d4ca
+        );
+
+    color:
+        var(--active-color);
+
+    animation:
+        visualPulse
+        520ms
+        180ms
+        ease-out
+        both;
+}
+
+
+@keyframes visualPulse {
+
+    0% {
+        transform:
+            scale(0.92);
+    }
+
+    55% {
+        transform:
+            scale(1.05);
+    }
+
+    100% {
+        transform:
+            scale(1);
+    }
+
+}
+
+
+.visual-file {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 5px;
+}
+
+
+.file-icon {
+    color:
+        var(--active-color);
+
+    font-size: 18px;
+}
+
+
+.visual-arrow {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 3px;
+
+    color:
+        var(--muted);
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing:
+        0.08em;
+
+    text-align: center;
+}
+
+
+.visual-arrow b {
+    color:
+        var(--active-color);
+
+    font-size: 18px;
+
+    animation:
+        arrowMove
+        650ms
+        ease-in-out
+        infinite
+        alternate;
+}
+
+
+.visual-arrow small {
+    color:
+        var(--muted);
+
+    font-size: 7px;
+}
+
+
+@keyframes arrowMove {
+
+    from {
+        transform:
+            translateX(-1px);
+    }
+
+    to {
+        transform:
+            translateX(3px);
+    }
+
+}
+
+
+/* ==========================================================
+   FILTER VISUAL
+   ========================================================== */
+
+.filter-visual,
+.aggregate-visual {
+    display: grid;
+
+    grid-template-columns:
+        minmax(90px, 1fr)
+        auto
+        minmax(90px, 1fr);
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.mini-table {
+    display: grid;
+
+    gap: 4px;
+}
+
+
+.mini-row {
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 8px;
+
+    padding:
+        6px 8px;
+
+    border:
+        1px solid
+        rgba(67, 60, 49, 0.10);
+
+    border-radius:
+        6px;
+
+    background:
+        rgba(255, 255, 255, 0.82);
+
+    color:
+        var(--ink-soft);
+
+    font-size: 8px;
+}
+
+
+.mini-row.muted {
+    opacity: 0.38;
+
+    animation:
+        filteredOut
+        620ms
+        250ms
+        ease-out
+        both;
+}
+
+
+@keyframes filteredOut {
+
+    from {
+        transform:
+            translateX(0);
+
+        opacity: 1;
+    }
+
+    to {
+        transform:
+            translateX(-7px);
+
+        opacity: 0.30;
+    }
+
+}
+
+
+.mini-row.survive {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--active-color) 40%,
+            #d8d1c4
+        );
+
+    animation:
+        surviveRow
+        500ms
+        330ms
+        ease-out
+        both;
+}
+
+
+@keyframes surviveRow {
+
+    from {
+        transform:
+            translateX(-8px);
+
+        opacity: 0;
+    }
+
+    to {
+        transform:
+            translateX(0);
+
+        opacity: 1;
+    }
+
+}
+
+
+.visual-arrow.condition {
+    max-width: 92px;
+}
+
+
+.visual-arrow.condition span {
+    color:
+        var(--active-color);
+
+    font-size: 7px;
+
+    line-height: 1.35;
+
+    word-break:
+        break-word;
+}
+
+
+/* ==========================================================
+   AGGREGATE VISUAL
+   ========================================================== */
+
+.aggregate-input,
+.aggregate-output {
+    display: grid;
+
+    gap: 4px;
+}
+
+
+.agg-row,
+.agg-result {
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    padding:
+        6px 8px;
+
+    border-radius:
+        6px;
+
+    background:
+        rgba(255, 255, 255, 0.82);
+
+    color:
+        var(--ink-soft);
+
+    font-size: 8px;
+}
+
+
+.agg-row:nth-child(1),
+.agg-row:nth-child(3) {
+    border-left:
+        3px solid
+        color-mix(
+            in srgb,
+            var(--active-color) 70%,
+            white
+        );
+}
+
+
+.agg-row:nth-child(2),
+.agg-row:nth-child(4) {
+    border-left:
+        3px solid
+        color-mix(
+            in srgb,
+            var(--active-color) 38%,
+            white
+        );
+}
+
+
+.agg-result {
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--active-color) 42%,
+            #d8d1c4
+        );
+
+    animation:
+        aggregateResult
+        520ms
+        330ms
+        cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        )
+        both;
+}
+
+
+@keyframes aggregateResult {
+
+    from {
+        transform:
+            scale(0.88);
+
+        opacity: 0;
+    }
+
+    to {
+        transform:
+            scale(1);
+
+        opacity: 1;
+    }
+
+}
+
+
+/* ==========================================================
+   RESPONSIVE VISUALS
+   ========================================================== */
+
+@media (max-width: 560px) {
+
+    .filter-visual,
+    .aggregate-visual {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .visual-flow {
+        flex-direction:
+            column;
+    }
+
+
+    .visual-arrow.condition b {
+        transform:
+            rotate(90deg);
+    }
+
+}

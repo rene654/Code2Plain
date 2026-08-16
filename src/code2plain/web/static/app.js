@@ -37,6 +37,9 @@ const noteSecondary =
 const noteTechnical =
     document.getElementById("noteTechnical");
 
+const conceptVisual =
+    document.getElementById("conceptVisual");
+
 const technicalSection =
     document.getElementById("technicalSection");
 
@@ -162,6 +165,339 @@ function renderCode() {
 }
 
 
+
+function getQuotedValues(code) {
+    const matches =
+        [
+            ...code.matchAll(
+                /["']([^"']+)["']/g
+            )
+        ];
+
+    return matches.map(
+        match => match[1]
+    );
+}
+
+
+function renderConceptVisual(section) {
+    const concept =
+        section.concept || "PROCESS";
+
+    const code =
+        section.code || "";
+
+    const values =
+        getQuotedValues(code);
+
+
+    let html = "";
+
+
+    if (concept === "IMPORT") {
+
+        html = `
+            <div class="visual-flow">
+
+                <div class="visual-node">
+                    Python
+                </div>
+
+                <div class="visual-arrow">
+                    <span>loads</span>
+                    <b>↓</b>
+                </div>
+
+                <div
+                    class="visual-node emphasized"
+                >
+                    external tool
+                </div>
+
+            </div>
+        `;
+
+    } else if (concept === "LOAD DATA") {
+
+        const filename =
+            values[0]
+            || "data file";
+
+
+        html = `
+            <div class="visual-flow">
+
+                <div class="visual-file">
+                    <span class="file-icon">
+                        ▤
+                    </span>
+
+                    <strong>
+                        ${escapeHtml(filename)}
+                    </strong>
+                </div>
+
+                <div class="visual-arrow">
+
+                    <span>
+                        LOAD
+                    </span>
+
+                    <b>
+                        ↓
+                    </b>
+
+                </div>
+
+                <div
+                    class="visual-node emphasized"
+                >
+                    DataFrame
+                </div>
+
+            </div>
+        `;
+
+    } else if (concept === "FILTER") {
+
+        const field =
+            values[0]
+            || "condition";
+
+        const target =
+            values[1]
+            || "match";
+
+
+        html = `
+            <div class="filter-visual">
+
+                <div class="mini-table before">
+
+                    <div class="mini-row">
+                        <span>1</span>
+                        <strong>${escapeHtml(target)}</strong>
+                    </div>
+
+                    <div class="mini-row muted">
+                        <span>2</span>
+                        <strong>Other</strong>
+                    </div>
+
+                    <div class="mini-row">
+                        <span>3</span>
+                        <strong>${escapeHtml(target)}</strong>
+                    </div>
+
+                    <div class="mini-row muted">
+                        <span>4</span>
+                        <strong>Other</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="visual-arrow condition">
+
+                    <span>
+                        ${escapeHtml(field)}
+                        ==
+                        ${escapeHtml(target)}
+                    </span>
+
+                    <b>
+                        →
+                    </b>
+
+                </div>
+
+
+                <div class="mini-table after">
+
+                    <div class="mini-row survive">
+                        <span>1</span>
+                        <strong>${escapeHtml(target)}</strong>
+                    </div>
+
+                    <div class="mini-row survive">
+                        <span>3</span>
+                        <strong>${escapeHtml(target)}</strong>
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+    } else if (concept === "AGGREGATE") {
+
+        const group =
+            values[0]
+            || "group";
+
+        const amount =
+            values[1]
+            || "value";
+
+
+        html = `
+            <div class="aggregate-visual">
+
+                <div class="aggregate-input">
+
+                    <div class="agg-row">
+                        <span>A</span>
+                        <strong>10</strong>
+                    </div>
+
+                    <div class="agg-row">
+                        <span>B</span>
+                        <strong>20</strong>
+                    </div>
+
+                    <div class="agg-row">
+                        <span>A</span>
+                        <strong>15</strong>
+                    </div>
+
+                    <div class="agg-row">
+                        <span>B</span>
+                        <strong>5</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="visual-arrow condition">
+
+                    <span>
+                        GROUP BY
+                        ${escapeHtml(group)}
+                    </span>
+
+                    <small>
+                        SUM
+                        ${escapeHtml(amount)}
+                    </small>
+
+                    <b>
+                        →
+                    </b>
+
+                </div>
+
+
+                <div class="aggregate-output">
+
+                    <div class="agg-result">
+                        <span>A</span>
+                        <strong>25</strong>
+                    </div>
+
+                    <div class="agg-result">
+                        <span>B</span>
+                        <strong>25</strong>
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+    } else if (concept === "EXPORT") {
+
+        const filename =
+            values[0]
+            || "output file";
+
+
+        html = `
+            <div class="visual-flow">
+
+                <div
+                    class="visual-node emphasized"
+                >
+                    Result
+                </div>
+
+                <div class="visual-arrow">
+
+                    <span>
+                        EXPORT
+                    </span>
+
+                    <b>
+                        ↓
+                    </b>
+
+                </div>
+
+                <div class="visual-file">
+
+                    <span class="file-icon">
+                        ↗
+                    </span>
+
+                    <strong>
+                        ${escapeHtml(filename)}
+                    </strong>
+
+                </div>
+
+            </div>
+        `;
+
+    } else {
+
+        html = `
+            <div class="visual-flow">
+
+                <div class="visual-node">
+                    Input
+                </div>
+
+                <div class="visual-arrow">
+                    <b>→</b>
+                </div>
+
+                <div
+                    class="visual-node emphasized"
+                >
+                    ${escapeHtml(concept)}
+                </div>
+
+                <div class="visual-arrow">
+                    <b>→</b>
+                </div>
+
+                <div class="visual-node">
+                    Output
+                </div>
+
+            </div>
+        `;
+
+    }
+
+
+    conceptVisual.innerHTML =
+        html;
+
+
+    conceptVisual
+        .classList
+        .remove("visual-enter");
+
+
+    void conceptVisual.offsetWidth;
+
+
+    conceptVisual
+        .classList
+        .add("visual-enter");
+}
+
+
 function activateSection(index) {
     const previousIndex =
         activeIndex;
@@ -251,6 +587,11 @@ function activateSection(index) {
 
     noteCode.textContent =
         section.code;
+
+
+    renderConceptVisual(
+        section
+    );
 
 
     primaryLabel.textContent =
