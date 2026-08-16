@@ -45,3 +45,24 @@ Future mastery signals may include:
 
 Persistent learning data should describe learning behavior,
 not preserve source code whenever that source code is unnecessary.
+
+
+## Phase 10.1 — Persistent learning memory
+
+LearningProfile persistence uses a dedicated SQLite store.
+
+Persisted data:
+
+- learner_id
+- concept
+- total exposure count
+- first seen timestamp
+- last seen timestamp
+- learning status
+
+Session-only counters are intentionally not persisted.
+
+The persistence layer does not require source-code storage.
+
+A learner can therefore continue from prior learning state
+after restarting Code2Plain.
