@@ -1,3 +1,8 @@
+from code2plain.notifications.apns_provider import (
+    APNsNotificationProvider,
+    APNsRequest,
+    APNsTransport,
+)
 from code2plain.notifications.dispatcher import (
     NotificationDispatcher,
 )
@@ -11,6 +16,9 @@ from code2plain.notifications.provider import (
 )
 
 __all__ = [
+    "APNsNotificationProvider",
+    "APNsRequest",
+    "APNsTransport",
     "InMemoryNotificationProvider",
     "NotificationDispatcher",
     "NotificationMessage",
