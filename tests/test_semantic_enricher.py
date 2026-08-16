@@ -49,6 +49,6 @@ def test_excel_export_is_identified():
 
     assert section["concept"] == "EXPORT"
 
-    assert "output" in (
+    assert "salida" in (
         section["what_to_learn"].lower()
     )

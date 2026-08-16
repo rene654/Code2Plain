@@ -2,22 +2,51 @@ from __future__ import annotations
 
 from typing import Any
 
+from code2plain.localization import Localizer
+
 
 class SemanticEnricher:
     """
-    Adds higher-level programming concepts and more specific
-    educational explanations without coupling them to the UI.
+    Detects semantic programming concepts.
 
-    The ExplanationEngine remains responsible for structure.
-    This layer improves meaning and learning value.
+    Concept IDs remain language-neutral.
+    Visible text is delegated to Localizer.
     """
+
+    def __init__(
+        self,
+        localizer: Localizer | None = None,
+    ) -> None:
+        self._localizer = (
+            localizer
+            or Localizer()
+        )
 
     def enrich(
         self,
         result: dict[str, Any],
     ) -> dict[str, Any]:
-        for section in result.get("sections", []):
-            self._enrich_section(section)
+        for section in result.get(
+            "sections",
+            [],
+        ):
+            self._enrich_section(
+                section
+            )
+
+            concept = section.get(
+                "concept",
+                "PROCESS",
+            )
+
+            section[
+                "concept_label"
+            ] = (
+                self._localizer
+                .concept_label(
+                    concept
+                )
+            )
 
         return result
 
@@ -32,19 +61,19 @@ class SemanticEnricher:
 
         normalized = code.lower()
 
-        if section.get("category") == "import":
+        if (
+            section.get("category")
+            == "import"
+        ):
             self._set(
                 section,
                 concept="IMPORT",
-                title="Import tools",
-                what_it_does=(
-                    "Loads external tools that the program "
-                    "will use later."
+                title_key="title.import",
+                does_key=(
+                    "semantic.import.does"
                 ),
-                what_to_learn=(
-                    "Imports let Python reuse functionality "
-                    "from libraries instead of building "
-                    "everything from scratch."
+                learn_key=(
+                    "semantic.import.learn"
                 ),
             )
             return
@@ -91,7 +120,7 @@ class SemanticEnricher:
             == "assignment"
         ):
             self._enrich_filter(
-                section,
+                section
             )
             return
 
@@ -122,7 +151,8 @@ class SemanticEnricher:
             "function": "DEFINE",
             "function_call": "CALL",
             "return": "RETURN",
-            "error_handling": "HANDLE ERROR",
+            "error_handling":
+                "HANDLE ERROR",
             "class": "MODEL",
         }
 
@@ -138,33 +168,49 @@ class SemanticEnricher:
         section: dict[str, Any],
         normalized: str,
     ) -> None:
-        source = "data source"
+        source_key = (
+            "source.generic"
+        )
 
         if "read_excel(" in normalized:
-            source = "Excel file"
+            source_key = (
+                "source.excel"
+            )
         elif "read_csv(" in normalized:
-            source = "CSV file"
+            source_key = (
+                "source.csv"
+            )
         elif "read_sql(" in normalized:
-            source = "SQL source"
+            source_key = (
+                "source.sql"
+            )
         elif "read_json(" in normalized:
-            source = "JSON file"
+            source_key = (
+                "source.json"
+            )
         elif "read_parquet(" in normalized:
-            source = "Parquet file"
+            source_key = (
+                "source.parquet"
+            )
+
+        source = (
+            self._localizer
+            .t(source_key)
+        )
 
         self._set(
             section,
             concept="LOAD DATA",
-            title="Load data",
-            what_it_does=(
-                f"Reads data from an {source} and stores "
-                "the result so the program can work with it."
+            title_key="title.load",
+            does_key=(
+                "semantic.load.does"
             ),
-            what_to_learn=(
-                "Loading data is usually the input stage of "
-                "a data workflow: information enters the "
-                "program before it can be filtered, changed, "
-                "or analyzed."
+            learn_key=(
+                "semantic.load.learn"
             ),
+            does_values={
+                "source": source,
+            },
         )
 
     def _enrich_filter(
@@ -176,26 +222,26 @@ class SemanticEnricher:
             "",
         )
 
-        explanation = (
-            "Keeps only the rows that satisfy the condition "
-            "inside the brackets."
+        does_key = (
+            "semantic.filter.does"
         )
 
-        if '"status"' in code and '"Late"' in code:
-            explanation = (
-                'Keeps only rows where the "status" column '
-                'equals "Late".'
+        if (
+            '"status"' in code
+            and '"Late"' in code
+        ):
+            does_key = (
+                "semantic.filter."
+                "status_late"
             )
 
         self._set(
             section,
             concept="FILTER",
-            title="Filter records",
-            what_it_does=explanation,
-            what_to_learn=(
-                "Boolean filtering creates a True/False rule "
-                "for every row and keeps only the rows where "
-                "the rule is True."
+            title_key="title.filter",
+            does_key=does_key,
+            learn_key=(
+                "semantic.filter.learn"
             ),
         )
 
@@ -204,23 +250,43 @@ class SemanticEnricher:
         section: dict[str, Any],
         normalized: str,
     ) -> None:
-        operation = "aggregate"
+        operation_key = (
+            "operation.generic"
+        )
 
         if ".sum(" in normalized:
-            operation = "sum"
+            operation_key = (
+                "operation.sum"
+            )
         elif ".mean(" in normalized:
-            operation = "average"
+            operation_key = (
+                "operation.mean"
+            )
         elif ".count(" in normalized:
-            operation = "count"
+            operation_key = (
+                "operation.count"
+            )
         elif ".min(" in normalized:
-            operation = "minimum"
+            operation_key = (
+                "operation.min"
+            )
         elif ".max(" in normalized:
-            operation = "maximum"
+            operation_key = (
+                "operation.max"
+            )
 
-        explanation = (
-            f"Groups related records and calculates a "
-            f"{operation} for each group."
+        operation = (
+            self._localizer
+            .t(operation_key)
         )
+
+        does_key = (
+            "semantic.aggregate.does"
+        )
+
+        does_values = {
+            "operation": operation,
+        }
 
         code = section.get(
             "code",
@@ -230,24 +296,24 @@ class SemanticEnricher:
         if (
             '"supplier"' in code
             and '"amount"' in code
-            and operation == "sum"
+            and ".sum(" in normalized
         ):
-            explanation = (
-                'Groups the records by "supplier" and sums '
-                'the "amount" values to calculate a total '
-                "for each supplier."
+            does_key = (
+                "semantic.aggregate."
+                "supplier_amount"
             )
+
+            does_values = {}
 
         self._set(
             section,
             concept="AGGREGATE",
-            title="Group and summarize",
-            what_it_does=explanation,
-            what_to_learn=(
-                "Grouping organizes rows by a shared value. "
-                "An aggregation such as sum, average, or count "
-                "then produces one result for each group."
+            title_key="title.aggregate",
+            does_key=does_key,
+            learn_key=(
+                "semantic.aggregate.learn"
             ),
+            does_values=does_values,
         )
 
     def _enrich_export(
@@ -255,43 +321,80 @@ class SemanticEnricher:
         section: dict[str, Any],
         normalized: str,
     ) -> None:
-        destination = "output file"
+        destination_key = (
+            "destination.generic"
+        )
 
         if "to_excel(" in normalized:
-            destination = "Excel file"
+            destination_key = (
+                "destination.excel"
+            )
         elif "to_csv(" in normalized:
-            destination = "CSV file"
+            destination_key = (
+                "destination.csv"
+            )
         elif "to_json(" in normalized:
-            destination = "JSON file"
+            destination_key = (
+                "destination.json"
+            )
         elif "to_parquet(" in normalized:
-            destination = "Parquet file"
+            destination_key = (
+                "destination.parquet"
+            )
+
+        destination = (
+            self._localizer
+            .t(destination_key)
+        )
 
         self._set(
             section,
             concept="EXPORT",
-            title="Export result",
-            what_it_does=(
-                f"Writes the processed result to an "
-                f"{destination} so it can be used outside "
-                "the Python program."
+            title_key="title.export",
+            does_key=(
+                "semantic.export.does"
             ),
-            what_to_learn=(
-                "Exporting is an output stage: the program "
-                "turns its internal result into something "
-                "another person or system can consume."
+            learn_key=(
+                "semantic.export.learn"
             ),
+            does_values={
+                "destination":
+                    destination,
+            },
         )
 
-    @staticmethod
     def _set(
+        self,
         section: dict[str, Any],
         *,
         concept: str,
-        title: str,
-        what_it_does: str,
-        what_to_learn: str,
+        title_key: str,
+        does_key: str,
+        learn_key: str,
+        does_values: (
+            dict[str, Any]
+            | None
+        ) = None,
     ) -> None:
         section["concept"] = concept
-        section["title"] = title
-        section["what_it_does"] = what_it_does
-        section["what_to_learn"] = what_to_learn
+
+        section["title"] = (
+            self._localizer
+            .t(title_key)
+        )
+
+        section["what_it_does"] = (
+            self._localizer
+            .t(
+                does_key,
+                **(
+                    does_values
+                    or {}
+                ),
+            )
+        )
+
+        section["what_to_learn"] = (
+            self._localizer
+            .t(learn_key)
+        )

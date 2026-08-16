@@ -43,16 +43,16 @@ def test_learn_mode_uses_beginner_language():
 
     assert (
         learn["primary_label"]
-        == "IN SIMPLE WORDS"
+        == "EN PALABRAS SIMPLES"
     )
 
     assert (
         learn["secondary_label"]
-        == "KEY IDEA"
+        == "IDEA CLAVE"
     )
 
     assert (
-        "keeps only"
+        "conserva solamente"
         in learn[
             "primary"
         ].lower()
@@ -74,7 +74,7 @@ def test_filter_key_idea_is_beginner_friendly():
     )
 
     assert (
-        "keeping only"
+        "quedarte solamente"
         in learn[
             "secondary"
         ].lower()

@@ -101,9 +101,11 @@ function renderProgramFlow() {
                 (section, index) => {
 
                     const concept =
-                        section.concept
+                        section.concept_label
+                        || section.concept_label
+                        || section.concept
                         || section.title
-                        || "STEP";
+                        || "PASO";
 
                     const number =
                         String(
@@ -319,7 +321,7 @@ function renderConceptVisual(section) {
                 </div>
 
                 <div class="visual-arrow">
-                    <span>loads</span>
+                    <span>carga</span>
                     <b>↓</b>
                 </div>
 
@@ -486,7 +488,7 @@ function renderConceptVisual(section) {
                 <div class="visual-arrow condition">
 
                     <span>
-                        GROUP BY
+                        AGRUPAR POR
                         ${escapeHtml(group)}
                     </span>
 
@@ -699,6 +701,8 @@ function activateSection(index) {
 
     noteTitle.textContent =
         mode.heading
+        || section.concept_label
+        || section.concept_label
         || section.concept
         || section.title;
 
@@ -714,7 +718,7 @@ function activateSection(index) {
 
     primaryLabel.textContent =
         mode.primary_label
-        || "WHAT IT DOES";
+        || "QUÉ HACE";
 
 
     notePrimary.textContent =
@@ -724,7 +728,7 @@ function activateSection(index) {
 
     secondaryLabel.textContent =
         mode.secondary_label
-        || "LEARN";
+        || "APRENDER";
 
 
     noteSecondary.textContent =
@@ -860,7 +864,7 @@ async function explainCode() {
     explainButton.disabled = true;
 
     explainButton.textContent =
-        "Studying...";
+        "Analizando...";
 
 
     try {
@@ -900,7 +904,7 @@ async function explainCode() {
 
 
         sectionCounter.textContent =
-            `${sections.length} study blocks`;
+            `${sections.length} bloques de aprendizaje`;
 
 
         renderCode();
@@ -923,7 +927,7 @@ async function explainCode() {
         explainButton.disabled = false;
 
         explainButton.textContent =
-            "Explain code";
+            "Explicar código";
 
     }
 }
@@ -1012,7 +1016,7 @@ function applyLiveExplanation(
 
 
     sectionCounter.textContent =
-        `LIVE · ${sections.length} study blocks`;
+        `EN VIVO · ${sections.length} bloques de aprendizaje`;
 
 
     sectionCounter

@@ -35,7 +35,7 @@ def test_understand_mode_differs_from_learn():
 
     assert (
         modes["understand"]["primary_label"]
-        == "PLAIN ENGLISH"
+        == "EXPLICACIÓN SIMPLE"
     )
 
 
@@ -49,9 +49,9 @@ def test_deep_mode_explains_boolean_mask():
         ["learning_modes"]["deep"]
     )
 
-    assert "Boolean mask" in deep["primary"]
+    assert "máscara booleana" in deep["primary"]
 
-    assert "df[condition]" in (
+    assert "df[condición]" in (
         deep["secondary"]
     )
 
@@ -68,11 +68,11 @@ def test_aggregation_deep_dive_teaches_groupby():
         ["learning_modes"]["deep"]
     )
 
-    assert "split" in (
+    assert "dividir" in (
         deep["technical"].lower()
     )
 
-    assert "method chaining" in (
+    assert "encadenamiento de métodos" in (
         deep["secondary"].lower()
     )
 
@@ -87,6 +87,6 @@ def test_load_data_understand_mode_has_flow_context():
         ["learning_modes"]["understand"]
     )
 
-    assert "enters the program" in (
+    assert "entra al programa" in (
         understand["primary"]
     )
