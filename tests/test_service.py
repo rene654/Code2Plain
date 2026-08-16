@@ -66,3 +66,25 @@ def test_section_contains_semantic_concept():
         result["sections"][0]["concept"]
         == "LOAD DATA"
     )
+
+
+def test_section_exposes_learning_modes():
+    result = Code2PlainService().explain_code(
+        'df = pd.read_excel("orders.xlsx")'
+    )
+
+    section = result["sections"][0]
+
+    assert "learning_modes" in section
+
+    assert "learn" in (
+        section["learning_modes"]
+    )
+
+    assert "understand" in (
+        section["learning_modes"]
+    )
+
+    assert "deep" in (
+        section["learning_modes"]
+    )
