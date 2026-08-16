@@ -2198,3 +2198,402 @@ button {
     }
 
 }
+
+
+/* ==========================================================
+   PHASE 9.4 — ZERO-CLICK QUICK SUMMARY
+   ========================================================== */
+
+.quick-summary-toast {
+    position: fixed;
+
+    top: 92px;
+    right: 26px;
+
+    z-index: 1000;
+
+    display: flex;
+
+    width:
+        min(
+            390px,
+            calc(
+                100vw - 32px
+            )
+        );
+
+    gap: 13px;
+
+    padding:
+        16px 18px;
+
+    border:
+        1px solid
+        rgba(
+            30,
+            42,
+            54,
+            0.10
+        );
+
+    border-radius:
+        18px;
+
+    background:
+        rgba(
+            255,
+            253,
+            247,
+            0.91
+        );
+
+    box-shadow:
+        0 18px 55px
+        rgba(
+            45,
+            52,
+            62,
+            0.15
+        );
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transform:
+        translateY(-12px)
+        scale(0.97);
+
+    transition:
+        opacity 240ms ease,
+        transform 280ms ease;
+}
+
+
+.quick-summary-toast.is-visible {
+    opacity: 1;
+
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+.quick-summary-icon {
+    display: grid;
+
+    width: 34px;
+    height: 34px;
+
+    flex:
+        0 0 34px;
+
+    place-items: center;
+
+    border-radius: 11px;
+
+    background:
+        rgba(
+            50,
+            174,
+            194,
+            0.13
+        );
+
+    color:
+        #289db0;
+
+    font-size: 17px;
+
+    animation:
+        quickSummaryPulse
+        1.8s ease-in-out
+        infinite;
+}
+
+
+.quick-summary-content {
+    min-width: 0;
+}
+
+
+.quick-summary-kicker {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color:
+        #7e8790;
+
+    font-size: 9px;
+
+    font-weight: 850;
+
+    letter-spacing:
+        0.09em;
+}
+
+
+.quick-summary-text {
+    margin: 0;
+
+    color:
+        #24303a;
+
+    font-size: 13px;
+
+    font-weight: 650;
+
+    line-height: 1.48;
+}
+
+
+.quick-summary-meta {
+    display: block;
+
+    margin-top: 8px;
+
+    color:
+        #9198a0;
+
+    font-size: 9px;
+
+    font-weight: 700;
+}
+
+
+/* ----------------------------------------------------------
+   PASSIVE CONNECTION STATE
+   ---------------------------------------------------------- */
+
+.passive-connection-state {
+    position: fixed;
+
+    right: 26px;
+    bottom: 22px;
+
+    z-index: 900;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding:
+        8px 12px;
+
+    border:
+        1px solid
+        rgba(
+            32,
+            43,
+            53,
+            0.10
+        );
+
+    border-radius: 999px;
+
+    background:
+        rgba(
+            255,
+            253,
+            247,
+            0.86
+        );
+
+    box-shadow:
+        0 10px 30px
+        rgba(
+            40,
+            50,
+            60,
+            0.08
+        );
+
+    backdrop-filter:
+        blur(14px);
+
+    color:
+        #7d858d;
+
+    font-size: 10px;
+
+    font-weight: 750;
+}
+
+
+.passive-state-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background:
+        #43aec0;
+}
+
+
+.passive-connection-state.is-connected
+.passive-state-dot,
+.passive-connection-state.is-received
+.passive-state-dot {
+    background:
+        #63a97b;
+}
+
+
+.passive-connection-state.is-reconnecting
+.passive-state-dot {
+    background:
+        #d7a048;
+
+    animation:
+        reconnectFade
+        1.15s ease-in-out
+        infinite;
+}
+
+
+/* ----------------------------------------------------------
+   THREE WAITING DOTS
+   ---------------------------------------------------------- */
+
+.passive-waiting-dots {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 3px;
+}
+
+
+.passive-waiting-dots i {
+    width: 3px;
+    height: 3px;
+
+    border-radius: 50%;
+
+    background:
+        #43aec0;
+
+    opacity: 0.25;
+
+    animation:
+        passiveWaitingDot
+        1.2s ease-in-out
+        infinite;
+}
+
+
+.passive-waiting-dots i:nth-child(2) {
+    animation-delay:
+        150ms;
+}
+
+
+.passive-waiting-dots i:nth-child(3) {
+    animation-delay:
+        300ms;
+}
+
+
+.passive-connection-state:not(
+    .is-waiting
+)
+.passive-waiting-dots {
+    display: none;
+}
+
+
+@keyframes passiveWaitingDot {
+
+    0%,
+    100% {
+        opacity: 0.22;
+
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        opacity: 1;
+
+        transform:
+            translateY(-3px);
+    }
+
+}
+
+
+@keyframes quickSummaryPulse {
+
+    0%,
+    100% {
+        transform:
+            scale(1);
+    }
+
+    50% {
+        transform:
+            scale(1.07);
+    }
+
+}
+
+
+@keyframes reconnectFade {
+
+    0%,
+    100% {
+        opacity: 0.35;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+}
+
+
+@media (
+    max-width: 700px
+) {
+
+    .quick-summary-toast {
+        top: auto;
+
+        right: 16px;
+        bottom: 64px;
+        left: 16px;
+
+        width: auto;
+    }
+
+
+    .passive-connection-state {
+        right: 16px;
+        bottom: 14px;
+    }
+
+}
+
+
+@media (
+    prefers-reduced-motion: reduce
+) {
+
+    .quick-summary-icon,
+    .passive-state-dot,
+    .passive-waiting-dots i {
+        animation:
+            none !important;
+    }
+
+}

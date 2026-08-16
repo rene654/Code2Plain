@@ -299,6 +299,58 @@ summary.to_excel("late_orders.xlsx")</textarea>
     </main>
 
 
+    <aside
+        id="quickSummaryToast"
+        class="quick-summary-toast"
+        aria-live="polite"
+        aria-atomic="true"
+    >
+        <div class="quick-summary-icon">
+            ✦
+        </div>
+
+        <div class="quick-summary-content">
+
+            <span class="quick-summary-kicker">
+                QUÉ HIZO ESTE CÓDIGO
+            </span>
+
+            <p
+                id="quickSummaryText"
+                class="quick-summary-text"
+            ></p>
+
+            <span
+                id="quickSummaryMeta"
+                class="quick-summary-meta"
+            ></span>
+
+        </div>
+    </aside>
+
+
+    <div
+        id="passiveConnectionState"
+        class="passive-connection-state is-waiting"
+        role="status"
+        aria-live="polite"
+    >
+        <span class="passive-state-dot"></span>
+
+        <span
+            id="passiveConnectionText"
+        >
+            Esperando código
+        </span>
+
+        <span class="passive-waiting-dots">
+            <i></i>
+            <i></i>
+            <i></i>
+        </span>
+    </div>
+
+
     <script src="/static/app.js"></script>
 
 </body>

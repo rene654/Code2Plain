@@ -4,6 +4,31 @@ const explainButton =
 const languageSelector =
     document.getElementById("languageSelector");
 
+const quickSummaryToast =
+    document.getElementById(
+        "quickSummaryToast"
+    );
+
+const quickSummaryText =
+    document.getElementById(
+        "quickSummaryText"
+    );
+
+const quickSummaryMeta =
+    document.getElementById(
+        "quickSummaryMeta"
+    );
+
+const passiveConnectionState =
+    document.getElementById(
+        "passiveConnectionState"
+    );
+
+const passiveConnectionText =
+    document.getElementById(
+        "passiveConnectionText"
+    );
+
 const codeInput =
     document.getElementById("codeInput");
 
@@ -1073,11 +1098,127 @@ let liveVersion = 0;
 let livePolling = false;
 
 
+let quickSummaryTimer = null;
+
+
+function setPassiveState(
+    state,
+    text
+) {
+    if (
+        !passiveConnectionState
+        || !passiveConnectionText
+    ) {
+        return;
+    }
+
+    passiveConnectionState
+        .classList.remove(
+            "is-waiting",
+            "is-connected",
+            "is-received",
+            "is-reconnecting"
+        );
+
+    passiveConnectionState
+        .classList.add(
+            `is-${state}`
+        );
+
+    passiveConnectionText
+        .textContent =
+            text;
+}
+
+
+function showQuickSummary(
+    summary
+) {
+    if (
+        !quickSummaryToast
+        || !quickSummaryText
+        || !summary
+        || !summary.text
+    ) {
+        return;
+    }
+
+    quickSummaryText.textContent =
+        summary.text;
+
+    if (quickSummaryMeta) {
+        const steps =
+            summary.step_count || 0;
+
+        quickSummaryMeta.textContent =
+            `${steps} ${
+                steps === 1
+                    ? "paso detectado"
+                    : "pasos detectados"
+            }`;
+    }
+
+    quickSummaryToast
+        .classList
+        .remove(
+            "is-visible"
+        );
+
+    void quickSummaryToast
+        .offsetWidth;
+
+    quickSummaryToast
+        .classList
+        .add(
+            "is-visible"
+        );
+
+
+    if (quickSummaryTimer) {
+        window.clearTimeout(
+            quickSummaryTimer
+        );
+    }
+
+
+    quickSummaryTimer =
+        window.setTimeout(
+            () => {
+                quickSummaryToast
+                    .classList
+                    .remove(
+                        "is-visible"
+                    );
+            },
+            8500
+        );
+}
+
+
 async function applyLiveExplanation(
     livePayload
 ) {
     const result =
         livePayload.explanation;
+
+    setPassiveState(
+        "received",
+        "Código recibido"
+    );
+
+    showQuickSummary(
+        result?.quick_summary
+    );
+
+    window.setTimeout(
+        () => {
+            setPassiveState(
+                "connected",
+                "Conectado"
+            );
+        },
+        1700
+    );
 
     if (
         !result

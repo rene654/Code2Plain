@@ -16,6 +16,9 @@ from code2plain.localization import (
 from code2plain.semantic_enricher import (
     SemanticEnricher,
 )
+from code2plain.quick_summary import (
+    QuickSummaryBuilder,
+)
 
 
 class Code2PlainService:
@@ -91,6 +94,17 @@ class Code2PlainService:
 
         output["language"] = (
             self.language
+        )
+
+        output["quick_summary"] = (
+            QuickSummaryBuilder(
+                self.language
+            ).build(
+                output.get(
+                    "sections",
+                    [],
+                )
+            )
         )
 
         return output
