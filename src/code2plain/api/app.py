@@ -85,6 +85,7 @@ def explain_code(
 # ============================================================
 
 from code2plain.live_store import LiveExplanationStore
+from code2plain.api.apple_push import router as apple_push_router
 
 
 _live_store = LiveExplanationStore()
@@ -127,3 +128,5 @@ def get_live_explanation(
         "changed": True,
         **latest,
     }
+
+app.include_router(apple_push_router)
