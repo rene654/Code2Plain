@@ -1,3 +1,7 @@
+from code2plain.devices.apple_registration import (
+    ApplePushRegistrationResult,
+    ApplePushRegistrationService,
+)
 from code2plain.devices.models import (
     DeviceRecord,
     PairingRequest,
@@ -13,6 +17,8 @@ from code2plain.devices.registry import (
 )
 
 __all__ = [
+    "ApplePushRegistrationResult",
+    "ApplePushRegistrationService",
     "ApplePushEndpoint",
     "ApplePushRegistry",
     "DeviceRecord",

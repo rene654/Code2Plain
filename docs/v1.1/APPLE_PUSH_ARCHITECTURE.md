@@ -99,3 +99,45 @@ runtime secret or mounted secret file in production.
 
 The APNs transport reports Apple response reason and APNs
 request ID without logging provider credentials.
+
+## iPhone Companion — Phase 10.7A.3
+
+The iPhone companion is intentionally minimal.
+
+Responsibilities:
+
+1. accept a one-time Code2Plain pairing token
+2. request notification authorization
+3. register with APNs
+4. receive the current APNs device token
+5. forward pairing token + APNs token to Code2Plain
+6. display connected state
+
+The companion does not determine subscription access.
+
+The companion does not contain source code.
+
+The companion does not grant premium capabilities.
+
+Backend registration:
+
+POST /api/v1/devices/apple/register
+
+Payload:
+
+- pairing_token
+- apns_token
+- bundle_id
+- environment
+
+Server flow:
+
+pairing token
+→ DeviceRegistry
+→ device_id
+→ ApplePushRegistry
+→ APNs endpoint
+
+The next production step is creating the signed Xcode project,
+enabling Push Notifications, configuring the real bundle ID,
+and testing on a physical iPhone.
