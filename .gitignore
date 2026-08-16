@@ -223,3 +223,6 @@ __marimo__/
 AuthKey_*.p8
 *.p8
 code2plain_devices.db
+*.db-journal
+*.db-shm
+*.db-wal
