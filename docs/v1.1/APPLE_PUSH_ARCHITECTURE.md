@@ -60,3 +60,42 @@ Real APNs delivery requires:
 - HTTP/2 APNs transport
 - secure token storage
 - token rotation handling
+
+## Real APNs Transport — Phase 10.7A.2
+
+The provider transport uses Apple's HTTP/2 provider API.
+
+Development endpoint:
+
+api.sandbox.push.apple.com
+
+Production endpoint:
+
+api.push.apple.com
+
+Each notification is sent to:
+
+/3/device/{device_token}
+
+Token-based authentication uses a signed ES256 JWT.
+
+The JWT includes:
+
+- issuer: Apple Team ID
+- issued-at timestamp
+- key identifier in JWT header
+
+The request includes:
+
+- authorization bearer token
+- apns-topic = application bundle ID
+- apns-push-type = alert
+- apns-priority = 10
+
+Apple credentials are not committed to the repository.
+
+The `.p8` signing key must be injected through a protected
+runtime secret or mounted secret file in production.
+
+The APNs transport reports Apple response reason and APNs
+request ID without logging provider credentials.
