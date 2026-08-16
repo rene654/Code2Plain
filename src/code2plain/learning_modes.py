@@ -38,15 +38,13 @@ class LearningModeBuilder:
         return {
             "learn": {
                 "heading": concept,
-                "primary_label": "WHAT IT DOES",
-                "primary": section.get(
-                    "what_it_does",
-                    "",
+                "primary_label": "IN SIMPLE WORDS",
+                "primary": self._beginner_explanation(
+                    section
                 ),
-                "secondary_label": "LEARN",
-                "secondary": section.get(
-                    "what_to_learn",
-                    "",
+                "secondary_label": "KEY IDEA",
+                "secondary": self._beginner_key_idea(
+                    section
                 ),
             },
             "understand": {
@@ -75,6 +73,125 @@ class LearningModeBuilder:
                 ),
             },
         }
+
+    def _beginner_explanation(
+        self,
+        section: dict[str, Any],
+    ) -> str:
+        concept = section.get(
+            "concept"
+        )
+
+        mapping = {
+            "IMPORT": (
+                "Python brings in a tool that this program "
+                "will need later."
+            ),
+            "LOAD DATA": (
+                "This line opens the data file and puts its "
+                "information inside Python so we can work "
+                "with it."
+            ),
+            "FILTER": (
+                "This line removes the rows we do not want "
+                "and keeps only the ones that match the rule."
+            ),
+            "AGGREGATE": (
+                "This step groups similar rows together and "
+                "turns them into a smaller summary."
+            ),
+            "EXPORT": (
+                "This line saves the result into a file that "
+                "you can open or share outside Python."
+            ),
+            "TRANSFORM": (
+                "This line changes some information into a "
+                "new form that the program can use next."
+            ),
+            "DECIDE": (
+                "This part lets the program choose what to "
+                "do depending on whether something is true "
+                "or false."
+            ),
+            "REPEAT": (
+                "This part repeats the same action several "
+                "times automatically."
+            ),
+            "DEFINE": (
+                "This creates a reusable set of instructions "
+                "that can be used again later."
+            ),
+            "CALL": (
+                "This tells Python to run a set of "
+                "instructions that already exists."
+            ),
+        }
+
+        return mapping.get(
+            concept,
+            section.get(
+                "what_it_does",
+                "",
+            ),
+        )
+
+    def _beginner_key_idea(
+        self,
+        section: dict[str, Any],
+    ) -> str:
+        concept = section.get(
+            "concept"
+        )
+
+        mapping = {
+            "IMPORT": (
+                "Importing means adding a tool to your "
+                "program instead of building it yourself."
+            ),
+            "LOAD DATA": (
+                "Before Python can analyze data, that data "
+                "has to enter the program."
+            ),
+            "FILTER": (
+                "Filtering means keeping only the data that "
+                "follows a rule."
+            ),
+            "AGGREGATE": (
+                "Aggregating means combining many detailed "
+                "rows into useful totals or summaries."
+            ),
+            "EXPORT": (
+                "Exporting means taking the result out of "
+                "Python and saving it somewhere useful."
+            ),
+            "TRANSFORM": (
+                "Transforming means changing data from one "
+                "form into another."
+            ),
+            "DECIDE": (
+                "Conditions let software make different "
+                "choices."
+            ),
+            "REPEAT": (
+                "Loops save you from writing the same action "
+                "again and again."
+            ),
+            "DEFINE": (
+                "Functions let you reuse instructions."
+            ),
+            "CALL": (
+                "Calling means asking Python to run something "
+                "that was already defined."
+            ),
+        }
+
+        return mapping.get(
+            concept,
+            section.get(
+                "what_to_learn",
+                "",
+            ),
+        )
 
     def _understand(
         self,

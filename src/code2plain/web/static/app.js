@@ -7,6 +7,9 @@ const codeInput =
 const codeEditor =
     document.getElementById("codeEditor");
 
+const programFlow =
+    document.getElementById("programFlow");
+
 const sectionCounter =
     document.getElementById("sectionCounter");
 
@@ -85,7 +88,119 @@ function escapeHtml(value) {
 }
 
 
+
+function renderProgramFlow() {
+    if (!programFlow) {
+        return;
+    }
+
+
+    programFlow.innerHTML =
+        sections
+            .map(
+                (section, index) => {
+
+                    const concept =
+                        section.concept
+                        || section.title
+                        || "STEP";
+
+                    const number =
+                        String(
+                            section.section_number
+                        ).padStart(
+                            2,
+                            "0"
+                        );
+
+                    return `
+                        <button
+                            class="flow-step"
+                            data-flow-index="${index}"
+                            type="button"
+                        >
+                            <span
+                                class="flow-dot"
+                            >
+                                ${number}
+                            </span>
+
+                            <span
+                                class="flow-label"
+                            >
+                                ${escapeHtml(
+                                    concept
+                                )}
+                            </span>
+                        </button>
+                    `;
+                }
+            )
+            .join(
+                '<span class="flow-line">→</span>'
+            );
+
+
+    document
+        .querySelectorAll(
+            ".flow-step"
+        )
+        .forEach(
+            element => {
+
+                element
+                    .addEventListener(
+                        "click",
+                        () => {
+
+                            activateSection(
+                                Number(
+                                    element
+                                        .dataset
+                                        .flowIndex
+                                )
+                            );
+
+                        }
+                    );
+
+            }
+        );
+}
+
+
+function updateProgramFlow(index) {
+    document
+        .querySelectorAll(
+            ".flow-step"
+        )
+        .forEach(
+            (element, elementIndex) => {
+
+                element
+                    .classList
+                    .toggle(
+                        "active",
+                        elementIndex
+                            === index
+                    );
+
+                element
+                    .classList
+                    .toggle(
+                        "completed",
+                        elementIndex
+                            < index
+                    );
+
+            }
+        );
+}
+
+
 function renderCode() {
+    renderProgramFlow();
+
     codeEditor.innerHTML =
         sections
             .map(
@@ -545,6 +660,9 @@ function activateSection(index) {
     codeEditor
         .classList
         .add("has-active");
+
+
+    updateProgramFlow(index);
 
 
     document
