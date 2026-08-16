@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-from typing import Any
+import contextlib
+from typing import Any, AsyncIterator
 
 from mcp.server.fastmcp import FastMCP
+from starlette.applications import Starlette
+from starlette.routing import Mount
 
 from code2plain.service import Code2PlainService
 
@@ -20,24 +23,22 @@ service = Code2PlainService()
 def explain_code(code: str) -> dict[str, Any]:
     """
     Explain source code using Code2Plain's visual-learning model.
-
-    Returns:
-    - script summary
-    - numbered sections
-    - color tags
-    - what each section does
-    - what the user should learn
     """
     return service.explain_code(code)
 
 
-def main() -> None:
-    mcp.run(
-        transport="streamable-http",
-        host="0.0.0.0",
-        port=8000,
-    )
+mcp_app = mcp.streamable_http_app()
 
 
-if __name__ == "__main__":
-    main()
+@contextlib.asynccontextmanager
+async def lifespan(app: Starlette) -> AsyncIterator[None]:
+    async with mcp.session_manager.run():
+        yield
+
+
+app = Starlette(
+    routes=[
+        Mount("/", app=mcp_app),
+    ],
+    lifespan=lifespan,
+)
