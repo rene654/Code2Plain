@@ -8,6 +8,7 @@ from starlette.applications import Starlette
 from starlette.routing import Mount
 
 from code2plain.service import Code2PlainService
+from code2plain.live_store import LiveExplanationStore
 
 
 mcp = FastMCP(
@@ -17,6 +18,7 @@ mcp = FastMCP(
 )
 
 service = Code2PlainService()
+live_store = LiveExplanationStore()
 
 
 @mcp.tool()
@@ -24,7 +26,14 @@ def explain_code(code: str) -> dict[str, Any]:
     """
     Explain source code using Code2Plain's visual-learning model.
     """
-    return service.explain_code(code)
+    result = service.explain_code(code)
+
+    live_store.publish(
+        result,
+        source="mcp",
+    )
+
+    return result
 
 
 mcp_app = mcp.streamable_http_app()

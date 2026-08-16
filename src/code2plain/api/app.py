@@ -73,3 +73,41 @@ def explain_code(
     return service.explain_code(
         request.code
     )
+
+
+# ============================================================
+# LIVE LEARNING CHANNEL
+# ============================================================
+
+from code2plain.live_store import LiveExplanationStore
+
+
+_live_store = LiveExplanationStore()
+
+
+@app.get("/v1/live")
+def get_live_explanation(
+    after: int = 0,
+) -> dict:
+    """
+    Return only an explanation newer than `after`.
+
+    The browser polls this lightweight endpoint automatically.
+    The user never needs to refresh the page manually.
+    """
+
+    latest = (
+        _live_store
+        .latest_after(after)
+    )
+
+    if latest is None:
+        return {
+            "changed": False,
+            "version": after,
+        }
+
+    return {
+        "changed": True,
+        **latest,
+    }

@@ -488,3 +488,117 @@ window.addEventListener(
     "DOMContentLoaded",
     explainCode
 );
+
+
+// ============================================================
+// LIVE AI SYNC
+// ============================================================
+
+let liveVersion = 0;
+
+let livePolling = false;
+
+
+function applyLiveExplanation(
+    livePayload
+) {
+    const result =
+        livePayload.explanation;
+
+    if (
+        !result
+        || !Array.isArray(
+            result.sections
+        )
+    ) {
+        return;
+    }
+
+
+    sections =
+        result.sections;
+
+
+    sectionCounter.textContent =
+        `LIVE · ${sections.length} study blocks`;
+
+
+    renderCode();
+
+
+    if (
+        sections.length > 0
+    ) {
+        activateSection(0);
+    }
+}
+
+
+async function checkLiveExplanation() {
+    if (livePolling) {
+        return;
+    }
+
+    livePolling = true;
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/v1/live?after=${liveVersion}`,
+                {
+                    cache: "no-store",
+                }
+            );
+
+
+        if (!response.ok) {
+            return;
+        }
+
+
+        const payload =
+            await response.json();
+
+
+        if (
+            payload.changed
+            && payload.version > liveVersion
+        ) {
+            liveVersion =
+                payload.version;
+
+            applyLiveExplanation(
+                payload
+            );
+        }
+
+    } catch (error) {
+
+        // Live sync is intentionally silent.
+        // A temporary network interruption should not
+        // break the learning canvas.
+
+    } finally {
+
+        livePolling = false;
+
+    }
+}
+
+
+function startLiveSync() {
+    checkLiveExplanation();
+
+    window.setInterval(
+        checkLiveExplanation,
+        800
+    );
+}
+
+
+window.addEventListener(
+    "DOMContentLoaded",
+    startLiveSync
+);
