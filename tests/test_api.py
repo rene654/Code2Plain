@@ -80,3 +80,31 @@ def test_stylesheet_is_available():
     assert response.status_code == 200
 
     assert ".code-section" in response.text
+
+
+def test_explain_endpoint_accepts_language():
+    response = client.post(
+        "/v1/explain",
+        json={
+            "code": (
+                'late_orders = '
+                'df[df["status"] == "Late"]'
+            ),
+            "language": "fr",
+        },
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert (
+        data["language"]
+        == "fr"
+    )
+
+    assert (
+        data["sections"][0]
+        ["concept_label"]
+        == "FILTRER (FILTER)"
+    )

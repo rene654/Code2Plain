@@ -1,6 +1,9 @@
 const explainButton =
     document.getElementById("explainButton");
 
+const languageSelector =
+    document.getElementById("languageSelector");
+
 const codeInput =
     document.getElementById("codeInput");
 
@@ -56,6 +59,26 @@ const modeButtons =
 let sections = [];
 let activeIndex = null;
 let currentMode = "learn";
+
+const LANGUAGE_STORAGE_KEY =
+    "code2plain.language";
+
+let currentLanguage =
+    localStorage.getItem(
+        LANGUAGE_STORAGE_KEY
+    )
+    || "es";
+
+
+if (
+    languageSelector
+    && ["es", "en", "fr"].includes(
+        currentLanguage
+    )
+) {
+    languageSelector.value =
+        currentLanguage;
+}
 
 
 const colorMap = {
@@ -883,6 +906,8 @@ async function explainCode() {
                     body:
                         JSON.stringify({
                             code,
+                            language:
+                                currentLanguage,
                         }),
                 }
             );
@@ -973,6 +998,34 @@ modeButtons.forEach(
 );
 
 
+if (languageSelector) {
+
+    languageSelector
+        .addEventListener(
+            "change",
+            async () => {
+
+                currentLanguage =
+                    languageSelector.value;
+
+                localStorage.setItem(
+                    LANGUAGE_STORAGE_KEY,
+                    currentLanguage
+                );
+
+
+                if (
+                    codeInput.value.trim()
+                ) {
+                    await explainCode();
+                }
+
+            }
+        );
+
+}
+
+
 explainButton
     .addEventListener(
         "click",
@@ -995,7 +1048,7 @@ let liveVersion = 0;
 let livePolling = false;
 
 
-function applyLiveExplanation(
+async function applyLiveExplanation(
     livePayload
 ) {
     const result =
@@ -1011,8 +1064,50 @@ function applyLiveExplanation(
     }
 
 
-    sections =
-        result.sections;
+    if (
+        result.language
+        && result.language
+            !== currentLanguage
+    ) {
+
+        const response =
+            await fetch(
+                "/v1/explain",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+                    },
+
+                    body:
+                        JSON.stringify({
+                            code:
+                                result.code,
+                            language:
+                                currentLanguage,
+                        }),
+                }
+            );
+
+
+        if (response.ok) {
+            const localized =
+                await response.json();
+
+            sections =
+                localized.sections;
+
+        } else {
+            sections =
+                result.sections;
+        }
+
+    } else {
+        sections =
+            result.sections;
+    }
 
 
     sectionCounter.textContent =
@@ -1078,7 +1173,7 @@ async function checkLiveExplanation() {
             liveVersion =
                 payload.version;
 
-            applyLiveExplanation(
+            await applyLiveExplanation(
                 payload
             );
         }

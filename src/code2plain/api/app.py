@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -27,6 +27,7 @@ class ExplainCodeRequest(BaseModel):
             "should explain."
         ),
     )
+    language: str = "es"
 
 
 app = FastAPI(
@@ -70,7 +71,11 @@ def health() -> dict[str, str]:
 def explain_code(
     request: ExplainCodeRequest,
 ) -> dict[str, Any]:
-    return service.explain_code(
+    localized_service = Code2PlainService(
+        language=request.language
+    )
+
+    return localized_service.explain_code(
         request.code
     )
 

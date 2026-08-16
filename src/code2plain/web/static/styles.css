@@ -2104,3 +2104,97 @@ button {
     }
 
 }
+
+
+/* ==========================================================
+   PHASE 9.2 — LANGUAGE SELECTOR
+   ========================================================== */
+
+.language-control {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding:
+        4px 5px 4px 10px;
+
+    border:
+        1px solid #dcd5c9;
+
+    border-radius: 12px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.55
+        );
+}
+
+
+.language-label {
+    color:
+        var(--muted);
+
+    font-size: 9px;
+
+    font-weight: 850;
+
+    letter-spacing:
+        0.08em;
+
+    text-transform:
+        uppercase;
+}
+
+
+.language-selector {
+    border: 0;
+
+    outline: none;
+
+    padding:
+        7px 28px 7px 8px;
+
+    border-radius: 8px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.82
+        );
+
+    color:
+        var(--ink);
+
+    cursor: pointer;
+
+    font-size: 11px;
+
+    font-weight: 750;
+}
+
+
+.language-selector:hover {
+    background:
+        white;
+}
+
+
+@media (max-width: 980px) {
+
+    .topbar-tools {
+        flex-wrap: wrap;
+    }
+
+
+    .language-control {
+        order: 3;
+    }
+
+}
