@@ -69,7 +69,7 @@ def test_visual_learning_ui_is_available():
     assert response.status_code == 200
 
     assert "Code2Plain" in response.text
-    assert "Learn code while you use it." in response.text
+    assert "Turn code into something you can learn." in response.text
 
 
 def test_stylesheet_is_available():

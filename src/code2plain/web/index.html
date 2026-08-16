@@ -18,27 +18,34 @@
 
 <body>
 
-    <main class="shell">
+    <main class="app">
 
         <header class="topbar">
 
             <div class="brand">
-                <div class="brand-symbol">
+
+                <div class="brand-mark">
                     C2P
                 </div>
 
-                <div>
+                <div class="brand-copy">
                     <h1>Code2Plain</h1>
 
                     <p>
-                        Learn code while you use it.
+                        Turn code into something you can learn.
                     </p>
                 </div>
+
             </div>
 
-            <div class="topbar-actions">
 
-                <div class="mode-switch">
+            <div class="topbar-tools">
+
+                <div
+                    class="mode-selector"
+                    aria-label="Learning mode"
+                >
+
                     <button
                         class="mode active"
                         data-mode="learn"
@@ -59,13 +66,15 @@
                     >
                         Deep Dive
                     </button>
+
                 </div>
+
 
                 <button
                     id="explainButton"
-                    class="primary-button"
+                    class="explain-button"
                 >
-                    Explain
+                    Explain code
                 </button>
 
             </div>
@@ -73,28 +82,33 @@
         </header>
 
 
-        <section class="stage">
+        <section class="learning-workspace">
 
-            <div class="code-surface">
+            <div class="paper">
 
-                <div class="editor-header">
+                <div class="paper-header">
 
                     <div>
-                        <span class="micro-label">
-                            SOURCE
+                        <span class="paper-kicker">
+                            STUDY SHEET
                         </span>
 
-                        <strong>
+                        <h2>
                             Python
-                        </strong>
+                        </h2>
                     </div>
 
-                    <span
-                        id="sectionCounter"
-                        class="section-counter"
-                    >
-                        Waiting for analysis
-                    </span>
+                    <div class="paper-status">
+
+                        <span class="status-dot"></span>
+
+                        <span
+                            id="sectionCounter"
+                        >
+                            Waiting for code
+                        </span>
+
+                    </div>
 
                 </div>
 
@@ -123,89 +137,102 @@ summary.to_excel("late_orders.xlsx")</textarea>
 
 
             <aside
-                id="learningOverlay"
-                class="learning-overlay hidden"
+                id="learningNote"
+                class="learning-note hidden"
             >
 
-                <div class="overlay-top">
+                <div class="note-pin"></div>
 
-                    <div class="overlay-index">
-                        <span
-                            id="overlayNumber"
-                        ></span>
+
+                <div class="note-header">
+
+                    <div
+                        id="noteNumber"
+                        class="note-number"
+                    >
+                        01
                     </div>
 
                     <div>
-                        <span class="micro-label">
-                            CURRENT CONCEPT
+
+                        <span class="note-kicker">
+                            CURRENT IDEA
                         </span>
 
-                        <h2
-                            id="overlayTitle"
-                        ></h2>
+                        <h3
+                            id="noteTitle"
+                        >
+                            IMPORT
+                        </h3>
+
                     </div>
 
                 </div>
 
 
                 <div
-                    id="overlayCode"
-                    class="overlay-code"
+                    id="noteCode"
+                    class="note-code"
                 ></div>
 
 
-                <div class="teaching-section">
+                <div class="note-section">
 
-                    <span class="teaching-label">
+                    <span
+                        id="primaryLabel"
+                        class="note-label"
+                    >
                         WHAT IT DOES
                     </span>
 
                     <p
-                        id="overlayDoes"
-                        class="strong-copy"
+                        id="notePrimary"
+                        class="note-primary"
                     ></p>
 
                 </div>
 
 
-                <div class="teaching-section">
+                <div class="note-section">
 
-                    <span class="teaching-label">
+                    <span
+                        id="secondaryLabel"
+                        class="note-label"
+                    >
                         LEARN
                     </span>
 
                     <p
-                        id="overlayLearn"
+                        id="noteSecondary"
                     ></p>
 
                 </div>
 
 
                 <div
-                    id="deepDiveSection"
-                    class="teaching-section deep-section hidden"
+                    id="technicalSection"
+                    class="note-section technical hidden"
                 >
 
-                    <span class="teaching-label">
-                        DEEP DIVE
+                    <span class="note-label">
+                        TECHNICAL NOTE
                     </span>
 
-                    <p id="overlayDeep">
-                        Technical detail becomes available here
-                        when deeper learning is selected.
-                    </p>
+                    <p
+                        id="noteTechnical"
+                    ></p>
 
                 </div>
 
 
-                <div class="overlay-footer">
+                <div class="note-footer">
 
                     <span
-                        id="overlayLines"
+                        id="noteLines"
                     ></span>
 
                     <span>
-                        Click another block to continue
+                        Pick another block →
                     </span>
 
                 </div>
@@ -215,13 +242,22 @@ summary.to_excel("late_orders.xlsx")</textarea>
         </section>
 
 
-        <footer class="bottom-hint">
-            <span class="status-dot"></span>
+        <footer class="study-footer">
 
-            Select a code block to explore how it works.
+            <div>
+                <span class="footer-dot"></span>
+
+                Click any numbered code block to study it.
+            </div>
+
+            <span>
+                Code2Plain Learning Canvas
+            </span>
+
         </footer>
 
     </main>
+
 
     <script src="/static/app.js"></script>
 

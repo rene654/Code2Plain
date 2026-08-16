@@ -7,54 +7,68 @@ const codeInput =
 const codeEditor =
     document.getElementById("codeEditor");
 
-const learningOverlay =
-    document.getElementById("learningOverlay");
-
-const overlayNumber =
-    document.getElementById("overlayNumber");
-
-const overlayTitle =
-    document.getElementById("overlayTitle");
-
-const overlayCode =
-    document.getElementById("overlayCode");
-
-const overlayDoes =
-    document.getElementById("overlayDoes");
-
-const overlayLearn =
-    document.getElementById("overlayLearn");
-
-const overlayLines =
-    document.getElementById("overlayLines");
-
-const deepDiveSection =
-    document.getElementById("deepDiveSection");
-
-const overlayDeep =
-    document.getElementById("overlayDeep");
-
 const sectionCounter =
     document.getElementById("sectionCounter");
+
+const learningNote =
+    document.getElementById("learningNote");
+
+const noteNumber =
+    document.getElementById("noteNumber");
+
+const noteTitle =
+    document.getElementById("noteTitle");
+
+const noteCode =
+    document.getElementById("noteCode");
+
+const primaryLabel =
+    document.getElementById("primaryLabel");
+
+const secondaryLabel =
+    document.getElementById("secondaryLabel");
+
+const notePrimary =
+    document.getElementById("notePrimary");
+
+const noteSecondary =
+    document.getElementById("noteSecondary");
+
+const noteTechnical =
+    document.getElementById("noteTechnical");
+
+const technicalSection =
+    document.getElementById("technicalSection");
+
+const noteLines =
+    document.getElementById("noteLines");
 
 const modeButtons =
     document.querySelectorAll(".mode");
 
 
 let sections = [];
-
 let activeIndex = null;
-
 let currentMode = "learn";
 
 
 const colorMap = {
-    blue: "#61a8ff",
-    green: "#52df93",
-    purple: "#bc83ff",
-    orange: "#ff9d57",
-    cyan: "#44d9ef",
-    yellow: "#f8d568",
+    blue: "#4f8fe8",
+    green: "#52aa78",
+    purple: "#9a6bc4",
+    orange: "#e78c4c",
+    cyan: "#45aabd",
+    yellow: "#e6bd48",
+};
+
+
+const softColorMap = {
+    blue: "rgba(79, 143, 232, 0.16)",
+    green: "rgba(82, 170, 120, 0.16)",
+    purple: "rgba(154, 107, 196, 0.16)",
+    orange: "rgba(231, 140, 76, 0.17)",
+    cyan: "rgba(69, 170, 189, 0.16)",
+    yellow: "rgba(230, 189, 72, 0.18)",
 };
 
 
@@ -65,16 +79,6 @@ function escapeHtml(value) {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
-}
-
-
-function buildDeepExplanation(section) {
-    return (
-        `Category: ${section.category}. ` +
-        `Lines ${section.start_line}–${section.end_line}. ` +
-        `This block participates in the larger program flow ` +
-        `and can be inspected at syntax level in a future version.`
-    );
 }
 
 
@@ -111,9 +115,7 @@ function renderCode() {
 
 
     document
-        .querySelectorAll(
-            ".code-section"
-        )
+        .querySelectorAll(".code-section")
         .forEach(
             element => {
 
@@ -156,17 +158,33 @@ function activateSection(index) {
     }
 
 
-    const color =
-        colorMap[
-            section.color_tag
-        ] || colorMap.blue;
+    const colorName =
+        section.color_tag || "blue";
+
+
+    const activeColor =
+        colorMap[colorName]
+        || colorMap.blue;
+
+
+    const activeSoft =
+        softColorMap[colorName]
+        || softColorMap.blue;
 
 
     document.documentElement
         .style
         .setProperty(
             "--active-color",
-            color
+            activeColor
+        );
+
+
+    document.documentElement
+        .style
+        .setProperty(
+            "--active-soft",
+            activeSoft
         );
 
 
@@ -176,9 +194,7 @@ function activateSection(index) {
 
 
     document
-        .querySelectorAll(
-            ".code-section"
-        )
+        .querySelectorAll(".code-section")
         .forEach(
             (element, elementIndex) => {
 
@@ -193,39 +209,58 @@ function activateSection(index) {
         );
 
 
-    overlayNumber.textContent =
+    const modes =
+        section.learning_modes || {};
+
+
+    const mode =
+        modes[currentMode]
+        || modes.learn
+        || {};
+
+
+    noteNumber.textContent =
         String(
             section.section_number
         ).padStart(2, "0");
 
 
-    overlayTitle.textContent =
-        section.concept || section.title;
+    noteTitle.textContent =
+        mode.heading
+        || section.concept
+        || section.title;
 
 
-    overlayCode.textContent =
+    noteCode.textContent =
         section.code;
 
 
-    overlayDoes.textContent =
-        section.what_it_does;
+    primaryLabel.textContent =
+        mode.primary_label
+        || "WHAT IT DOES";
 
 
-    overlayLearn.textContent =
-        section.what_to_learn;
+    notePrimary.textContent =
+        mode.primary
+        || section.what_it_does;
 
 
-    overlayDeep.textContent =
-        buildDeepExplanation(
-            section
-        );
+    secondaryLabel.textContent =
+        mode.secondary_label
+        || "LEARN";
 
 
-    overlayLines.textContent =
-        `L${section.start_line} — L${section.end_line}`;
+    noteSecondary.textContent =
+        mode.secondary
+        || section.what_to_learn;
 
 
-    deepDiveSection
+    noteTechnical.textContent =
+        mode.technical
+        || "";
+
+
+    technicalSection
         .classList
         .toggle(
             "hidden",
@@ -233,69 +268,90 @@ function activateSection(index) {
         );
 
 
-    learningOverlay
+    noteLines.textContent =
+        `L${section.start_line} — L${section.end_line}`;
+
+
+    learningNote
         .classList
         .remove("hidden");
 
 
     requestAnimationFrame(
-        () => positionOverlay(index)
+        () => positionLearningNote(index)
     );
 }
 
 
-function positionOverlay(index) {
+function positionLearningNote(index) {
+    if (
+        window.innerWidth <= 980
+    ) {
+        return;
+    }
+
+
     const activeElement =
         document.querySelector(
             `.code-section[data-index="${index}"]`
         );
 
-    const stage =
-        document.querySelector(".stage");
+
+    const workspace =
+        document.querySelector(
+            ".learning-workspace"
+        );
+
 
     if (
         !activeElement
-        || !stage
-        || window.innerWidth <= 900
+        || !workspace
     ) {
         return;
     }
 
-    const blockCenter =
+
+    const center =
         activeElement.offsetTop
         + (
             activeElement.offsetHeight
             / 2
         );
 
-    const overlayHeight =
-        learningOverlay.offsetHeight;
 
-    const minimumTop = 90;
+    const noteHeight =
+        learningNote.offsetHeight;
+
+
+    const minimumTop = 100;
+
 
     const maximumTop =
-        stage.clientHeight
-        - overlayHeight
-        - 28;
+        workspace.clientHeight
+        - noteHeight
+        - 32;
 
-    let targetTop =
-        blockCenter
+
+    let target =
+        center
         - (
-            overlayHeight
+            noteHeight
             / 2
         );
 
-    targetTop =
+
+    target =
         Math.max(
             minimumTop,
             Math.min(
-                targetTop,
+                target,
                 maximumTop
-            ),
+            )
         );
 
-    learningOverlay.style.top =
-        `${targetTop}px`;
+
+    learningNote.style.top =
+        `${target}px`;
 }
 
 
@@ -312,7 +368,7 @@ async function explainCode() {
     explainButton.disabled = true;
 
     explainButton.textContent =
-        "Analyzing";
+        "Studying...";
 
 
     try {
@@ -338,7 +394,7 @@ async function explainCode() {
 
         if (!response.ok) {
             throw new Error(
-                `Code2Plain API returned ${response.status}`
+                `API returned ${response.status}`
             );
         }
 
@@ -352,7 +408,7 @@ async function explainCode() {
 
 
         sectionCounter.textContent =
-            `${sections.length} learning blocks`;
+            `${sections.length} study blocks`;
 
 
         renderCode();
@@ -375,7 +431,7 @@ async function explainCode() {
         explainButton.disabled = false;
 
         explainButton.textContent =
-            "Explain";
+            "Explain code";
 
     }
 }
@@ -391,9 +447,9 @@ modeButtons.forEach(
                 modeButtons
                     .forEach(
                         item =>
-                            item.classList.remove(
-                                "active"
-                            )
+                            item
+                                .classList
+                                .remove("active")
                     );
 
 
