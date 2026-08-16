@@ -83,10 +83,41 @@ const modeButtons =
 
 let sections = [];
 let activeIndex = null;
-let currentMode = "learn";
+let currentMode =
+    localStorage.getItem(
+        MODE_STORAGE_KEY
+    )
+    || "learn";
+
+if (
+    ![
+        "learn",
+        "understand",
+        "deep",
+    ].includes(
+        currentMode
+    )
+) {
+    currentMode = "learn";
+}
 
 const LANGUAGE_STORAGE_KEY =
     "code2plain.language";
+
+const MODE_STORAGE_KEY =
+    "code2plain.mode";
+
+const ACTIVE_BLOCK_STORAGE_KEY =
+    "code2plain.activeBlock";
+
+const LAST_CODE_STORAGE_KEY =
+    "code2plain.lastCode";
+
+const LAST_EXPLANATION_STORAGE_KEY =
+    "code2plain.lastExplanation";
+
+const LAST_SESSION_STORAGE_KEY =
+    "code2plain.lastSession";
 
 let currentLanguage =
     localStorage.getItem(
@@ -669,6 +700,11 @@ function activateSection(index) {
 
     activeIndex = index;
 
+    localStorage.setItem(
+        ACTIVE_BLOCK_STORAGE_KEY,
+        String(index)
+    );
+
     const section =
         sections[index];
 
@@ -1101,6 +1137,119 @@ let livePolling = false;
 let quickSummaryTimer = null;
 
 
+function persistLearningState(
+    result
+) {
+    if (!result) {
+        return;
+    }
+
+    try {
+        if (result.code) {
+            localStorage.setItem(
+                LAST_CODE_STORAGE_KEY,
+                result.code
+            );
+        }
+
+        localStorage.setItem(
+            LAST_EXPLANATION_STORAGE_KEY,
+            JSON.stringify(result)
+        );
+
+        localStorage.setItem(
+            LAST_SESSION_STORAGE_KEY,
+            currentSessionId
+        );
+
+    } catch (error) {
+        console.warn(
+            "Could not persist learning state:",
+            error
+        );
+    }
+}
+
+
+function restoreLastExplanation() {
+    const raw =
+        localStorage.getItem(
+            LAST_EXPLANATION_STORAGE_KEY
+        );
+
+    if (!raw) {
+        return false;
+    }
+
+    try {
+        const result =
+            JSON.parse(raw);
+
+        if (
+            !result
+            || !Array.isArray(
+                result.sections
+            )
+            || result.sections.length === 0
+        ) {
+            return false;
+        }
+
+        sections =
+            result.sections;
+
+        if (
+            codeInput
+            && result.code
+        ) {
+            codeInput.value =
+                result.code;
+        }
+
+        renderCode();
+
+        const storedIndex =
+            Number(
+                localStorage.getItem(
+                    ACTIVE_BLOCK_STORAGE_KEY
+                )
+                || 0
+            );
+
+        const safeIndex =
+            Number.isInteger(
+                storedIndex
+            )
+            && storedIndex >= 0
+            && storedIndex < sections.length
+                ? storedIndex
+                : 0;
+
+        activateSection(
+            safeIndex
+        );
+
+        setPassiveState(
+            "connected",
+            "Sesión recuperada"
+        );
+
+        return true;
+
+    } catch (error) {
+        console.warn(
+            "Could not restore previous session:",
+            error
+        );
+
+        return false;
+    }
+}
+
+
+
+
+
 function setPassiveState(
     state,
     text
@@ -1208,6 +1357,10 @@ async function applyLiveExplanation(
 
     showQuickSummary(
         result?.quick_summary
+    );
+
+    persistLearningState(
+        result
     );
 
     window.setTimeout(
@@ -1371,4 +1524,36 @@ function startLiveSync() {
 window.addEventListener(
     "DOMContentLoaded",
     startLiveSync
+);
+
+function restoreModeButtons() {
+    document.querySelectorAll(
+        "[data-mode]"
+    ).forEach(
+        (button) => {
+            button.classList.toggle(
+                "active",
+                button.dataset.mode
+                    === currentMode
+            );
+        }
+    );
+}
+
+
+window.addEventListener(
+    "DOMContentLoaded",
+    () => {
+        restoreModeButtons();
+
+        const restored =
+            restoreLastExplanation();
+
+        if (!restored) {
+            setPassiveState(
+                "waiting",
+                "Esperando código"
+            );
+        }
+    }
 );

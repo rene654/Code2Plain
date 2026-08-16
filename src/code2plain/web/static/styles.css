@@ -2597,3 +2597,88 @@ button {
     }
 
 }
+
+
+/* ==========================================================
+   PHASE 9.5 — SESSION MEMORY + RECOVERY
+   ========================================================== */
+
+.local-session-note {
+    position: fixed;
+
+    left: 22px;
+    bottom: 20px;
+
+    z-index: 850;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding:
+        7px 10px;
+
+    border:
+        1px solid
+        rgba(
+            40,
+            50,
+            60,
+            0.08
+        );
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(
+            255,
+            253,
+            247,
+            0.72
+        );
+
+    backdrop-filter:
+        blur(12px);
+
+    -webkit-backdrop-filter:
+        blur(12px);
+
+    color:
+        #92979c;
+
+    font-size:
+        9px;
+
+    font-weight:
+        650;
+
+    pointer-events:
+        none;
+
+    opacity:
+        0.72;
+}
+
+
+.local-session-note span {
+    color:
+        #63a97b;
+
+    font-size:
+        7px;
+}
+
+
+@media (
+    max-width: 700px
+) {
+
+    .local-session-note {
+        display:
+            none;
+    }
+
+}
