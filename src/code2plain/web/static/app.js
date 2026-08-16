@@ -4,6 +4,42 @@ const explainButton =
 const languageSelector =
     document.getElementById("languageSelector");
 
+const compactLearningOverlay =
+    document.getElementById(
+        "compactLearningOverlay"
+    );
+
+const compactOverlayState =
+    document.getElementById(
+        "compactOverlayState"
+    );
+
+const compactSummaryText =
+    document.getElementById(
+        "compactSummaryText"
+    );
+
+const compactConceptNumber =
+    document.getElementById(
+        "compactConceptNumber"
+    );
+
+const compactConceptLabel =
+    document.getElementById(
+        "compactConceptLabel"
+    );
+
+const compactLearningText =
+    document.getElementById(
+        "compactLearningText"
+    );
+
+const compactOverlayMeta =
+    document.getElementById(
+        "compactOverlayMeta"
+    );
+
+
 const quickSummaryToast =
     document.getElementById(
         "quickSummaryToast"
@@ -1146,6 +1182,271 @@ let livePolling = false;
 
 let quickSummaryTimer = null;
 
+let compactOverlayTimer = null;
+
+
+function chooseCompactLearningSection(
+    result
+) {
+    const resultSections =
+        result?.sections || [];
+
+    if (
+        resultSections.length === 0
+    ) {
+        return null;
+    }
+
+
+    const priority = [
+        "FILTER",
+        "AGGREGATE",
+        "DECIDE",
+        "REPEAT",
+        "TRANSFORM",
+        "LOAD DATA",
+        "EXPORT",
+        "DEFINE",
+        "CALL",
+        "RETURN",
+        "IMPORT",
+    ];
+
+
+    for (
+        const concept
+        of priority
+    ) {
+        const match =
+            resultSections.find(
+                (section) =>
+                    section.concept
+                    === concept
+            );
+
+        if (match) {
+            return match;
+        }
+    }
+
+
+    return resultSections[0];
+}
+
+
+function compactLearningTextFor(
+    section
+) {
+    if (!section) {
+        return "";
+    }
+
+
+    const modes =
+        section.learning_modes
+        || {};
+
+
+    const selectedMode =
+        modes[currentMode]
+        || modes.learn
+        || modes.understand
+        || modes.deep;
+
+
+    if (
+        selectedMode
+        && selectedMode.primary
+    ) {
+        return selectedMode.primary;
+    }
+
+
+    return (
+        section.what_to_learn
+        || section.what_it_does
+        || ""
+    );
+}
+
+
+function compactMetaText(
+    result
+) {
+    const count =
+        result?.sections?.length
+        || 0;
+
+
+    if (currentLanguage === "en") {
+        return `${count} ${
+            count === 1
+                ? "step detected"
+                : "steps detected"
+        }`;
+    }
+
+
+    if (currentLanguage === "fr") {
+        return `${count} ${
+            count === 1
+                ? "étape détectée"
+                : "étapes détectées"
+        }`;
+    }
+
+
+    return `${count} ${
+        count === 1
+            ? "paso detectado"
+            : "pasos detectados"
+    }`;
+}
+
+
+function showCompactLearningOverlay(
+    result
+) {
+    if (
+        !compactLearningOverlay
+        || !result
+    ) {
+        return;
+    }
+
+
+    const summary =
+        result.quick_summary;
+
+
+    const section =
+        chooseCompactLearningSection(
+            result
+        );
+
+
+    if (
+        compactSummaryText
+        && summary?.text
+    ) {
+        compactSummaryText.textContent =
+            summary.text;
+    }
+
+
+    if (section) {
+
+        if (compactConceptNumber) {
+            compactConceptNumber
+                .textContent =
+                    String(
+                        section.section_number
+                        || 1
+                    ).padStart(
+                        2,
+                        "0"
+                    );
+        }
+
+
+        if (compactConceptLabel) {
+            compactConceptLabel
+                .textContent =
+                    (
+                        section.concept_label
+                        || section.concept
+                        || section.title
+                        || ""
+                    );
+        }
+
+
+        if (compactLearningText) {
+            compactLearningText
+                .textContent =
+                    compactLearningTextFor(
+                        section
+                    );
+        }
+
+    }
+
+
+    if (compactOverlayMeta) {
+        compactOverlayMeta
+            .textContent =
+                compactMetaText(
+                    result
+                );
+    }
+
+
+    if (compactOverlayState) {
+
+        const states = {
+            es:
+                "Código recibido",
+
+            en:
+                "Code received",
+
+            fr:
+                "Code reçu",
+        };
+
+
+        compactOverlayState
+            .textContent =
+                states[
+                    currentLanguage
+                ]
+                || states.es;
+    }
+
+
+    compactLearningOverlay
+        .classList
+        .remove(
+            "is-visible"
+        );
+
+
+    void compactLearningOverlay
+        .offsetWidth;
+
+
+    compactLearningOverlay
+        .classList
+        .add(
+            "is-visible"
+        );
+
+
+    if (compactOverlayTimer) {
+        window.clearTimeout(
+            compactOverlayTimer
+        );
+    }
+
+
+    compactOverlayTimer =
+        window.setTimeout(
+            () => {
+
+                compactLearningOverlay
+                    .classList
+                    .remove(
+                        "is-visible"
+                    );
+
+            },
+            10000
+        );
+}
+
+
+
+
 
 function showEmptyLearningState(
     visible
@@ -1429,6 +1730,10 @@ async function applyLiveExplanation(
 
     showQuickSummary(
         result?.quick_summary
+    );
+
+    showCompactLearningOverlay(
+        result
     );
 
     persistLearningState(
