@@ -90,6 +90,7 @@ function renderCode() {
                     <article
                         class="code-section"
                         data-index="${index}"
+                        style="--block-index: ${index};"
                     >
 
                         <div class="code-gutter">
@@ -112,6 +113,20 @@ function renderCode() {
                 `
             )
             .join("");
+
+
+    codeEditor
+        .classList
+        .remove("is-revealing");
+
+
+    requestAnimationFrame(
+        () => {
+            codeEditor
+                .classList
+                .add("is-revealing");
+        }
+    );
 
 
     document
@@ -148,6 +163,9 @@ function renderCode() {
 
 
 function activateSection(index) {
+    const previousIndex =
+        activeIndex;
+
     activeIndex = index;
 
     const section =
@@ -275,6 +293,21 @@ function activateSection(index) {
     learningNote
         .classList
         .remove("hidden");
+
+
+    if (
+        previousIndex !== index
+    ) {
+        learningNote
+            .classList
+            .remove("note-enter");
+
+        void learningNote.offsetWidth;
+
+        learningNote
+            .classList
+            .add("note-enter");
+    }
 
 
     requestAnimationFrame(
@@ -521,6 +554,19 @@ function applyLiveExplanation(
 
     sectionCounter.textContent =
         `LIVE · ${sections.length} study blocks`;
+
+
+    sectionCounter
+        .classList
+        .remove("live-arrival");
+
+
+    void sectionCounter.offsetWidth;
+
+
+    sectionCounter
+        .classList
+        .add("live-arrival");
 
 
     renderCode();
