@@ -4,11 +4,20 @@ import contextlib
 from typing import Any, AsyncIterator
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp.server import Settings as FastMCPSettings
 from starlette.applications import Starlette
 from starlette.routing import Mount
 
 from code2plain.service import Code2PlainService
 from code2plain.live_store import LiveExplanationStore
+
+
+# MCP 1.x defines Settings as a generic BaseSettings model.
+# Rebuild it explicitly before FastMCP instantiation so
+# pydantic-settings sees the fully-resolved lifespan field.
+FastMCPSettings.model_rebuild(
+    force=True
+)
 
 
 mcp = FastMCP(
