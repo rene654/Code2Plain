@@ -61,3 +61,22 @@ def test_empty_code_is_rejected():
     )
 
     assert response.status_code == 422
+
+
+def test_visual_learning_ui_is_available():
+    response = client.get("/")
+
+    assert response.status_code == 200
+
+    assert "Code2Plain" in response.text
+    assert "Learn code while you use it." in response.text
+
+
+def test_stylesheet_is_available():
+    response = client.get(
+        "/static/styles.css"
+    )
+
+    assert response.status_code == 200
+
+    assert ".code-section" in response.text

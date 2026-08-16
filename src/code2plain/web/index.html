@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Code2Plain</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/styles.css"
+    >
+</head>
+
+<body>
+
+    <main class="shell">
+
+        <header class="topbar">
+
+            <div class="brand">
+                <div class="brand-symbol">
+                    C2P
+                </div>
+
+                <div>
+                    <h1>Code2Plain</h1>
+
+                    <p>
+                        Learn code while you use it.
+                    </p>
+                </div>
+            </div>
+
+            <div class="topbar-actions">
+
+                <div class="mode-switch">
+                    <button
+                        class="mode active"
+                        data-mode="learn"
+                    >
+                        Learn
+                    </button>
+
+                    <button
+                        class="mode"
+                        data-mode="understand"
+                    >
+                        Understand
+                    </button>
+
+                    <button
+                        class="mode"
+                        data-mode="deep"
+                    >
+                        Deep Dive
+                    </button>
+                </div>
+
+                <button
+                    id="explainButton"
+                    class="primary-button"
+                >
+                    Explain
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <section class="stage">
+
+            <div class="code-surface">
+
+                <div class="editor-header">
+
+                    <div>
+                        <span class="micro-label">
+                            SOURCE
+                        </span>
+
+                        <strong>
+                            Python
+                        </strong>
+                    </div>
+
+                    <span
+                        id="sectionCounter"
+                        class="section-counter"
+                    >
+                        Waiting for analysis
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="codeEditor"
+                    class="code-editor"
+                ></div>
+
+
+                <textarea
+                    id="codeInput"
+                    spellcheck="false"
+                    aria-label="Python source code"
+                >import pandas as pd
+
+df = pd.read_excel("orders.xlsx")
+
+late_orders = df[df["status"] == "Late"]
+
+summary = late_orders.groupby("supplier")["amount"].sum()
+
+summary.to_excel("late_orders.xlsx")</textarea>
+
+            </div>
+
+
+            <aside
+                id="learningOverlay"
+                class="learning-overlay hidden"
+            >
+
+                <div class="overlay-top">
+
+                    <div class="overlay-index">
+                        <span
+                            id="overlayNumber"
+                        ></span>
+                    </div>
+
+                    <div>
+                        <span class="micro-label">
+                            CURRENT CONCEPT
+                        </span>
+
+                        <h2
+                            id="overlayTitle"
+                        ></h2>
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="overlayCode"
+                    class="overlay-code"
+                ></div>
+
+
+                <div class="teaching-section">
+
+                    <span class="teaching-label">
+                        WHAT IT DOES
+                    </span>
+
+                    <p
+                        id="overlayDoes"
+                        class="strong-copy"
+                    ></p>
+
+                </div>
+
+
+                <div class="teaching-section">
+
+                    <span class="teaching-label">
+                        LEARN
+                    </span>
+
+                    <p
+                        id="overlayLearn"
+                    ></p>
+
+                </div>
+
+
+                <div
+                    id="deepDiveSection"
+                    class="teaching-section deep-section hidden"
+                >
+
+                    <span class="teaching-label">
+                        DEEP DIVE
+                    </span>
+
+                    <p id="overlayDeep">
+                        Technical detail becomes available here
+                        when deeper learning is selected.
+                    </p>
+
+                </div>
+
+
+                <div class="overlay-footer">
+
+                    <span
+                        id="overlayLines"
+                    ></span>
+
+                    <span>
+                        Click another block to continue
+                    </span>
+
+                </div>
+
+            </aside>
+
+        </section>
+
+
+        <footer class="bottom-hint">
+            <span class="status-dot"></span>
+
+            Select a code block to explore how it works.
+        </footer>
+
+    </main>
+
+    <script src="/static/app.js"></script>
+
+</body>
+</html>
