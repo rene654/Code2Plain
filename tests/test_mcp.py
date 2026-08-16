@@ -25,3 +25,56 @@ df = pd.read_excel("orders.xlsx")
 def test_mcp_is_configured_for_http():
     assert mcp.settings.stateless_http is True
     assert mcp.settings.json_response is True
+
+
+def test_mcp_routes_to_requested_session(
+    tmp_path,
+    monkeypatch,
+):
+    import importlib
+
+    from code2plain.live_store import (
+        LiveExplanationStore,
+    )
+
+    server = importlib.import_module(
+        "code2plain.mcp.server"
+    )
+
+    isolated_store = LiveExplanationStore(
+        tmp_path / "mcp-live.db"
+    )
+
+    monkeypatch.setattr(
+        server,
+        "live_store",
+        isolated_store,
+    )
+
+    result = server.explain_code(
+        'late_orders = '
+        'df[df["status"] == "Late"]',
+        session_id="mcp-session",
+        language="fr",
+    )
+
+    latest = isolated_store.latest(
+        session_id="mcp-session"
+    )
+
+    assert (
+        result["language"]
+        == "fr"
+    )
+
+    assert latest is not None
+
+    assert (
+        latest["session_id"]
+        == "mcp-session"
+    )
+
+    assert (
+        latest["explanation"]["language"]
+        == "fr"
+    )

@@ -22,15 +22,32 @@ live_store = LiveExplanationStore()
 
 
 @mcp.tool()
-def explain_code(code: str) -> dict[str, Any]:
+def explain_code(
+    code: str,
+    session_id: str = "default",
+    language: str = "es",
+) -> dict[str, Any]:
     """
     Explain source code using Code2Plain's visual-learning model.
+
+    session_id routes the explanation to the matching
+    Code2Plain live-learning channel.
+
+    language controls the pedagogical explanation language.
     """
-    result = service.explain_code(code)
+
+    localized_service = Code2PlainService(
+        language=language
+    )
+
+    result = localized_service.explain_code(
+        code
+    )
 
     live_store.publish(
         result,
         source="mcp",
+        session_id=session_id,
     )
 
     return result

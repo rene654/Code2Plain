@@ -1043,6 +1043,31 @@ window.addEventListener(
 // LIVE AI SYNC
 // ============================================================
 
+// =========================================================
+// SESSION-AWARE LIVE CHANNEL
+// =========================================================
+
+const SESSION_STORAGE_KEY =
+    "code2plain.session";
+
+const sessionFromUrl =
+    new URLSearchParams(
+        window.location.search
+    ).get("session");
+
+let currentSessionId =
+    sessionFromUrl
+    || localStorage.getItem(
+        SESSION_STORAGE_KEY
+    )
+    || "default";
+
+localStorage.setItem(
+    SESSION_STORAGE_KEY,
+    currentSessionId
+);
+
+
 let liveVersion = 0;
 
 let livePolling = false;
@@ -1150,7 +1175,7 @@ async function checkLiveExplanation() {
 
         const response =
             await fetch(
-                `/v1/live?after=${liveVersion}`,
+                `/v1/live?after=${liveVersion}&session_id=${encodeURIComponent(currentSessionId)}`,
                 {
                     cache: "no-store",
                 }

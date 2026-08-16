@@ -93,23 +93,34 @@ _live_store = LiveExplanationStore()
 @app.get("/v1/live")
 def get_live_explanation(
     after: int = 0,
+    session_id: str = Query(
+        "default",
+        min_length=1,
+        max_length=64,
+        pattern=r"^[A-Za-z0-9_-]+$",
+    ),
 ) -> dict:
     """
-    Return only an explanation newer than `after`.
+    Return only an explanation newer than `after`
+    for the requested live-learning session.
 
-    The browser polls this lightweight endpoint automatically.
-    The user never needs to refresh the page manually.
+    Independent sessions never consume one another's
+    live explanation payloads.
     """
 
     latest = (
         _live_store
-        .latest_after(after)
+        .latest_after(
+            after,
+            session_id=session_id,
+        )
     )
 
     if latest is None:
         return {
             "changed": False,
             "version": after,
+            "session_id": session_id,
         }
 
     return {
