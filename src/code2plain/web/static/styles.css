@@ -3439,3 +3439,31 @@ span:nth-child(3) {
     }
 
 }
+
+
+/* ==========================================================
+   V1 RELEASE POLISH — SINGLE VISUAL STATUS
+   ----------------------------------------------------------
+   The study sheet already owns the canonical connection
+   status. Extra fixed indicators created visual collisions
+   and are intentionally hidden in the v1 interface.
+   ========================================================== */
+
+
+/* Top-left release metadata collided with main branding. */
+.product-meta-bar {
+    display: none !important;
+}
+
+
+/* Bottom-left local-storage hint collided with footer copy. */
+.local-session-note {
+    display: none !important;
+}
+
+
+/* Bottom-right passive state duplicated the sheet status. */
+.passive-connection-state {
+    display: none !important;
+}
+

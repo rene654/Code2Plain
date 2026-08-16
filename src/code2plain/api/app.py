@@ -32,7 +32,7 @@ class ExplainCodeRequest(BaseModel):
 
 app = FastAPI(
     title="Code2Plain",
-    version="0.1.0",
+    version="1.0.0",
     description=(
         "Visual learning system for "
         "understanding source code."
@@ -63,7 +63,7 @@ def health() -> dict[str, str]:
     return {
         "status": "ok",
         "service": "code2plain",
-        "version": "0.1.0",
+        "version": "1.0.0",
     }
 
 
