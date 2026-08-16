@@ -300,6 +300,27 @@ summary.to_excel("late_orders.xlsx")</textarea>
 
 
     <div
+        class="product-meta-bar"
+    >
+        <span
+            class="product-version"
+            title="Versión actual de Code2Plain"
+        >
+            Code2Plain v1
+        </span>
+
+        <button
+            id="clearSessionButton"
+            class="clear-session-button"
+            type="button"
+            title="Borrar la sesión guardada en este navegador"
+        >
+            Limpiar sesión
+        </button>
+    </div>
+
+
+    <div
         class="local-session-note"
         title="Code2Plain no ejecuta tu código."
     >
@@ -309,6 +330,32 @@ summary.to_excel("late_orders.xlsx")</textarea>
 
         Tu sesión se recuerda localmente
     </div>
+
+
+    <section
+        id="emptyLearningState"
+        class="empty-learning-state"
+        aria-live="polite"
+    >
+        <div
+            class="empty-learning-orbit"
+            aria-hidden="true"
+        >
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="empty-learning-copy">
+            <strong>
+                Code2Plain está listo
+            </strong>
+
+            <span>
+                Esperando el siguiente código para explicarlo.
+            </span>
+        </div>
+    </section>
 
 
     <aside

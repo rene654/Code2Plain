@@ -29,6 +29,16 @@ const passiveConnectionText =
         "passiveConnectionText"
     );
 
+const clearSessionButton =
+    document.getElementById(
+        "clearSessionButton"
+    );
+
+const emptyLearningState =
+    document.getElementById(
+        "emptyLearningState"
+    );
+
 const codeInput =
     document.getElementById("codeInput");
 
@@ -1137,6 +1147,56 @@ let livePolling = false;
 let quickSummaryTimer = null;
 
 
+function showEmptyLearningState(
+    visible
+) {
+    if (!emptyLearningState) {
+        return;
+    }
+
+    emptyLearningState
+        .classList
+        .toggle(
+            "is-visible",
+            visible
+        );
+}
+
+
+function clearStoredLearningState() {
+    const keys = [
+        MODE_STORAGE_KEY,
+        ACTIVE_BLOCK_STORAGE_KEY,
+        LAST_CODE_STORAGE_KEY,
+        LAST_EXPLANATION_STORAGE_KEY,
+        LAST_SESSION_STORAGE_KEY,
+    ];
+
+    keys.forEach(
+        (key) => {
+            localStorage.removeItem(
+                key
+            );
+        }
+    );
+
+    sections = [];
+
+    if (codeInput) {
+        codeInput.value = "";
+    }
+
+    showEmptyLearningState(
+        true
+    );
+
+    setPassiveState(
+        "waiting",
+        "Esperando código"
+    );
+}
+
+
 function persistLearningState(
     result
 ) {
@@ -1240,6 +1300,18 @@ function restoreLastExplanation() {
         console.warn(
             "Could not restore previous session:",
             error
+        );
+
+        localStorage.removeItem(
+            LAST_EXPLANATION_STORAGE_KEY
+        );
+
+        localStorage.removeItem(
+            LAST_CODE_STORAGE_KEY
+        );
+
+        showEmptyLearningState(
+            true
         );
 
         return false;
@@ -1361,6 +1433,10 @@ async function applyLiveExplanation(
 
     persistLearningState(
         result
+    );
+
+    showEmptyLearningState(
+        false
     );
 
     window.setTimeout(
@@ -1550,10 +1626,60 @@ window.addEventListener(
             restoreLastExplanation();
 
         if (!restored) {
+            showEmptyLearningState(
+                true
+            );
+
             setPassiveState(
                 "waiting",
                 "Esperando código"
             );
+
+        } else {
+            showEmptyLearningState(
+                false
+            );
         }
     }
 );
+
+
+if (clearSessionButton) {
+
+    clearSessionButton.addEventListener(
+        "click",
+        () => {
+            clearStoredLearningState();
+
+            clearSessionButton
+                .classList
+                .add(
+                    "is-confirmed"
+                );
+
+            const originalText =
+                clearSessionButton
+                    .textContent;
+
+            clearSessionButton
+                .textContent =
+                    "Sesión limpiada";
+
+            window.setTimeout(
+                () => {
+                    clearSessionButton
+                        .classList
+                        .remove(
+                            "is-confirmed"
+                        );
+
+                    clearSessionButton
+                        .textContent =
+                            originalText;
+                },
+                1800
+            );
+        }
+    );
+
+}

@@ -2682,3 +2682,315 @@ button {
     }
 
 }
+
+
+/* ==========================================================
+   PHASE 9.6 — HARDENING + FINAL UX
+   ========================================================== */
+
+.product-meta-bar {
+    position: fixed;
+
+    left: 22px;
+    top: 18px;
+
+    z-index: 920;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+.product-version {
+    padding:
+        5px 8px;
+
+    border:
+        1px solid
+        rgba(
+            50,
+            60,
+            70,
+            0.08
+        );
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(
+            255,
+            253,
+            247,
+            0.72
+        );
+
+    color:
+        #999fa5;
+
+    font-size:
+        8px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        0.05em;
+}
+
+
+.clear-session-button {
+    border:
+        1px solid
+        rgba(
+            50,
+            60,
+            70,
+            0.08
+        );
+
+    border-radius:
+        999px;
+
+    padding:
+        5px 9px;
+
+    background:
+        rgba(
+            255,
+            253,
+            247,
+            0.72
+        );
+
+    color:
+        #878d93;
+
+    cursor:
+        pointer;
+
+    font-size:
+        8px;
+
+    font-weight:
+        750;
+
+    transition:
+        transform 160ms ease,
+        background-color 160ms ease,
+        color 160ms ease;
+}
+
+
+.clear-session-button:hover {
+    transform:
+        translateY(-1px);
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.92
+        );
+
+    color:
+        #555f67;
+}
+
+
+.clear-session-button.is-confirmed {
+    background:
+        rgba(
+            96,
+            176,
+            124,
+            0.14
+        );
+
+    color:
+        #4d8d64;
+}
+
+
+/* ----------------------------------------------------------
+   EMPTY STATE
+   ---------------------------------------------------------- */
+
+.empty-learning-state {
+    position: fixed;
+
+    inset:
+        0;
+
+    z-index: 40;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 22px;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition:
+        opacity 220ms ease;
+}
+
+
+.empty-learning-state.is-visible {
+    opacity: 1;
+
+    visibility: visible;
+}
+
+
+.empty-learning-copy {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+.empty-learning-copy strong {
+    color:
+        #5f6971;
+
+    font-size:
+        13px;
+
+    font-weight:
+        800;
+}
+
+
+.empty-learning-copy span {
+    color:
+        #9aa0a6;
+
+    font-size:
+        10px;
+
+    font-weight:
+        600;
+}
+
+
+.empty-learning-orbit {
+    position: relative;
+
+    width: 42px;
+    height: 42px;
+}
+
+
+.empty-learning-orbit span {
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background:
+        #44afc1;
+
+    animation:
+        emptyOrbit 2.2s
+        ease-in-out infinite;
+}
+
+
+.empty-learning-orbit
+span:nth-child(1) {
+    top: 4px;
+    left: 17px;
+}
+
+
+.empty-learning-orbit
+span:nth-child(2) {
+    right: 4px;
+    bottom: 8px;
+
+    animation-delay:
+        180ms;
+}
+
+
+.empty-learning-orbit
+span:nth-child(3) {
+    left: 4px;
+    bottom: 8px;
+
+    animation-delay:
+        360ms;
+}
+
+
+@keyframes emptyOrbit {
+
+    0%,
+    100% {
+        opacity: 0.3;
+
+        transform:
+            scale(0.85);
+    }
+
+    50% {
+        opacity: 1;
+
+        transform:
+            scale(1.25);
+    }
+
+}
+
+
+/* ----------------------------------------------------------
+   RESPONSIVE
+   ---------------------------------------------------------- */
+
+@media (
+    max-width: 700px
+) {
+
+    .product-meta-bar {
+        left: 12px;
+        top: 10px;
+    }
+
+
+    .empty-learning-state {
+        flex-direction:
+            column;
+
+        text-align:
+            center;
+    }
+
+}
+
+
+@media (
+    prefers-reduced-motion: reduce
+) {
+
+    .empty-learning-orbit span {
+        animation:
+            none !important;
+    }
+
+}
