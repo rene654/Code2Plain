@@ -68,78 +68,6 @@ function escapeHtml(value) {
 }
 
 
-function inferConcept(section) {
-    const code =
-        section.code.toLowerCase();
-
-    if (
-        section.category === "import"
-    ) {
-        return "IMPORT";
-    }
-
-    if (
-        code.includes("read_excel") ||
-        code.includes("read_csv") ||
-        code.includes("read_sql")
-    ) {
-        return "LOAD DATA";
-    }
-
-    if (
-        code.includes("groupby")
-    ) {
-        return "AGGREGATE";
-    }
-
-    if (
-        code.includes("to_excel") ||
-        code.includes("to_csv")
-    ) {
-        return "EXPORT";
-    }
-
-    if (
-        code.includes("[") &&
-        code.includes("==")
-    ) {
-        return "FILTER";
-    }
-
-    if (
-        section.category === "condition"
-    ) {
-        return "DECIDE";
-    }
-
-    if (
-        section.category === "loop"
-    ) {
-        return "REPEAT";
-    }
-
-    if (
-        section.category === "function"
-    ) {
-        return "DEFINE";
-    }
-
-    if (
-        section.category === "assignment"
-    ) {
-        return "TRANSFORM";
-    }
-
-    if (
-        section.category === "function_call"
-    ) {
-        return "CALL";
-    }
-
-    return section.title.toUpperCase();
-}
-
-
 function buildDeepExplanation(section) {
     return (
         `Category: ${section.category}. ` +
@@ -272,7 +200,7 @@ function activateSection(index) {
 
 
     overlayTitle.textContent =
-        inferConcept(section);
+        section.concept || section.title;
 
 
     overlayCode.textContent =
@@ -308,6 +236,66 @@ function activateSection(index) {
     learningOverlay
         .classList
         .remove("hidden");
+
+
+    requestAnimationFrame(
+        () => positionOverlay(index)
+    );
+}
+
+
+function positionOverlay(index) {
+    const activeElement =
+        document.querySelector(
+            `.code-section[data-index="${index}"]`
+        );
+
+    const stage =
+        document.querySelector(".stage");
+
+    if (
+        !activeElement
+        || !stage
+        || window.innerWidth <= 900
+    ) {
+        return;
+    }
+
+    const blockCenter =
+        activeElement.offsetTop
+        + (
+            activeElement.offsetHeight
+            / 2
+        );
+
+    const overlayHeight =
+        learningOverlay.offsetHeight;
+
+    const minimumTop = 90;
+
+    const maximumTop =
+        stage.clientHeight
+        - overlayHeight
+        - 28;
+
+    let targetTop =
+        blockCenter
+        - (
+            overlayHeight
+            / 2
+        );
+
+    targetTop =
+        Math.max(
+            minimumTop,
+            Math.min(
+                targetTop,
+                maximumTop
+            ),
+        );
+
+    learningOverlay.style.top =
+        `${targetTop}px`;
 }
 
 

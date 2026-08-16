@@ -53,3 +53,16 @@ df = pd.read_excel("orders.xlsx")
     assert first["section_number"] == 1
     assert second["section_number"] == 2
     assert first["color_tag"] != second["color_tag"]
+
+
+def test_section_contains_semantic_concept():
+    service = Code2PlainService()
+
+    result = service.explain_code(
+        'df = pd.read_excel("orders.xlsx")'
+    )
+
+    assert (
+        result["sections"][0]["concept"]
+        == "LOAD DATA"
+    )
