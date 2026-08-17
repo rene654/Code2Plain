@@ -6,7 +6,7 @@ from code2plain.version import __version__
 
 def test_code2plain_version_is_v1_1_0():
 
-    assert __version__ == "1.1.0"
+    assert __version__ == "1.1.2"
 
 
 def test_fastapi_version_matches_product_version():
