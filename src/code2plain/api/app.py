@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from code2plain.service import Code2PlainService
+from code2plain.version import __version__
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,7 +33,7 @@ class ExplainCodeRequest(BaseModel):
 
 app = FastAPI(
     title="Code2Plain",
-    version="1.0.0",
+    version=__version__,
     description=(
         "Visual learning system for "
         "understanding source code."
@@ -63,7 +64,7 @@ def health() -> dict[str, str]:
     return {
         "status": "ok",
         "service": "code2plain",
-        "version": "1.0.0",
+        "version": __version__,
     }
 
 

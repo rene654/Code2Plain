@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "code2plain"
-version = "1.0.0"
+version = "1.1.0"
 description = "Visual learning engine for explaining AI-generated code in plain language."
 requires-python = ">=3.12"
 dependencies = [
