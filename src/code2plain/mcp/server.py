@@ -9,7 +9,7 @@ from starlette.applications import Starlette
 from starlette.routing import Mount
 
 from code2plain.service import Code2PlainService
-from code2plain.live_store import LiveExplanationStore
+from code2plain.live_store import live_store
 
 
 # MCP 1.x defines Settings as a generic BaseSettings model.
@@ -27,7 +27,6 @@ mcp = FastMCP(
 )
 
 service = Code2PlainService()
-live_store = LiveExplanationStore()
 
 
 @mcp.tool()

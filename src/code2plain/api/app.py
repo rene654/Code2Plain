@@ -85,11 +85,11 @@ def explain_code(
 # LIVE LEARNING CHANNEL
 # ============================================================
 
-from code2plain.live_store import LiveExplanationStore
+from code2plain.live_store import live_store
 from code2plain.api.apple_push import router as apple_push_router
 
 
-_live_store = LiveExplanationStore()
+_live_store = live_store
 
 
 @app.get("/v1/live")
