@@ -261,3 +261,16 @@ class LiveExplanationStore:
             return None
 
         return latest
+
+# ============================================================
+# SHARED LIVE STORE
+# ============================================================
+
+# Single process-wide live learning channel.
+#
+# MCP publishers and the HTTP API MUST use the same instance.
+# Creating independent stores causes explanations published by
+# an AI integration to be invisible to the browser.
+
+live_store = LiveExplanationStore()
+
