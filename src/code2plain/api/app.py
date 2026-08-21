@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from code2plain.service import Code2PlainService
+from code2plain.feedback.service import FeedbackService
 from code2plain.version import __version__
 
 
@@ -17,6 +18,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 WEB_DIR = BASE_DIR / "web"
 
 STATIC_DIR = WEB_DIR / "static"
+
+
+class GitHubFeedbackRequest(BaseModel):
+    name: str
+    conclusion: str
+    summary: str
+    details: str = ""
+    file_path: str | None = None
+    line: int | None = None
 
 
 class ExplainCodeRequest(BaseModel):
@@ -41,6 +51,9 @@ app = FastAPI(
 )
 
 service = Code2PlainService()
+feedback_service = FeedbackService()
+_latest_github_feedback: dict | None = None
+_github_feedback_version = 0
 
 
 app.mount(
@@ -90,6 +103,51 @@ from code2plain.api.apple_push import router as apple_push_router
 
 
 _live_store = live_store
+
+
+
+
+@app.post("/v1/github/feedback")
+def github_feedback(
+    request: GitHubFeedbackRequest,
+) -> dict:
+    global _latest_github_feedback
+    global _github_feedback_version
+
+    feedback = feedback_service.from_github_check(
+        request.model_dump()
+    )
+
+    payload = {
+        "status": feedback.status,
+        "headline": feedback.headline,
+        "what_failed": feedback.what_failed,
+        "likely_cause": feedback.likely_cause,
+        "where_to_look": feedback.where_to_look,
+        "concept": feedback.concept,
+    }
+
+    _github_feedback_version += 1
+    _latest_github_feedback = payload
+
+    return {
+        **payload,
+        "version": _github_feedback_version,
+    }
+
+
+@app.get("/v1/github/feedback/latest")
+def latest_github_feedback() -> dict:
+    if _latest_github_feedback is None:
+        return {
+            "changed": False,
+        }
+
+    return {
+        "changed": True,
+        "version": _github_feedback_version,
+        "feedback": _latest_github_feedback,
+    }
 
 
 @app.get("/v1/live")

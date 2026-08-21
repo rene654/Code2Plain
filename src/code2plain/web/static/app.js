@@ -1988,3 +1988,115 @@ if (clearSessionButton) {
     );
 
 }
+
+
+// ============================================================
+// GITHUB LEARNING FEEDBACK
+// ============================================================
+
+function showGitHubFeedback(feedback) {
+    const section =
+        document.getElementById(
+            "compactFailureSection"
+        );
+
+    const text =
+        document.getElementById(
+            "compactFailureText"
+        );
+
+    const meta =
+        document.getElementById(
+            "compactFailureMeta"
+        );
+
+    if (
+        !section
+        || !text
+        || !meta
+        || !feedback
+    ) {
+        return;
+    }
+
+    text.textContent =
+        feedback.what_failed
+        || feedback.headline
+        || "Algo salió mal";
+
+    const parts = [];
+
+    if (feedback.where_to_look) {
+        parts.push(
+            feedback.where_to_look
+        );
+    }
+
+    if (feedback.concept) {
+        parts.push(
+            feedback.concept
+        );
+    }
+
+    meta.textContent =
+        parts.join(" · ");
+
+    section.classList.remove(
+        "hidden"
+    );
+}
+
+
+// ============================================================
+// GITHUB FEEDBACK SYNC
+// ============================================================
+
+let githubFeedbackVersion = 0;
+
+async function checkGitHubFeedback() {
+    try {
+        const response =
+            await fetch(
+                "/v1/github/feedback/latest",
+                {
+                    cache: "no-store",
+                }
+            );
+
+        if (!response.ok) {
+            return;
+        }
+
+        const payload =
+            await response.json();
+
+        if (
+            payload.changed
+            && payload.feedback
+            && payload.version > githubFeedbackVersion
+        ) {
+            githubFeedbackVersion =
+                payload.version;
+
+            showGitHubFeedback(
+                payload.feedback
+            );
+        }
+
+    } catch (error) {
+        // Feedback sync should never interrupt
+        // the main learning experience.
+    }
+}
+
+window.addEventListener(
+    "DOMContentLoaded",
+    () => {
+        checkGitHubFeedback();
+
+        window.setInterval(
+            checkGitHubFeedback,
+            1500
+        );
+    }
+);
