@@ -10,6 +10,7 @@ class GitHubCheckRun:
     conclusion: str | None
     summary: str
     details: str
+    details_url: str = ""
 
 
 class GitHubClient:
@@ -91,6 +92,13 @@ class GitHubClient:
                         )
                         or ""
                     ),
+                    details_url=str(
+                        item.get(
+                            "details_url",
+                            "",
+                        )
+                        or ""
+                    ),
                 )
             )
 
@@ -117,3 +125,38 @@ class GitHubClient:
                 "action_required",
             }
         ]
+
+
+    def get_check_log(
+        self,
+        owner: str,
+        repo: str,
+        check: GitHubCheckRun,
+    ) -> str:
+        """
+        Read the GitHub Actions job log associated
+        with a check run when available.
+        """
+        import re
+
+        match = re.search(
+            r"/job/(\d+)",
+            check.details_url,
+        )
+
+        if not match:
+            return ""
+
+        job_id = match.group(1)
+
+        response = self._client.get(
+            (
+                f"/repos/{owner}/{repo}"
+                f"/actions/jobs/{job_id}/logs"
+            ),
+            follow_redirects=True,
+        )
+
+        response.raise_for_status()
+
+        return response.text

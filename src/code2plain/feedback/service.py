@@ -9,6 +9,9 @@ from code2plain.feedback.analyzer import (
 from code2plain.feedback.models import (
     LearningFeedback,
 )
+from code2plain.feedback.github_log_parser import (
+    GitHubFailureLogParser,
+)
 
 
 class FeedbackService:
@@ -42,4 +45,27 @@ class FeedbackService:
 
         return self.analyzer.analyze(
             failure
+        )
+
+
+
+    def from_github_check_with_log(
+        self,
+        payload: dict[str, Any],
+        log: str,
+    ) -> LearningFeedback:
+        parsed = GitHubFailureLogParser().parse(
+            log
+        )
+
+        enriched = {
+            **payload,
+            "summary": parsed.summary,
+            "details": parsed.details,
+            "file_path": parsed.file_path,
+            "line": parsed.line,
+        }
+
+        return self.from_github_check(
+            enriched
         )
