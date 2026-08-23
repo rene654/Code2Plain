@@ -208,7 +208,8 @@ function renderLearning(
                 document.createElement("div");
 
             row.className =
-                "code2plain-item";
+                "code2plain-item "
+                + `code2plain-item-${index + 1}`;
 
             const concept =
                 document.createElement("span");
@@ -237,9 +238,19 @@ function renderLearning(
             line.textContent =
                 `L${item.line_number}`;
 
+            const confidence =
+                document.createElement("span");
+
+            confidence.className =
+                "code2plain-confidence";
+
+            confidence.textContent =
+                `${item.confidence}% · ${item.context_status}`;
+
             row.appendChild(line);
             row.appendChild(concept);
             row.appendChild(explanation);
+            row.appendChild(confidence);
 
             panel.appendChild(row);
         }

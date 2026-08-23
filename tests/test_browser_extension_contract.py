@@ -174,3 +174,27 @@ def test_highlight_uses_browser_api_without_rewriting_code():
         "replaceChildren"
         not in CONTENT
     )
+
+
+def test_learning_rows_receive_matching_color_index():
+    assert (
+        "code2plain-item-${index + 1}"
+        in CONTENT
+    )
+
+
+def test_confidence_indicator_is_rendered():
+    assert (
+        "code2plain-confidence"
+        in CONTENT
+    )
+
+    assert (
+        "item.confidence"
+        in CONTENT
+    )
+
+    assert (
+        "item.context_status"
+        in CONTENT
+    )

@@ -12,6 +12,7 @@ from code2plain.service import Code2PlainService
 from code2plain.feedback.service import FeedbackService
 from code2plain.detection.learning_pipeline import AutomaticLearningPipeline
 from code2plain.detection.models import ContentCandidate
+from code2plain.detection.confidence import ExplanationConfidenceAssessor
 from code2plain.version import __version__
 
 
@@ -62,6 +63,7 @@ app = FastAPI(
 service = Code2PlainService()
 feedback_service = FeedbackService()
 automatic_learning_pipeline = AutomaticLearningPipeline()
+explanation_confidence = ExplanationConfidenceAssessor()
 _latest_github_feedback: dict | None = None
 _github_feedback_version = 0
 
@@ -133,15 +135,25 @@ def auto_learn(
     items = []
 
     if result.microlearning is not None:
-        items = [
-            {
-                "line_number": item.line_number,
-                "code": item.code,
-                "concept": item.concept,
-                "explanation": item.explanation,
-            }
-            for item in result.microlearning.items
-        ]
+        items = []
+
+        for item in result.microlearning.items:
+            confidence = explanation_confidence.assess(
+                code=result.code,
+                line_number=item.line_number,
+                concept=item.concept,
+            )
+
+            items.append(
+                {
+                    "line_number": item.line_number,
+                    "code": item.code,
+                    "concept": item.concept,
+                    "explanation": item.explanation,
+                    "confidence": confidence.score,
+                    "context_status": confidence.status,
+                }
+            )
 
     return {
         "should_teach": result.should_teach,

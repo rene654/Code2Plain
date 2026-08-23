@@ -90,3 +90,61 @@
         rgba(236, 72, 153, 0.70)
         2px;
 }
+
+
+/* Compact confidence metadata */
+.code2plain-confidence {
+    margin-left: auto;
+    padding-left: 8px;
+    font-size: 10px;
+    font-weight: 500;
+    opacity: 0.48;
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   MATCH EXPLANATION TO HIGHLIGHT COLOR
+   ========================================================== */
+
+.code2plain-item-1 {
+    border-left:
+        3px solid
+        rgba(234, 179, 8, 0.72);
+    padding-left: 8px;
+}
+
+.code2plain-item-2 {
+    border-left:
+        3px solid
+        rgba(34, 197, 94, 0.68);
+    padding-left: 8px;
+}
+
+.code2plain-item-3 {
+    border-left:
+        3px solid
+        rgba(236, 72, 153, 0.66);
+    padding-left: 8px;
+}
+
+.code2plain-item-1 .code2plain-concept {
+    text-decoration:
+        underline
+        rgba(234, 179, 8, 0.55)
+        2px;
+}
+
+.code2plain-item-2 .code2plain-concept {
+    text-decoration:
+        underline
+        rgba(34, 197, 94, 0.50)
+        2px;
+}
+
+.code2plain-item-3 .code2plain-concept {
+    text-decoration:
+        underline
+        rgba(236, 72, 153, 0.48)
+        2px;
+}
