@@ -198,3 +198,15 @@ def test_confidence_indicator_is_rendered():
         "item.context_status"
         in CONTENT
     )
+
+
+def test_learning_renderer_receives_item_index():
+    assert (
+        "(item, index) =>"
+        in CONTENT
+    )
+
+    assert (
+        "code2plain-item-${index + 1}"
+        in CONTENT
+    )

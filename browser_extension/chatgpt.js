@@ -203,7 +203,7 @@ function renderLearning(
     panel.appendChild(title);
 
     payload.items.forEach(
-        item => {
+        (item, index) => {
             const row =
                 document.createElement("div");
 
