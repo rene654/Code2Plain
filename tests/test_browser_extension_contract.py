@@ -80,3 +80,22 @@ def test_extension_limits_itself_to_ai_code_blocks():
         "assistantMessage"
         in CONTENT
     )
+
+
+def test_backend_address_is_configurable():
+    assert (
+        "code2plainApiBase"
+        in BACKGROUND
+    )
+
+    assert (
+        "chrome.storage.local"
+        in BACKGROUND
+    )
+
+
+def test_extension_fails_silently_when_backend_is_offline():
+    assert (
+        "ok: false"
+        in BACKGROUND
+    )

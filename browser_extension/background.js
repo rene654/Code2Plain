@@ -1,5 +1,18 @@
-const CODE2PLAIN_API =
-    "http://127.0.0.1:8000/v1/auto-learn";
+const DEFAULT_API_BASE =
+    "http://127.0.0.1:8000";
+
+
+async function getApiBase() {
+    const stored =
+        await chrome.storage.local.get(
+            "code2plainApiBase"
+        );
+
+    return (
+        stored.code2plainApiBase
+        || DEFAULT_API_BASE
+    );
+}
 
 
 chrome.runtime.onMessage.addListener(
@@ -12,19 +25,24 @@ chrome.runtime.onMessage.addListener(
             return;
         }
 
-        fetch(
-            CODE2PLAIN_API,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type":
-                        "application/json",
-                },
-                body: JSON.stringify(
-                    message.payload
-                ),
-            }
-        )
+        getApiBase()
+            .then(apiBase =>
+                fetch(
+                    `${apiBase}/v1/auto-learn`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+                        },
+
+                        body: JSON.stringify(
+                            message.payload
+                        ),
+                    }
+                )
+            )
             .then(response => {
                 if (!response.ok) {
                     throw new Error(
@@ -42,8 +60,8 @@ chrome.runtime.onMessage.addListener(
             })
             .catch(() => {
                 /*
-                 * Code2Plain being offline must never
-                 * interrupt ChatGPT.
+                 * Code2Plain must remain invisible
+                 * when its backend is unavailable.
                  */
                 sendResponse({
                     ok: false,
