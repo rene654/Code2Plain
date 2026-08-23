@@ -1,0 +1,33 @@
+.code2plain-learning {
+    margin: 8px 0 14px;
+    padding: 10px 12px;
+    border: 1px solid rgba(125, 125, 125, 0.22);
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.code2plain-title {
+    margin-bottom: 7px;
+    font-weight: 600;
+}
+
+.code2plain-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 5px 0;
+}
+
+.code2plain-line {
+    opacity: 0.55;
+    font-size: 11px;
+}
+
+.code2plain-concept {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.code2plain-explanation {
+    opacity: 0.86;
+}
