@@ -99,3 +99,78 @@ def test_extension_fails_silently_when_backend_is_offline():
         "ok: false"
         in BACKGROUND
     )
+
+
+def test_extension_can_highlight_learning_lines():
+    assert (
+        "highlightLearningLines"
+        in CONTENT
+    )
+
+    assert (
+        "CSS.highlights"
+        in CONTENT
+    )
+
+    assert (
+        "new Highlight"
+        in CONTENT
+    )
+
+    assert (
+        "line_number"
+        in CONTENT
+    )
+
+
+def test_highlight_does_not_require_navigation():
+    assert (
+        "window.location"
+        not in CONTENT
+    )
+
+    assert (
+        "window.open"
+        not in CONTENT
+    )
+
+
+def test_highlight_preserves_chatgpt_code_dom():
+    assert (
+        "CSS.highlights"
+        in CONTENT
+    )
+
+    assert (
+        "new Highlight"
+        in CONTENT
+    )
+
+    assert (
+        "replaceChildren"
+        not in CONTENT
+    )
+
+
+def test_each_learning_item_gets_its_own_highlight():
+    assert (
+        "code2plain-learning-${index + 1}"
+        in CONTENT
+    )
+
+    assert (
+        "items.forEach"
+        in CONTENT
+    )
+
+
+def test_highlight_uses_browser_api_without_rewriting_code():
+    assert (
+        "CSS.highlights.set"
+        in CONTENT
+    )
+
+    assert (
+        "replaceChildren"
+        not in CONTENT
+    )

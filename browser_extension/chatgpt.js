@@ -27,6 +27,127 @@ function fingerprint(text) {
 }
 
 
+
+function highlightLearningLines(
+    codeElement,
+    items
+) {
+    if (
+        !codeElement
+        || !items
+        || items.length === 0
+        || !CSS.highlights
+    ) {
+        return;
+    }
+
+    const walker =
+        document.createTreeWalker(
+            codeElement,
+            NodeFilter.SHOW_TEXT
+        );
+
+    const textNodes = [];
+
+    let node;
+
+    while (
+        (node = walker.nextNode())
+    ) {
+        textNodes.push(
+            node
+        );
+    }
+
+    function rangesForLine(
+        wantedLine
+    ) {
+        const ranges = [];
+
+        let lineNumber = 1;
+
+        textNodes.forEach(
+            textNode => {
+                const value =
+                    textNode.nodeValue
+                    || "";
+
+                let segmentStart = 0;
+
+                for (
+                    let index = 0;
+                    index <= value.length;
+                    index += 1
+                ) {
+                    const isEnd =
+                        index === value.length;
+
+                    const isBreak =
+                        !isEnd
+                        && value[index] === "\n";
+
+                    if (
+                        isEnd
+                        || isBreak
+                    ) {
+                        if (
+                            lineNumber === wantedLine
+                            && index > segmentStart
+                        ) {
+                            const range =
+                                new Range();
+
+                            range.setStart(
+                                textNode,
+                                segmentStart
+                            );
+
+                            range.setEnd(
+                                textNode,
+                                index
+                            );
+
+                            ranges.push(
+                                range
+                            );
+                        }
+
+                        if (isBreak) {
+                            lineNumber += 1;
+                            segmentStart =
+                                index + 1;
+                        }
+                    }
+                }
+            }
+        );
+
+        return ranges;
+    }
+
+    items.forEach(
+        (item, index) => {
+            const ranges =
+                rangesForLine(
+                    Number(
+                        item.line_number
+                    )
+                );
+
+            const highlight =
+                new Highlight(
+                    ...ranges
+                );
+
+            CSS.highlights.set(
+                `code2plain-learning-${index + 1}`,
+                highlight
+            );
+        }
+    );
+}
+
+
 function renderLearning(
     codeElement,
     payload
@@ -39,6 +160,11 @@ function renderLearning(
     ) {
         return;
     }
+
+    highlightLearningLines(
+        codeElement,
+        payload.items
+    );
 
     const pre =
         codeElement.closest("pre");
