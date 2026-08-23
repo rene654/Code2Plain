@@ -74,3 +74,27 @@ def test_same_code_does_not_teach_twice():
     assert first.should_teach is True
     assert second.should_teach is False
     assert second.reason == "already_seen"
+
+
+def test_pipeline_returns_compact_microlearning():
+    pipeline = AutomaticLearningPipeline()
+
+    result = pipeline.process(
+        ai_code(
+            """
+def process_sales(sales):
+    for sale in sales:
+        if sale["active"]:
+            filtered = sales[
+                sales["status"] == "active"
+            ]
+            grouped = filtered.groupby("customer")
+            total = grouped["amount"].sum()
+"""
+        )
+    )
+
+    assert result.should_teach is True
+    assert result.microlearning is not None
+    assert result.microlearning.total_detected >= 3
+    assert len(result.microlearning.items) <= 3

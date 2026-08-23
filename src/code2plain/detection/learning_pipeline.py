@@ -10,6 +10,10 @@ from code2plain.detection.relevance import (
     CodeRelevanceEngine,
     RelevantCodePart,
 )
+from code2plain.detection.microlearning import (
+    MicroLearningPlan,
+    MicroLearningPlanner,
+)
 
 
 @dataclass(frozen=True)
@@ -18,6 +22,7 @@ class LearningDetectionResult:
     reason: str
     code: str
     learning_points: tuple[RelevantCodePart, ...]
+    microlearning: MicroLearningPlan | None = None
 
 
 class AutomaticLearningPipeline:
@@ -34,6 +39,7 @@ class AutomaticLearningPipeline:
         self,
         detection_pipeline: DetectionPipeline | None = None,
         relevance_engine: CodeRelevanceEngine | None = None,
+        microlearning_planner: MicroLearningPlanner | None = None,
     ) -> None:
         self.detection_pipeline = (
             detection_pipeline
@@ -42,6 +48,10 @@ class AutomaticLearningPipeline:
         self.relevance_engine = (
             relevance_engine
             or CodeRelevanceEngine()
+        )
+        self.microlearning_planner = (
+            microlearning_planner
+            or MicroLearningPlanner()
         )
 
     def process(
@@ -75,9 +85,14 @@ class AutomaticLearningPipeline:
                 learning_points=(),
             )
 
+        plan = self.microlearning_planner.build(
+            points
+        )
+
         return LearningDetectionResult(
             should_teach=True,
             reason="relevant_new_ai_code",
             code=detection.code,
             learning_points=points,
+            microlearning=plan,
         )
