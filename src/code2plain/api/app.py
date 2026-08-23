@@ -10,6 +10,8 @@ from pydantic import BaseModel, Field
 
 from code2plain.service import Code2PlainService
 from code2plain.feedback.service import FeedbackService
+from code2plain.detection.learning_pipeline import AutomaticLearningPipeline
+from code2plain.detection.models import ContentCandidate
 from code2plain.version import __version__
 
 
@@ -18,6 +20,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 WEB_DIR = BASE_DIR / "web"
 
 STATIC_DIR = WEB_DIR / "static"
+
+
+class AutoLearningRequest(BaseModel):
+    source: str
+    author_role: str
+    text: str
+    content_type: str = "unknown"
 
 
 class GitHubFeedbackRequest(BaseModel):
@@ -52,6 +61,7 @@ app = FastAPI(
 
 service = Code2PlainService()
 feedback_service = FeedbackService()
+automatic_learning_pipeline = AutomaticLearningPipeline()
 _latest_github_feedback: dict | None = None
 _github_feedback_version = 0
 
@@ -105,6 +115,39 @@ from code2plain.api.apple_push import router as apple_push_router
 _live_store = live_store
 
 
+
+
+@app.post("/v1/auto-learn")
+def auto_learn(
+    request: AutoLearningRequest,
+) -> dict:
+    result = automatic_learning_pipeline.process(
+        ContentCandidate(
+            source=request.source,
+            author_role=request.author_role,
+            text=request.text,
+            content_type=request.content_type,
+        )
+    )
+
+    items = []
+
+    if result.microlearning is not None:
+        items = [
+            {
+                "line_number": item.line_number,
+                "code": item.code,
+                "concept": item.concept,
+                "explanation": item.explanation,
+            }
+            for item in result.microlearning.items
+        ]
+
+    return {
+        "should_teach": result.should_teach,
+        "reason": result.reason,
+        "items": items,
+    }
 
 
 @app.post("/v1/github/feedback")
