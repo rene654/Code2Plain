@@ -122,6 +122,30 @@ def learning_page():
         .concept {
             margin-top: 5px;
             font-weight: 700;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .concept-chip {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            background:
+                color-mix(
+                    in srgb,
+                    var(--chip-color) 18%,
+                    white
+                );
+            border:
+                1px solid
+                color-mix(
+                    in srgb,
+                    var(--chip-color) 48%,
+                    white
+                );
         }
 
         .explanation {
@@ -153,6 +177,8 @@ def learning_page():
         summary {
             cursor: pointer;
             font-weight: 600;
+            opacity: 0.72;
+            font-size: 12px;
         }
 
         .challenge {
@@ -314,10 +340,52 @@ button.addEventListener(
                     concept.className =
                         "concept";
 
-                    concept.textContent =
-                        item.concept
-                        ? item.concept
-                        : `Línea ${item.line_number}`;
+                    if (item.concept) {
+                        const parts =
+                            item.concept.split(
+                                " + "
+                            );
+
+                        parts.forEach(
+                            part => {
+                                const chip =
+                                    document.createElement(
+                                        "span"
+                                    );
+
+                                chip.className =
+                                    "concept-chip";
+
+                                chip.textContent =
+                                    part;
+
+                                const colorMap = {
+                                    "FILTER":
+                                        "#ec4899",
+                                    "GROUP":
+                                        "#eab308",
+                                    "SELECT":
+                                        "#38bdf8",
+                                    "AGGREGATE":
+                                        "#22c55e",
+                                };
+
+                                chip.style
+                                    .setProperty(
+                                        "--chip-color",
+                                        colorMap[part]
+                                        || "#a3a3a3"
+                                    );
+
+                                concept.appendChild(
+                                    chip
+                                );
+                            }
+                        );
+                    } else {
+                        concept.textContent =
+                            `Línea ${item.line_number}`;
+                    }
 
                     const explanation =
                         document.createElement(
@@ -364,9 +432,14 @@ button.addEventListener(
                     challenge.className =
                         "challenge";
 
-                    challenge.textContent =
-                        "Comprueba: "
-                        + item.challenge;
+                    if (item.challenge) {
+                        challenge.textContent =
+                            "Comprueba: "
+                            + item.challenge;
+                    } else {
+                        challenge.style.display =
+                            "none";
+                    }
 
                     const snippet =
                         document.createElement(
