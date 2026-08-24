@@ -221,7 +221,7 @@ button.addEventListener(
         try {
             const response =
                 await fetch(
-                    "/v1/auto-learn",
+                    "/v1/line-by-line",
                     {
                         method: "POST",
                         headers: {
@@ -229,13 +229,7 @@ button.addEventListener(
                                 "application/json"
                         },
                         body: JSON.stringify({
-                            source:
-                                "code2plain",
-                            author_role:
-                                "assistant",
-                            content_type:
-                                "code",
-                            text
+                            code: text
                         })
                     }
                 );
@@ -244,8 +238,7 @@ button.addEventListener(
                 await response.json();
 
             if (
-                !payload.should_teach
-                || !payload.items?.length
+                !payload.items?.length
             ) {
                 results.innerHTML =
                     '<p class="empty">'
@@ -298,8 +291,9 @@ button.addEventListener(
                         );
 
                     confidence.textContent =
-                        `${item.confidence}% · `
-                        + item.context_status;
+                        item.key
+                        ? `${item.confidence}% · ${item.context_status}`
+                        : "";
 
                     meta.append(
                         line,
@@ -315,7 +309,9 @@ button.addEventListener(
                         "concept";
 
                     concept.textContent =
-                        item.concept;
+                        item.concept
+                        ? item.concept
+                        : `Línea ${item.line_number}`;
 
                     const explanation =
                         document.createElement(
