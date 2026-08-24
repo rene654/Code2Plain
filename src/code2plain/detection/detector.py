@@ -20,6 +20,7 @@ class AICodeDetector:
         "github_copilot",
         "claude",
         "cursor",
+        "code2plain",
     }
 
     AI_ROLES = {
