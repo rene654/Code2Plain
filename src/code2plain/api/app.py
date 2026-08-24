@@ -17,6 +17,7 @@ from code2plain.detection.models import ContentCandidate
 from code2plain.detection.confidence import ExplanationConfidenceAssessor
 from code2plain.learning_interaction import LearningInteractionBuilder
 from code2plain.learning_memory import learning_memory
+from code2plain.learning_memory_store import learning_memory_store
 from code2plain.version import __version__
 
 
@@ -157,6 +158,10 @@ def auto_learn(
             )
 
             progress = learning_memory.seen(
+                item.concept
+            )
+
+            learning_memory_store.record_seen(
                 item.concept
             )
 
