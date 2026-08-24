@@ -11,7 +11,7 @@ router = APIRouter()
 )
 def learning_page():
     return HTMLResponse(
-        """
+        r"""
 <!doctype html>
 <html lang="es">
 <head>
