@@ -16,6 +16,7 @@ from code2plain.detection.learning_pipeline import AutomaticLearningPipeline
 from code2plain.detection.models import ContentCandidate
 from code2plain.detection.confidence import ExplanationConfidenceAssessor
 from code2plain.learning_interaction import LearningInteractionBuilder
+from code2plain.learning_memory import learning_memory
 from code2plain.version import __version__
 
 
@@ -155,6 +156,10 @@ def auto_learn(
                 item.concept
             )
 
+            progress = learning_memory.seen(
+                item.concept
+            )
+
             items.append(
                 {
                     "line_number": item.line_number,
@@ -165,6 +170,12 @@ def auto_learn(
                     "challenge": interaction.challenge,
                     "confidence": confidence.score,
                     "context_status": confidence.status,
+                    "learning_level":
+                        learning_memory.level(
+                            item.concept
+                        ),
+                    "times_seen":
+                        progress.seen,
                 }
             )
 
