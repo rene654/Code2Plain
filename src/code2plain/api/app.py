@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from code2plain.web.app import router as web_router
+
 from pathlib import Path
 from typing import Any
 
@@ -75,6 +77,9 @@ app.mount(
     ),
     name="static",
 )
+
+
+app.include_router(web_router)
 
 
 @app.get("/")
