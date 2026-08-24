@@ -18,6 +18,7 @@ from code2plain.detection.confidence import ExplanationConfidenceAssessor
 from code2plain.learning_interaction import LearningInteractionBuilder
 from code2plain.learning_memory import learning_memory
 from code2plain.learning_memory_store import learning_memory_store
+from code2plain.adaptive_learning import AdaptiveLearningEngine
 from code2plain.version import __version__
 
 
@@ -70,6 +71,7 @@ feedback_service = FeedbackService()
 automatic_learning_pipeline = AutomaticLearningPipeline()
 explanation_confidence = ExplanationConfidenceAssessor()
 learning_interaction = LearningInteractionBuilder()
+adaptive_learning = AdaptiveLearningEngine()
 _latest_github_feedback: dict | None = None
 _github_feedback_version = 0
 
@@ -165,22 +167,30 @@ def auto_learn(
                 item.concept
             )
 
+            level = learning_memory.level(
+                item.concept
+            )
+
+            adaptive = adaptive_learning.adapt(
+                concept=item.concept,
+                explanation=item.explanation,
+                challenge=interaction.challenge,
+                level=level,
+            )
+
             items.append(
                 {
                     "line_number": item.line_number,
                     "code": item.code,
                     "concept": item.concept,
-                    "explanation": item.explanation,
+                    "explanation": adaptive.explanation,
                     "why": interaction.why,
-                    "challenge": interaction.challenge,
+                    "challenge": adaptive.challenge,
                     "confidence": confidence.score,
                     "context_status": confidence.status,
-                    "learning_level":
-                        learning_memory.level(
-                            item.concept
-                        ),
-                    "times_seen":
-                        progress.seen,
+                    "learning_level": level,
+                    "learning_mode": adaptive.mode,
+                    "times_seen": progress.seen,
                 }
             )
 
