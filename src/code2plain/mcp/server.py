@@ -10,6 +10,15 @@ from starlette.routing import Mount
 
 from code2plain.service import Code2PlainService
 from code2plain.live_store import live_store
+from code2plain.detection.learning_pipeline import (
+    AutomaticLearningPipeline,
+)
+from code2plain.detection.models import (
+    ContentCandidate,
+)
+from code2plain.detection.confidence import (
+    ExplanationConfidenceAssessor,
+)
 
 
 # MCP 1.x defines Settings as a generic BaseSettings model.
@@ -59,6 +68,76 @@ def explain_code(
     )
 
     return result
+
+
+
+@mcp.tool()
+def learn_code(
+    code: str,
+    language: str = "es",
+) -> dict[str, Any]:
+    """
+    Teach the most important concepts in AI-generated code.
+
+    Returns a compact learning layer instead of explaining
+    every line.
+    """
+
+    pipeline = AutomaticLearningPipeline()
+
+    result = pipeline.process(
+        ContentCandidate(
+            source="chatgpt",
+            author_role="assistant",
+            content_type="code",
+            text=code,
+        )
+    )
+
+    if (
+        not result.should_teach
+        or result.microlearning is None
+    ):
+        return {
+            "should_teach": False,
+            "items": [],
+        }
+
+    assessor = ExplanationConfidenceAssessor()
+
+    items = []
+
+    for item in result.microlearning.items:
+        confidence = assessor.assess(
+            code=code,
+            line_number=item.line_number,
+            concept=item.concept,
+        )
+
+        items.append(
+            {
+                "line_number":
+                    item.line_number,
+                "code":
+                    item.code,
+                "concept":
+                    item.concept,
+                "explanation":
+                    item.explanation,
+                "confidence":
+                    confidence.score,
+                "context_status":
+                    confidence.status,
+            }
+        )
+
+    return {
+        "should_teach": True,
+        "total_detected":
+            result.microlearning.total_detected,
+        "items": items,
+        "language": language,
+    }
 
 
 mcp_app = mcp.streamable_http_app()

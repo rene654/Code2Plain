@@ -8,23 +8,11 @@
   ],
   "host_permissions": [
     "http://127.0.0.1:8000/*",
-    "http://localhost:8000/*"
+    "http://localhost:8000/*",
+    "https://*.app.github.dev/*"
   ],
   "background": {
     "service_worker": "background.js"
   },
-  "content_scripts": [
-    {
-      "matches": [
-        "https://chatgpt.com/*"
-      ],
-      "js": [
-        "chatgpt.js"
-      ],
-      "css": [
-        "code2plain.css"
-      ],
-      "run_at": "document_idle"
-    }
-  ]
+  "content_scripts": []
 }
