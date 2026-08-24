@@ -138,6 +138,12 @@ def learning_page():
             color: #525252;
         }
 
+        .code2plain-code-highlight {
+            padding: 1px 2px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
         details {
             margin-top: 8px;
             font-size: 12px;
@@ -370,8 +376,182 @@ button.addEventListener(
                     snippet.className =
                         "code";
 
-                    snippet.textContent =
-                        item.code;
+                    const conceptText =
+                        item.concept || "";
+
+                    const conceptColors = {
+                        "FILTER": "#ec4899",
+                        "GROUP": "#eab308",
+                        "SELECT": "#38bdf8",
+                        "AGGREGATE": "#22c55e",
+                    };
+
+                    function appendColoredCode(
+                        container,
+                        codeText,
+                        concepts
+                    ) {
+                        const mappings = [];
+
+                        if (
+                            concepts.includes("FILTER")
+                        ) {
+                            const match =
+                                codeText.match(
+                                    /\[[^\]]+==[^\]]+\]/
+                                );
+
+                            if (match) {
+                                mappings.push({
+                                    start: match.index,
+                                    end:
+                                        match.index
+                                        + match[0].length,
+                                    color:
+                                        conceptColors.FILTER,
+                                });
+                            }
+                        }
+
+                        if (
+                            concepts.includes("GROUP")
+                        ) {
+                            const match =
+                                codeText.match(
+                                    /\.groupby\([^)]*\)/
+                                );
+
+                            if (match) {
+                                mappings.push({
+                                    start: match.index,
+                                    end:
+                                        match.index
+                                        + match[0].length,
+                                    color:
+                                        conceptColors.GROUP,
+                                });
+                            }
+                        }
+
+                        if (
+                            concepts.includes("SELECT")
+                        ) {
+                            const matches = [
+                                ...codeText.matchAll(
+                                    /\[[\"'][^\]]+[\"']\]/g
+                                )
+                            ];
+
+                            const match =
+                                matches.at(-1);
+
+                            if (match) {
+                                mappings.push({
+                                    start: match.index,
+                                    end:
+                                        match.index
+                                        + match[0].length,
+                                    color:
+                                        conceptColors.SELECT,
+                                });
+                            }
+                        }
+
+                        if (
+                            concepts.includes(
+                                "AGGREGATE"
+                            )
+                        ) {
+                            const match =
+                                codeText.match(
+                                    /\.sum\(\)/
+                                );
+
+                            if (match) {
+                                mappings.push({
+                                    start: match.index,
+                                    end:
+                                        match.index
+                                        + match[0].length,
+                                    color:
+                                        conceptColors.AGGREGATE,
+                                });
+                            }
+                        }
+
+                        mappings.sort(
+                            (a, b) =>
+                                a.start - b.start
+                        );
+
+                        let cursor = 0;
+
+                        for (
+                            const mapping
+                            of mappings
+                        ) {
+                            if (
+                                mapping.start
+                                > cursor
+                            ) {
+                                container.append(
+                                    document.createTextNode(
+                                        codeText.slice(
+                                            cursor,
+                                            mapping.start
+                                        )
+                                    )
+                                );
+                            }
+
+                            const mark =
+                                document.createElement(
+                                    "span"
+                                );
+
+                            mark.className =
+                                "code2plain-code-highlight";
+
+                            mark.style.backgroundColor =
+                                mapping.color + "33";
+
+                            mark.style.boxShadow =
+                                "inset 0 -2px 0 "
+                                + mapping.color;
+
+                            mark.textContent =
+                                codeText.slice(
+                                    mapping.start,
+                                    mapping.end
+                                );
+
+                            container.append(
+                                mark
+                            );
+
+                            cursor =
+                                mapping.end;
+                        }
+
+                        if (
+                            cursor
+                            < codeText.length
+                        ) {
+                            container.append(
+                                document.createTextNode(
+                                    codeText.slice(
+                                        cursor
+                                    )
+                                )
+                            );
+                        }
+                    }
+
+                    appendColoredCode(
+                        snippet,
+                        item.code,
+                        conceptText
+                    );
 
                     element.append(
                         meta,
