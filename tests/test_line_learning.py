@@ -78,3 +78,24 @@ def test_chained_group_select_sum_is_fully_explained():
     assert "Agrupa" in item.explanation
     assert "Selecciona" in item.explanation
     assert "Suma" in item.explanation
+
+
+def test_every_explained_line_has_learning_metadata():
+    code = '''import pandas as pd
+sales = pd.read_csv("sales.csv")
+print(sales)
+'''
+
+    items = (
+        LineByLineExplainer()
+        .explain(code)
+    )
+
+    assert items
+
+    for item in items:
+        assert item.explanation
+        assert item.why
+        assert item.challenge
+        assert 1 <= item.confidence <= 100
+        assert item.context_status

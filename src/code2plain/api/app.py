@@ -252,6 +252,10 @@ def learn_github_file(
                     item.code,
                 "explanation":
                     item.explanation,
+                "why":
+                    item.why,
+                "challenge":
+                    item.challenge,
                 "concept":
                     item.concept,
                 "key":
@@ -290,6 +294,10 @@ def line_by_line(
                     item.code,
                 "explanation":
                     item.explanation,
+                "why":
+                    item.why,
+                "challenge":
+                    item.challenge,
                 "concept":
                     item.concept,
                 "key":
