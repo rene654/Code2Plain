@@ -53,6 +53,25 @@ def learning_page():
             color: #737373;
         }
 
+        input[type="url"] {
+            width: 100%;
+            margin-top: 28px;
+            padding: 13px 15px;
+            border:
+                1px solid #dedede;
+            border-radius: 10px;
+            background: white;
+            color: #171717;
+            font-size: 14px;
+        }
+
+        .source-separator {
+            margin: 12px 0 -12px;
+            text-align: center;
+            color: #a3a3a3;
+            font-size: 12px;
+        }
+
         textarea {
             width: 100%;
             min-height: 260px;
@@ -201,6 +220,16 @@ def learning_page():
         Entiende el código que estás usando.
     </p>
 
+    <input
+        id="githubUrl"
+        type="url"
+        placeholder="URL de archivo GitHub (opcional)"
+    >
+
+    <div class="source-separator">
+        o
+    </div>
+
     <textarea
         id="code"
         placeholder="Pega o escribe código aquí..."
@@ -229,6 +258,11 @@ const button =
 const code =
     document.getElementById("code");
 
+const githubUrl =
+    document.getElementById(
+        "githubUrl"
+    );
+
 const results =
     document.getElementById("results");
 
@@ -240,7 +274,13 @@ button.addEventListener(
         const text =
             code.value.trim();
 
-        if (!text) {
+        const url =
+            githubUrl.value.trim();
+
+        if (
+            !text
+            && !url
+        ) {
             return;
         }
 
@@ -251,18 +291,29 @@ button.addEventListener(
         results.innerHTML = "";
 
         try {
+            const endpoint =
+                url
+                ? "/v1/github-file/learn"
+                : "/v1/line-by-line";
+
+            const requestBody =
+                url
+                ? { url }
+                : { code: text };
+
             const response =
                 await fetch(
-                    "/v1/line-by-line",
+                    endpoint,
                     {
                         method: "POST",
                         headers: {
                             "Content-Type":
                                 "application/json"
                         },
-                        body: JSON.stringify({
-                            code: text
-                        })
+                        body:
+                            JSON.stringify(
+                                requestBody
+                            )
                     }
                 );
 

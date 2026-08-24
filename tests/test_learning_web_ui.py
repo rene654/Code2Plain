@@ -27,3 +27,23 @@ def test_learning_page_has_inline_code_highlighting():
         "appendColoredCode"
         in response.text
     )
+
+
+def test_learning_page_accepts_github_url():
+    response = client.get("/learn")
+
+    assert response.status_code == 200
+    assert "githubUrl" in response.text
+    assert (
+        "/v1/github-file/learn"
+        in response.text
+    )
+
+
+def test_learning_page_keeps_manual_code_mode():
+    response = client.get("/learn")
+
+    assert (
+        "/v1/line-by-line"
+        in response.text
+    )
