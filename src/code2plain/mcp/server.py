@@ -4,6 +4,9 @@ import contextlib
 from typing import Any, AsyncIterator
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import (
+    TransportSecuritySettings,
+)
 from mcp.server.fastmcp.server import Settings as FastMCPSettings
 from starlette.applications import Starlette
 from starlette.routing import Mount
@@ -30,11 +33,29 @@ FastMCPSettings.model_rebuild(
 )
 
 
+transport_security = (
+    TransportSecuritySettings(
+        allowed_hosts=[
+            "code2plain.onrender.com",
+            "code2plain.onrender.com:*",
+            "127.0.0.1:*",
+            "localhost:*",
+        ],
+        allowed_origins=[
+            "https://code2plain.onrender.com",
+            "http://127.0.0.1:*",
+            "http://localhost:*",
+        ],
+    )
+)
+
+
 mcp = FastMCP(
     "Code2Plain",
     stateless_http=True,
     json_response=True,
     streamable_http_path="/",
+    transport_security=transport_security,
 )
 
 service = Code2PlainService()
