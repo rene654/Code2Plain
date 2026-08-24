@@ -10,6 +10,7 @@ from starlette.routing import Mount
 
 from code2plain.service import Code2PlainService
 from code2plain.live_store import live_store
+from code2plain.line_learning import line_by_line_explainer
 from code2plain.detection.learning_pipeline import (
     AutomaticLearningPipeline,
 )
@@ -137,6 +138,53 @@ def learn_code(
             result.microlearning.total_detected,
         "items": items,
         "language": language,
+    }
+
+
+
+@mcp.tool()
+def explain_line_by_line(
+    code: str,
+    language: str = "es",
+) -> dict[str, Any]:
+    """
+    Explain code line by line in execution order.
+
+    Important operations receive concept labels
+    and confidence while simple lines receive
+    compact explanations.
+    """
+
+    items = line_by_line_explainer.explain(
+        code
+    )
+
+    return {
+        "total_lines":
+            len(code.splitlines()),
+        "explained_lines":
+            len(items),
+        "language":
+            language,
+        "items": [
+            {
+                "line_number":
+                    item.line_number,
+                "code":
+                    item.code,
+                "explanation":
+                    item.explanation,
+                "concept":
+                    item.concept,
+                "key":
+                    item.key,
+                "confidence":
+                    item.confidence,
+                "context_status":
+                    item.context_status,
+            }
+            for item in items
+        ],
     }
 
 
