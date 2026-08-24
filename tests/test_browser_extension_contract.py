@@ -27,16 +27,11 @@ BACKGROUND = (
 )
 
 
-def test_extension_only_targets_chatgpt_for_now():
-    matches = (
-        MANIFEST[
-            "content_scripts"
-        ][0]["matches"]
+def test_chatgpt_dom_injection_is_disabled():
+    assert (
+        MANIFEST.get("content_scripts")
+        == []
     )
-
-    assert matches == [
-        "https://chatgpt.com/*"
-    ]
 
 
 def test_adapter_requires_assistant_role():
