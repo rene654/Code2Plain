@@ -34,6 +34,7 @@ mcp = FastMCP(
     "Code2Plain",
     stateless_http=True,
     json_response=True,
+    streamable_http_path="/",
 )
 
 service = Code2PlainService()
