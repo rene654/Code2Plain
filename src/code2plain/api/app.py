@@ -15,6 +15,7 @@ from code2plain.feedback.service import FeedbackService
 from code2plain.detection.learning_pipeline import AutomaticLearningPipeline
 from code2plain.detection.models import ContentCandidate
 from code2plain.detection.confidence import ExplanationConfidenceAssessor
+from code2plain.learning_interaction import LearningInteractionBuilder
 from code2plain.version import __version__
 
 
@@ -66,6 +67,7 @@ service = Code2PlainService()
 feedback_service = FeedbackService()
 automatic_learning_pipeline = AutomaticLearningPipeline()
 explanation_confidence = ExplanationConfidenceAssessor()
+learning_interaction = LearningInteractionBuilder()
 _latest_github_feedback: dict | None = None
 _github_feedback_version = 0
 
@@ -149,12 +151,18 @@ def auto_learn(
                 concept=item.concept,
             )
 
+            interaction = learning_interaction.build(
+                item.concept
+            )
+
             items.append(
                 {
                     "line_number": item.line_number,
                     "code": item.code,
                     "concept": item.concept,
                     "explanation": item.explanation,
+                    "why": interaction.why,
+                    "challenge": interaction.challenge,
                     "confidence": confidence.score,
                     "context_status": confidence.status,
                 }

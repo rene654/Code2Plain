@@ -138,6 +138,23 @@ def learning_page():
             color: #525252;
         }
 
+        details {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #525252;
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .challenge {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #737373;
+        }
+
         .empty {
             color: #737373;
         }
@@ -311,6 +328,44 @@ button.addEventListener(
                     explanation.textContent =
                         item.explanation;
 
+                    const why =
+                        document.createElement(
+                            "details"
+                        );
+
+                    const whyTitle =
+                        document.createElement(
+                            "summary"
+                        );
+
+                    whyTitle.textContent =
+                        "Why?";
+
+                    const whyText =
+                        document.createElement(
+                            "div"
+                        );
+
+                    whyText.textContent =
+                        item.why;
+
+                    why.append(
+                        whyTitle,
+                        whyText
+                    );
+
+                    const challenge =
+                        document.createElement(
+                            "div"
+                        );
+
+                    challenge.className =
+                        "challenge";
+
+                    challenge.textContent =
+                        "Comprueba: "
+                        + item.challenge;
+
                     const snippet =
                         document.createElement(
                             "div"
@@ -326,6 +381,8 @@ button.addEventListener(
                         meta,
                         concept,
                         explanation,
+                        why,
+                        challenge,
                         snippet
                     );
 
