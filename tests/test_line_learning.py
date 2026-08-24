@@ -54,3 +54,27 @@ def test_line_learning_keeps_key_concepts():
     assert "FILTER" in concepts
     assert "GROUP" in concepts
     assert "AGGREGATE" in concepts
+
+
+def test_chained_group_select_sum_is_fully_explained():
+    code = (
+        'result = active.groupby("customer_id")'
+        '["amount"].sum()'
+    )
+
+    items = (
+        LineByLineExplainer()
+        .explain(code)
+    )
+
+    assert len(items) == 1
+
+    item = items[0]
+
+    assert "GROUP" in item.concept
+    assert "SELECT" in item.concept
+    assert "AGGREGATE" in item.concept
+
+    assert "Agrupa" in item.explanation
+    assert "Selecciona" in item.explanation
+    assert "Suma" in item.explanation

@@ -71,14 +71,61 @@ class LineByLineExplainer:
                     )
                 )
 
+                concepts = [
+                    part.concept
+                ]
+
+                explanations = [
+                    part.explanation
+                ]
+
+                if (
+                    ".groupby(" in line
+                    and (
+                        '["' in line
+                        or "['" in line
+                    )
+                ):
+                    concepts.append(
+                        "SELECT"
+                    )
+
+                    explanations.append(
+                        "Selecciona la columna que "
+                        "se usará dentro de cada grupo."
+                    )
+
+                if (
+                    ".sum(" in line
+                    or line.endswith(".sum()")
+                ):
+                    if (
+                        "AGGREGATE"
+                        not in concepts
+                    ):
+                        concepts.append(
+                            "AGGREGATE"
+                        )
+
+                        explanations.append(
+                            "Suma los valores de cada "
+                            "grupo para obtener un total."
+                        )
+
                 results.append(
                     LineExplanation(
                         line_number=number,
                         code=line,
                         explanation=(
-                            part.explanation
+                            " ".join(
+                                explanations
+                            )
                         ),
-                        concept=part.concept,
+                        concept=(
+                            " + ".join(
+                                concepts
+                            )
+                        ),
                         key=True,
                         confidence=(
                             confidence.score
