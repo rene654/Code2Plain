@@ -20,6 +20,7 @@ from code2plain.learning_memory import learning_memory
 from code2plain.learning_memory_store import learning_memory_store
 from code2plain.adaptive_learning import AdaptiveLearningEngine
 from code2plain.line_learning import line_by_line_explainer
+from code2plain.github_file_reader import GitHubFileReader
 from code2plain.version import __version__
 
 
@@ -35,6 +36,13 @@ class AutoLearningRequest(BaseModel):
     author_role: str
     text: str
     content_type: str = "unknown"
+
+
+class GitHubFileLearnRequest(BaseModel):
+    url: str = Field(
+        min_length=10,
+        max_length=2000,
+    )
 
 
 class LineByLineRequest(BaseModel):
@@ -80,6 +88,7 @@ automatic_learning_pipeline = AutomaticLearningPipeline()
 explanation_confidence = ExplanationConfidenceAssessor()
 learning_interaction = LearningInteractionBuilder()
 adaptive_learning = AdaptiveLearningEngine()
+github_file_reader = GitHubFileReader()
 _latest_github_feedback: dict | None = None
 _github_feedback_version = 0
 
@@ -206,6 +215,54 @@ def auto_learn(
         "should_teach": result.should_teach,
         "reason": result.reason,
         "items": items,
+    }
+
+
+@app.post("/v1/github-file/learn")
+def learn_github_file(
+    request: GitHubFileLearnRequest,
+) -> dict:
+    file = github_file_reader.read_url(
+        request.url
+    )
+
+    items = (
+        line_by_line_explainer
+        .explain(file.content)
+    )
+
+    return {
+        "repository":
+            f"{file.owner}/{file.repo}",
+        "ref":
+            file.ref,
+        "path":
+            file.path,
+        "total_lines":
+            len(
+                file.content.splitlines()
+            ),
+        "explained_lines":
+            len(items),
+        "items": [
+            {
+                "line_number":
+                    item.line_number,
+                "code":
+                    item.code,
+                "explanation":
+                    item.explanation,
+                "concept":
+                    item.concept,
+                "key":
+                    item.key,
+                "confidence":
+                    item.confidence,
+                "context_status":
+                    item.context_status,
+            }
+            for item in items
+        ],
     }
 
 
