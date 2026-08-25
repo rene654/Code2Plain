@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-import json
-import os
 import re
-import sqlite3
-from datetime import UTC, datetime
+import threading
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -44,110 +42,38 @@ def normalize_session_id(
 
 class LiveExplanationStore:
     """
-    Cross-process store for Code2Plain live explanations.
+    Ephemeral live-learning channel.
 
-    SQLite is used because the MCP server and web API may
-    run in separate Python processes.
+    Privacy rule:
+    - source code and explanation payloads stay in RAM only
+    - nothing from this channel is written to SQLite or disk
+    - persistent learning memory is handled separately and
+      stores abstract concepts/progress only
 
-    Every explanation belongs to a session_id so independent
-    live channels do not read one another's code.
-
-    This store NEVER executes user code.
-    It only persists explanation payloads.
+    The optional path argument remains only for backwards
+    compatibility with existing callers/tests. It is ignored.
     """
 
     def __init__(
         self,
         path: str | Path | None = None,
+        *,
+        ttl_seconds: int = 900,
     ) -> None:
-        if path is None:
-            configured = os.getenv(
-                "CODE2PLAIN_LIVE_DB"
-            )
+        self.path = None
 
-            if configured:
-                path = Path(configured)
-
-            else:
-                path = (
-                    Path.cwd()
-                    / ".code2plain"
-                    / "live_state.db"
-                )
-
-        self.path = Path(path)
-
-        self.path.parent.mkdir(
-            parents=True,
-            exist_ok=True,
+        self.ttl = timedelta(
+            seconds=ttl_seconds
         )
 
-        self._initialize()
+        self._lock = threading.Lock()
 
-    def _connect(
-        self,
-    ) -> sqlite3.Connection:
-        connection = sqlite3.connect(
-            self.path,
-            timeout=5,
-        )
+        self._version = 0
 
-        connection.row_factory = (
-            sqlite3.Row
-        )
-
-        return connection
-
-    def _initialize(
-        self,
-    ) -> None:
-        """
-        Create the current schema and migrate the pre-session
-        prototype database in place when necessary.
-        """
-
-        with self._connect() as connection:
-            connection.execute(
-                """
-                CREATE TABLE IF NOT EXISTS live_explanations (
-                    version INTEGER PRIMARY KEY AUTOINCREMENT,
-                    created_at TEXT NOT NULL,
-                    source TEXT NOT NULL,
-                    payload TEXT NOT NULL,
-                    session_id TEXT NOT NULL DEFAULT 'default'
-                )
-                """
-            )
-
-            columns = {
-                row["name"]
-                for row
-                in connection.execute(
-                    """
-                    PRAGMA table_info(live_explanations)
-                    """
-                ).fetchall()
-            }
-
-            if "session_id" not in columns:
-                connection.execute(
-                    """
-                    ALTER TABLE live_explanations
-                    ADD COLUMN session_id TEXT
-                    NOT NULL DEFAULT 'default'
-                    """
-                )
-
-            connection.execute(
-                """
-                CREATE INDEX IF NOT EXISTS
-                idx_live_explanations_session_version
-                ON live_explanations (
-                    session_id,
-                    version DESC
-                )
-                """
-            )
+        self._latest_by_session: dict[
+            str,
+            dict[str, Any],
+        ] = {}
 
     def publish(
         self,
@@ -160,44 +86,33 @@ class LiveExplanationStore:
             session_id
         )
 
-        created_at = (
-            datetime.now(UTC)
-            .isoformat()
-        )
+        created_at = datetime.now(UTC)
 
-        serialized = json.dumps(
-            payload,
-            ensure_ascii=False,
-        )
+        with self._lock:
+            self._purge_expired_locked(
+                created_at
+            )
 
-        with self._connect() as connection:
-            cursor = connection.execute(
-                """
-                INSERT INTO live_explanations (
+            self._version += 1
+
+            version = self._version
+
+            self._latest_by_session[
+                session_id
+            ] = {
+                "version": version,
+                "created_at":
+                    created_at.isoformat(),
+                "created_at_dt":
                     created_at,
-                    source,
-                    payload,
-                    session_id
-                )
-                VALUES (?, ?, ?, ?)
-                """,
-                (
-                    created_at,
-                    source,
-                    serialized,
+                "source": source,
+                "session_id":
                     session_id,
-                ),
-            )
+                "explanation":
+                    payload,
+            }
 
-            version = cursor.lastrowid
-
-        if version is None:
-            raise RuntimeError(
-                "Live explanation version "
-                "was not created."
-            )
-
-        return int(version)
+        return version
 
     def latest(
         self,
@@ -207,43 +122,33 @@ class LiveExplanationStore:
             session_id
         )
 
-        with self._connect() as connection:
-            row = connection.execute(
-                """
-                SELECT
-                    version,
-                    created_at,
-                    source,
-                    payload,
-                    session_id
-                FROM live_explanations
-                WHERE session_id = ?
-                ORDER BY version DESC
-                LIMIT 1
-                """,
-                (
-                    session_id,
-                ),
-            ).fetchone()
+        now = datetime.now(UTC)
 
-        if row is None:
-            return None
+        with self._lock:
+            self._purge_expired_locked(
+                now
+            )
 
-        return {
-            "version": int(
-                row["version"]
-            ),
-            "created_at": row[
-                "created_at"
-            ],
-            "source": row["source"],
-            "session_id": row[
-                "session_id"
-            ],
-            "explanation": json.loads(
-                row["payload"]
-            ),
-        }
+            item = (
+                self._latest_by_session
+                .get(session_id)
+            )
+
+            if item is None:
+                return None
+
+            return {
+                "version":
+                    item["version"],
+                "created_at":
+                    item["created_at"],
+                "source":
+                    item["source"],
+                "session_id":
+                    item["session_id"],
+                "explanation":
+                    item["explanation"],
+            }
 
     def latest_after(
         self,
@@ -262,15 +167,50 @@ class LiveExplanationStore:
 
         return latest
 
-# ============================================================
-# SHARED LIVE STORE
-# ============================================================
+    def clear(
+        self,
+        session_id: str | None = None,
+    ) -> None:
+        with self._lock:
+            if session_id is None:
+                self._latest_by_session.clear()
+                return
 
-# Single process-wide live learning channel.
+            normalized = (
+                normalize_session_id(
+                    session_id
+                )
+            )
+
+            self._latest_by_session.pop(
+                normalized,
+                None,
+            )
+
+    def _purge_expired_locked(
+        self,
+        now: datetime,
+    ) -> None:
+        expired = [
+            session_id
+            for session_id, item
+            in self._latest_by_session.items()
+            if (
+                now
+                - item["created_at_dt"]
+                > self.ttl
+            )
+        ]
+
+        for session_id in expired:
+            self._latest_by_session.pop(
+                session_id,
+                None,
+            )
+
+
+# Shared process-wide ephemeral channel.
 #
-# MCP publishers and the HTTP API MUST use the same instance.
-# Creating independent stores causes explanations published by
-# an AI integration to be invisible to the browser.
-
+# Production deployment mounts MCP + API in the same process,
+# so this channel does not require persistent storage.
 live_store = LiveExplanationStore()
-

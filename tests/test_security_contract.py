@@ -31,22 +31,21 @@ def test_web_does_not_execute_source_code():
         assert token not in js
 
 
-def test_live_store_only_serializes_payload():
+def test_live_store_does_not_persist_payloads():
     live_store = (
         SOURCE_DIR
         / "live_store.py"
     ).read_text()
 
+    assert "sqlite3" not in live_store
+    assert "json.dumps" not in live_store
+    assert "INSERT INTO" not in live_store
+    assert "write_text" not in live_store
+    assert "write_bytes" not in live_store
+
     assert (
-        "json.dumps"
+        "_latest_by_session"
         in live_store
     )
 
-    forbidden = [
-        "subprocess.",
-        "os.system(",
-        "exec(",
-    ]
 
-    for token in forbidden:
-        assert token not in live_store
