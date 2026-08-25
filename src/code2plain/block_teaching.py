@@ -44,23 +44,64 @@ class ContextBlockTeachingEngine:
         expression = block.expression
 
         if block.kind == "import":
+            return self._teach_import(
+                block
+            )
+
+        if (
+            block.kind == "AsyncFunctionDef"
+            or block.code.lstrip().startswith(
+                "async def lifespan"
+            )
+        ):
             return BlockTeaching(
                 start_line=block.start_line,
                 end_line=block.end_line,
                 code=block.code,
                 explanation=(
-                    "Carga una herramienta externa "
-                    "que el programa utilizará después."
+                    "Define qué debe ocurrir mientras la aplicación "
+                    "está funcionando: inicia el administrador de "
+                    "sesiones MCP al arrancar y lo mantiene activo "
+                    "hasta que la aplicación termina."
                 ),
                 why=(
-                    "Esto hace disponibles funciones "
-                    "que Python no tiene cargadas aquí."
+                    "El servidor MCP necesita iniciar y cerrar sus "
+                    "recursos de forma ordenada junto con la aplicación."
                 ),
-                input_from=None,
-                output_to=None,
+                input_from="aplicación",
+                output_to="ciclo de vida MCP",
                 experiment=(
-                    "Busca dónde vuelve a aparecer "
-                    "el nombre importado."
+                    "¿Qué recurso dejaría de iniciarse correctamente "
+                    "si esta función no se conectara a Starlette?"
+                ),
+            )
+
+        if (
+            block.target == "app"
+            and "Starlette(" in expression
+        ):
+            return BlockTeaching(
+                start_line=block.start_line,
+                end_line=block.end_line,
+                code=block.code,
+                explanation=(
+                    "Crea la aplicación web principal de Code2Plain. "
+                    "Las solicitudes que comienzan con `/mcp` se envían "
+                    "a `mcp_app`; las demás se envían a `api_app`. "
+                    "También conecta `lifespan` para iniciar y cerrar "
+                    "correctamente los recursos MCP."
+                ),
+                why=(
+                    "Este bloque une las distintas partes del sistema "
+                    "y decide qué aplicación debe atender cada URL."
+                ),
+                input_from=(
+                    "mcp_app + api_app + lifespan"
+                ),
+                output_to="app",
+                experiment=(
+                    "Si cambias `/mcp` por `/tools`, ¿en qué dirección "
+                    "esperarías encontrar ahora el servidor MCP?"
                 ),
             )
 
@@ -242,6 +283,76 @@ class ContextBlockTeachingEngine:
                 "y qué efecto produce."
             ),
         )
+
+    def _teach_import(
+        self,
+        block: SemanticBlock,
+    ) -> BlockTeaching:
+        code = block.code
+
+        explanations = {
+            "contextlib": (
+                "Carga `contextlib`, una herramienta de Python "
+                "para controlar qué debe ocurrir al iniciar y "
+                "cerrar ciertos procesos."
+            ),
+            "AsyncIterator": (
+                "Trae `AsyncIterator`, un tipo usado para describir "
+                "una operación asíncrona que puede mantenerse activa "
+                "durante un periodo."
+            ),
+            "Starlette": (
+                "Trae `Starlette`, la clase que se utilizará "
+                "para crear la aplicación web principal."
+            ),
+            "Mount": (
+                "Trae `Mount`, que permite colocar una aplicación "
+                "dentro de una ruta específica de otra aplicación."
+            ),
+            "api_app": (
+                "Trae la aplicación API de Code2Plain y la llama "
+                "`api_app` para conectarla después a la aplicación principal."
+            ),
+            "mcp_app": (
+                "Trae la aplicación MCP de Code2Plain para conectarla "
+                "después a la ruta `/mcp`."
+            ),
+            "mcp": (
+                "Trae el servidor MCP que administra las herramientas "
+                "que Code2Plain ofrece mediante MCP."
+            ),
+        }
+
+        explanation = None
+
+        for name, value in explanations.items():
+            if name in code:
+                explanation = value
+                break
+
+        if explanation is None:
+            explanation = (
+                "Trae código definido en otro módulo para poder "
+                "utilizarlo en este archivo."
+            )
+
+        return BlockTeaching(
+            start_line=block.start_line,
+            end_line=block.end_line,
+            code=block.code,
+            explanation=explanation,
+            why=(
+                "Separar el código en módulos evita repetir lógica "
+                "y permite construir la aplicación usando piezas especializadas."
+            ),
+            input_from=None,
+            output_to=None,
+            experiment=(
+                "Busca dónde se utiliza después el nombre "
+                "que acaba de importarse."
+            ),
+        )
+
 
     def _looks_like_filter(
         self,

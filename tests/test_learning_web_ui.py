@@ -12,7 +12,7 @@ def test_learning_page_loads():
     assert response.status_code == 200
     assert "Code2Plain" in response.text
     assert "Explicar código" in response.text
-    assert "/v1/line-by-line" in response.text
+    assert "/v1/context-block-learn" in response.text
 
 
 def test_learning_page_has_inline_code_highlighting():
@@ -44,7 +44,7 @@ def test_learning_page_keeps_manual_code_mode():
     response = client.get("/learn")
 
     assert (
-        "/v1/line-by-line"
+        "/v1/context-block-learn"
         in response.text
     )
 

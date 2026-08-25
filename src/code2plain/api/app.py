@@ -228,9 +228,8 @@ def learn_github_file(
         request.url
     )
 
-    items = (
-        line_by_line_explainer
-        .explain(file.content)
+    items = context_block_teaching.explain(
+        file.content
     )
 
     return {
@@ -244,28 +243,26 @@ def learn_github_file(
             len(
                 file.content.splitlines()
             ),
-        "explained_lines":
+        "total_ideas":
             len(items),
         "items": [
             {
-                "line_number":
-                    item.line_number,
+                "start_line":
+                    item.start_line,
+                "end_line":
+                    item.end_line,
                 "code":
                     item.code,
                 "explanation":
                     item.explanation,
                 "why":
                     item.why,
-                "challenge":
-                    item.challenge,
-                "concept":
-                    item.concept,
-                "key":
-                    item.key,
-                "confidence":
-                    item.confidence,
-                "context_status":
-                    item.context_status,
+                "input_from":
+                    item.input_from,
+                "output_to":
+                    item.output_to,
+                "experiment":
+                    item.experiment,
             }
             for item in items
         ],

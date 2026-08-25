@@ -394,52 +394,10 @@ button.addEventListener(
                     concept.className =
                         "concept";
 
-                    if (item.concept) {
-                        const parts =
-                            item.concept.split(
-                                " + "
-                            );
-
-                        parts.forEach(
-                            part => {
-                                const chip =
-                                    document.createElement(
-                                        "span"
-                                    );
-
-                                chip.className =
-                                    "concept-chip";
-
-                                chip.textContent =
-                                    part;
-
-                                const colorMap = {
-                                    "FILTER":
-                                        "#ec4899",
-                                    "GROUP":
-                                        "#eab308",
-                                    "SELECT":
-                                        "#38bdf8",
-                                    "AGGREGATE":
-                                        "#22c55e",
-                                };
-
-                                chip.style
-                                    .setProperty(
-                                        "--chip-color",
-                                        colorMap[part]
-                                        || "#a3a3a3"
-                                    );
-
-                                concept.appendChild(
-                                    chip
-                                );
-                            }
-                        );
-                    } else {
-                        concept.textContent =
-                            `Línea ${item.line_number}`;
-                    }
+                    concept.textContent =
+                        item.output_to
+                        ? `Resultado → ${item.output_to}`
+                        : "Paso del programa";
 
                     const explanation =
                         document.createElement(
@@ -486,7 +444,7 @@ button.addEventListener(
                     challenge.className =
                         "challenge";
 
-                    if (item.challenge) {
+                    if (item.experiment) {
                         challenge.textContent =
                             "Prueba mental: "
                             + item.experiment;

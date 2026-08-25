@@ -82,3 +82,42 @@ def test_program_has_five_meaningful_learning_units():
     )
 
     assert len(items) == 5
+
+
+def test_starlette_application_is_explained_as_routing():
+    code = '''
+app = Starlette(
+    routes=[
+        Mount("/mcp", app=mcp_app),
+        Mount("/", app=api_app),
+    ],
+    lifespan=lifespan,
+)
+'''
+
+    item = (
+        ContextBlockTeachingEngine()
+        .explain(code)[0]
+    )
+
+    assert "aplicación web principal" in (
+        item.explanation
+    )
+
+    assert "/mcp" in item.explanation
+    assert "mcp_app" in item.explanation
+    assert "api_app" in item.explanation
+
+
+def test_starlette_import_is_specific():
+    item = (
+        ContextBlockTeachingEngine()
+        .explain(
+            "from starlette.applications "
+            "import Starlette"
+        )[0]
+    )
+
+    assert "aplicación web principal" in (
+        item.explanation
+    )
