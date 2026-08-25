@@ -294,7 +294,7 @@ button.addEventListener(
             const endpoint =
                 url
                 ? "/v1/github-file/learn"
-                : "/v1/line-by-line";
+                : "/v1/context-block-learn";
 
             const requestBody =
                 url
@@ -366,7 +366,10 @@ button.addEventListener(
                         );
 
                     line.textContent =
-                        `Línea ${item.line_number}`;
+                        item.start_line
+                        === item.end_line
+                        ? `Línea ${item.start_line}`
+                        : `Líneas ${item.start_line}-${item.end_line}`;
 
                     const confidence =
                         document.createElement(
@@ -374,8 +377,8 @@ button.addEventListener(
                         );
 
                     confidence.textContent =
-                        item.key
-                        ? `${item.confidence}% · ${item.context_status}`
+                        item.input_from
+                        ? `Entra: ${item.input_from}`
                         : "";
 
                     meta.append(
@@ -485,8 +488,8 @@ button.addEventListener(
 
                     if (item.challenge) {
                         challenge.textContent =
-                            "Comprueba: "
-                            + item.challenge;
+                            "Prueba mental: "
+                            + item.experiment;
                     } else {
                         challenge.style.display =
                             "none";

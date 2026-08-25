@@ -47,3 +47,13 @@ def test_learning_page_keeps_manual_code_mode():
         "/v1/line-by-line"
         in response.text
     )
+
+
+def test_learning_page_uses_context_blocks():
+    response = client.get("/learn")
+
+    assert response.status_code == 200
+    assert (
+        "/v1/context-block-learn"
+        in response.text
+    )

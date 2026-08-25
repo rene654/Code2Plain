@@ -20,6 +20,8 @@ from code2plain.learning_memory import learning_memory
 from code2plain.learning_memory_store import learning_memory_store
 from code2plain.adaptive_learning import AdaptiveLearningEngine
 from code2plain.line_learning import line_by_line_explainer
+from code2plain.context_learning import context_aware_teaching
+from code2plain.block_teaching import context_block_teaching
 from code2plain.github_file_reader import GitHubFileReader
 from code2plain.version import __version__
 
@@ -267,6 +269,71 @@ def learn_github_file(
             }
             for item in items
         ],
+    }
+
+
+@app.post("/v1/context-block-learn")
+def context_block_learn(
+    request: LineByLineRequest,
+) -> dict:
+    items = context_block_teaching.explain(
+        request.code
+    )
+
+    return {
+        "total_ideas": len(items),
+        "items": [
+            {
+                "start_line":
+                    item.start_line,
+                "end_line":
+                    item.end_line,
+                "code":
+                    item.code,
+                "explanation":
+                    item.explanation,
+                "why":
+                    item.why,
+                "input_from":
+                    item.input_from,
+                "output_to":
+                    item.output_to,
+                "experiment":
+                    item.experiment,
+            }
+            for item in items
+        ],
+    }
+
+
+@app.post("/v1/context-learn")
+def context_learn(
+    request: LineByLineRequest,
+) -> dict:
+    items = context_aware_teaching.explain(
+        request.code
+    )
+
+    return {
+        "items": [
+            {
+                "line_number":
+                    item.line_number,
+                "code":
+                    item.code,
+                "explanation":
+                    item.simple_explanation,
+                "why":
+                    item.why_it_matters,
+                "input_from":
+                    item.input_from,
+                "output_to":
+                    item.output_to,
+                "consequence":
+                    item.consequence,
+            }
+            for item in items
+        ]
     }
 
 
