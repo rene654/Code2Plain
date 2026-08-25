@@ -3,6 +3,8 @@ from __future__ import annotations
 import ast
 from dataclasses import dataclass
 
+from code2plain.semantic_fallback import semantic_fallback
+
 from code2plain.semantic_blocks import (
     SemanticBlock,
     semantic_block_extractor,
@@ -102,6 +104,35 @@ class ContextBlockTeachingEngine:
                 experiment=(
                     "Si cambias `/mcp` por `/tools`, ¿en qué dirección "
                     "esperarías encontrar ahora el servidor MCP?"
+                ),
+            )
+
+        if (
+            block.target
+            and expression.startswith(
+                "Path("
+            )
+        ):
+            return BlockTeaching(
+                start_line=block.start_line,
+                end_line=block.end_line,
+                code=block.code,
+                explanation=(
+                    f"Crea una representación de una ruta "
+                    f"de archivo o carpeta y la guarda "
+                    f"en `{block.target}`."
+                ),
+                why=(
+                    "Usar `Path` facilita trabajar con "
+                    "archivos y carpetas sin manipular "
+                    "sus rutas como texto manualmente."
+                ),
+                input_from="ruta de archivo o carpeta",
+                output_to=block.target,
+                experiment=(
+                    "Cambia `input.txt` por otro nombre "
+                    "y observa qué ruta representa "
+                    "la variable."
                 ),
             )
 
@@ -236,8 +267,8 @@ class ContextBlockTeachingEngine:
             )
 
         if block.target:
-            source = self._first_name(
-                expression
+            fallback = semantic_fallback.explain(
+                block.code
             )
 
             return BlockTeaching(
@@ -245,42 +276,43 @@ class ContextBlockTeachingEngine:
                 end_line=block.end_line,
                 code=block.code,
                 explanation=(
-                    f"Calcula un valor y lo guarda "
-                    f"en `{block.target}` para "
-                    "utilizarlo después."
+                    fallback.explanation
                 ),
                 why=(
-                    "Una variable permite conservar "
-                    "un resultado para otras partes "
-                    "del programa."
+                    fallback.why
                 ),
-                input_from=source,
+                input_from=self._first_name(
+                    expression
+                ),
                 output_to=block.target,
                 experiment=(
-                    f"Busca dónde vuelve a usarse "
-                    f"`{block.target}`."
+                    "Busca dónde se usa este resultado "
+                    "y qué objeto o función produjo el valor."
                 ),
             )
+
+        fallback = semantic_fallback.explain(
+            block.code
+        )
 
         return BlockTeaching(
             start_line=block.start_line,
             end_line=block.end_line,
             code=block.code,
             explanation=(
-                "Ejecuta esta operación como una "
-                "unidad dentro del programa."
+                fallback.explanation
             ),
             why=(
-                "Su efecto depende de los valores "
-                "que recibe y del contexto del bloque."
+                fallback.why
             ),
             input_from=self._first_name(
                 expression
             ),
-            output_to=None,
+            output_to=block.target,
             experiment=(
-                "Identifica qué valor utiliza "
-                "y qué efecto produce."
+                "Busca las líneas anteriores y siguientes "
+                "para identificar qué entra en esta operación "
+                "y dónde se usa su resultado."
             ),
         )
 

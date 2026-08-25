@@ -121,3 +121,56 @@ def test_starlette_import_is_specific():
     assert "aplicación web principal" in (
         item.explanation
     )
+
+
+def test_unknown_library_call_uses_conservative_fallback():
+    code = '''
+mystery_engine.execute(data)
+'''
+
+    item = (
+        ContextBlockTeachingEngine()
+        .explain(code)[0]
+    )
+
+    assert (
+        "no permite saber con seguridad"
+        in item.explanation
+        or "contexto" in item.explanation.lower()
+    )
+
+    assert "invent" not in item.explanation.lower()
+
+
+def test_unknown_assignment_keeps_variable_without_inventing():
+    code = '''
+prediction = strange_model.run(data)
+'''
+
+    item = (
+        ContextBlockTeachingEngine()
+        .explain(code)[0]
+    )
+
+    assert "prediction" in (
+        item.explanation
+    )
+
+    assert "machine learning" not in (
+        item.explanation.lower()
+    )
+
+
+def test_path_is_explained_as_file_system_path():
+    item = (
+        ContextBlockTeachingEngine()
+        .explain(
+            'source = Path("input.txt")'
+        )[0]
+    )
+
+    assert "ruta" in (
+        item.explanation.lower()
+    )
+
+    assert item.output_to == "source"
