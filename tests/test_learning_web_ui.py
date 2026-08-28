@@ -57,3 +57,26 @@ def test_learning_page_uses_context_blocks():
         "/v1/context-block-learn"
         in response.text
     )
+
+
+def test_learning_page_displays_zero_retention_notice():
+    response = client.get("/learn")
+
+    assert response.status_code == 200
+
+    assert (
+        "Tu código se procesa temporalmente "
+        "y no se guarda"
+        in response.text
+    )
+
+    assert (
+        "Solo conservamos conceptos "
+        "de aprendizaje y progreso"
+        in response.text
+    )
+
+    assert (
+        "¿Qué significa esto?"
+        in response.text
+    )

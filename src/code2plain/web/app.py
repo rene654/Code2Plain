@@ -65,6 +65,30 @@ def learning_page():
             font-size: 14px;
         }
 
+        .privacy-note {
+            margin-top: 12px;
+            padding: 10px 12px;
+            border: 1px solid rgba(125, 125, 125, 0.18);
+            border-radius: 10px;
+            font-size: 12px;
+            line-height: 1.45;
+            color: #525252;
+            background: rgba(125, 125, 125, 0.04);
+        }
+
+        .privacy-note details {
+            margin-top: 6px;
+        }
+
+        .privacy-note summary {
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .privacy-note p {
+            margin: 7px 0 0;
+        }
+
         .source-separator {
             margin: 12px 0 -12px;
             text-align: center;
@@ -239,6 +263,23 @@ def learning_page():
     <button id="learn">
         Explicar código
     </button>
+
+    <div class="privacy-note">
+        🔒 Tu código se procesa temporalmente y no se guarda.
+        Solo conservamos conceptos de aprendizaje y progreso.
+        <details>
+            <summary>
+                ¿Qué significa esto?
+            </summary>
+            <p>
+                Code2Plain analiza el código en memoria para generar
+                la explicación. El código fuente y los fragmentos
+                analizados no se almacenan en la memoria de aprendizaje.
+                La persistencia solo conserva conceptos abstractos,
+                como funciones, clases o condiciones, junto con tu progreso.
+            </p>
+        </details>
+    </div>
 
     <div id="results"></div>
 </main>
