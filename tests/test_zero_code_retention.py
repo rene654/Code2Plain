@@ -135,3 +135,51 @@ def test_live_store_does_not_create_default_live_database(
         / ".code2plain"
         / "live_state.db"
     ).exists()
+
+
+def test_live_store_evicts_oldest_session_when_full():
+    store = LiveExplanationStore(
+        max_sessions=2
+    )
+
+    store.publish(
+        {"value": "one"},
+        source="test",
+        session_id="session1",
+    )
+
+    store.publish(
+        {"value": "two"},
+        source="test",
+        session_id="session2",
+    )
+
+    store.publish(
+        {"value": "three"},
+        source="test",
+        session_id="session3",
+    )
+
+    assert (
+        store.latest("session1")
+        is None
+    )
+
+    assert (
+        store.latest("session2")
+        is not None
+    )
+
+    assert (
+        store.latest("session3")
+        is not None
+    )
+
+
+def test_live_store_rejects_invalid_session_limit():
+    import pytest
+
+    with pytest.raises(ValueError):
+        LiveExplanationStore(
+            max_sessions=0
+        )

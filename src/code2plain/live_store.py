@@ -59,11 +59,21 @@ class LiveExplanationStore:
         path: str | Path | None = None,
         *,
         ttl_seconds: int = 900,
+        max_sessions: int = 1000,
     ) -> None:
         self.path = None
 
         self.ttl = timedelta(
             seconds=ttl_seconds
+        )
+
+        if max_sessions < 1:
+            raise ValueError(
+                "max_sessions must be at least 1."
+            )
+
+        self.max_sessions = (
+            max_sessions
         )
 
         self._lock = threading.Lock()
@@ -92,6 +102,15 @@ class LiveExplanationStore:
             self._purge_expired_locked(
                 created_at
             )
+
+            if (
+                session_id
+                not in self._latest_by_session
+                and len(
+                    self._latest_by_session
+                ) >= self.max_sessions
+            ):
+                self._evict_oldest_locked()
 
             self._version += 1
 
@@ -186,6 +205,27 @@ class LiveExplanationStore:
                 normalized,
                 None,
             )
+
+    def _evict_oldest_locked(
+        self,
+    ) -> None:
+        if not self._latest_by_session:
+            return
+
+        oldest_session = min(
+            self._latest_by_session,
+            key=lambda session_id: (
+                self._latest_by_session[
+                    session_id
+                ]["created_at_dt"]
+            ),
+        )
+
+        self._latest_by_session.pop(
+            oldest_session,
+            None,
+        )
+
 
     def _purge_expired_locked(
         self,
