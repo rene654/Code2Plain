@@ -22,6 +22,13 @@ from code2plain.adaptive_learning import AdaptiveLearningEngine
 from code2plain.line_learning import line_by_line_explainer
 from code2plain.context_learning import context_aware_teaching
 from code2plain.block_teaching import context_block_teaching
+from code2plain.adaptive_human_learning import adaptive_human_learning
+from code2plain.human_skill_detection import (
+    primary_human_skill,
+)
+from code2plain.human_skills import (
+    get_human_skill,
+)
 from code2plain.github_file_reader import GitHubFileReader
 from code2plain.version import __version__
 
@@ -45,6 +52,18 @@ class GitHubFileLearnRequest(BaseModel):
         min_length=10,
         max_length=2000,
     )
+
+
+class HumanLearningAnswerRequest(BaseModel):
+    user_id: str = Field(
+        min_length=1,
+        max_length=128,
+    )
+    skill_id: str = Field(
+        min_length=1,
+        max_length=80,
+    )
+    correct: bool
 
 
 class LineByLineRequest(BaseModel):
@@ -263,9 +282,62 @@ def learn_github_file(
                     item.output_to,
                 "experiment":
                     item.experiment,
+                "skill_id":
+                    primary_human_skill(
+                        item.code
+                    ),
+                "skill_name":
+                    (
+                        get_human_skill(
+                            primary_human_skill(
+                                item.code
+                            )
+                        ).name
+                        if primary_human_skill(
+                            item.code
+                        )
+                        else None
+                    ),
             }
             for item in items
         ],
+    }
+
+
+@app.post("/v1/learning/answer")
+def record_learning_answer(
+    request: HumanLearningAnswerRequest,
+) -> dict:
+    feedback = (
+        adaptive_human_learning
+        .record_answer(
+            user_id=request.user_id,
+            skill_id=request.skill_id,
+            correct=request.correct,
+        )
+    )
+
+    return {
+        "skill_id":
+            feedback.skill_id,
+        "skill_name":
+            feedback.skill_name,
+        "simple_meaning":
+            feedback.simple_meaning,
+        "mastery_level":
+            feedback.mastery_level,
+        "seen":
+            feedback.seen,
+        "correct":
+            feedback.correct,
+        "incorrect":
+            feedback.incorrect,
+        "mastery":
+            feedback.mastery,
+        "message":
+            feedback.message,
+        "next_step":
+            feedback.next_step,
     }
 
 
@@ -297,6 +369,22 @@ def context_block_learn(
                     item.output_to,
                 "experiment":
                     item.experiment,
+                "skill_id":
+                    primary_human_skill(
+                        item.code
+                    ),
+                "skill_name":
+                    (
+                        get_human_skill(
+                            primary_human_skill(
+                                item.code
+                            )
+                        ).name
+                        if primary_human_skill(
+                            item.code
+                        )
+                        else None
+                    ),
             }
             for item in items
         ],

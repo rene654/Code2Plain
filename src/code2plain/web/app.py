@@ -65,6 +65,39 @@ def learning_page():
             font-size: 14px;
         }
 
+        .learning-feedback {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(125, 125, 125, 0.15);
+        }
+
+        .learning-feedback-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .learning-feedback-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .learning-feedback-actions button {
+            padding: 7px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(125, 125, 125, 0.22);
+            background: transparent;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .learning-feedback-message {
+            margin-top: 8px;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
         .privacy-note {
             margin-top: 12px;
             padding: 10px 12px;
@@ -306,6 +339,45 @@ const githubUrl =
 
 const results =
     document.getElementById("results");
+
+
+async function sendLearningFeedback(
+    skillId,
+    correct,
+    container
+) {
+    const response = await fetch(
+        "/v1/learning/answer",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+            body: JSON.stringify({
+                user_id:
+                    "default-user",
+                skill_id:
+                    skillId,
+                correct
+            })
+        }
+    );
+
+    if (!response.ok) {
+        container.textContent =
+            "No pude registrar el progreso.";
+        return;
+    }
+
+    const data =
+        await response.json();
+
+    container.textContent =
+        data.message
+        + " "
+        + data.next_step;
+}
 
 
 button.addEventListener(
@@ -679,6 +751,102 @@ button.addEventListener(
                         conceptText
                     );
 
+                    const feedback =
+                        document.createElement(
+                            "div"
+                        );
+
+                    feedback.className =
+                        "learning-feedback";
+
+                    if (
+                        item.skill_id
+                        && item.skill_name
+                    ) {
+                        const feedbackTitle =
+                            document.createElement(
+                                "div"
+                            );
+
+                        feedbackTitle.className =
+                            "learning-feedback-title";
+
+                        feedbackTitle.textContent =
+                            "Estás practicando: "
+                            + item.skill_name;
+
+                        const actions =
+                            document.createElement(
+                                "div"
+                            );
+
+                        actions.className =
+                            "learning-feedback-actions";
+
+                        const correctButton =
+                            document.createElement(
+                                "button"
+                            );
+
+                        correctButton.type =
+                            "button";
+
+                        correctButton.textContent =
+                            "La respondí bien";
+
+                        const reviewButton =
+                            document.createElement(
+                                "button"
+                            );
+
+                        reviewButton.type =
+                            "button";
+
+                        reviewButton.textContent =
+                            "Necesito repasarlo";
+
+                        const feedbackMessage =
+                            document.createElement(
+                                "div"
+                            );
+
+                        feedbackMessage.className =
+                            "learning-feedback-message";
+
+                        correctButton.addEventListener(
+                            "click",
+                            async () => {
+                                await sendLearningFeedback(
+                                    item.skill_id,
+                                    true,
+                                    feedbackMessage
+                                );
+                            }
+                        );
+
+                        reviewButton.addEventListener(
+                            "click",
+                            async () => {
+                                await sendLearningFeedback(
+                                    item.skill_id,
+                                    false,
+                                    feedbackMessage
+                                );
+                            }
+                        );
+
+                        actions.append(
+                            correctButton,
+                            reviewButton
+                        );
+
+                        feedback.append(
+                            feedbackTitle,
+                            actions,
+                            feedbackMessage
+                        );
+                    }
+
                     element.append(
                         meta,
                         concept,
@@ -687,6 +855,15 @@ button.addEventListener(
                         challenge,
                         snippet
                     );
+
+                    if (
+                        item.skill_id
+                        && item.skill_name
+                    ) {
+                        element.append(
+                            feedback
+                        );
+                    }
 
                     results.appendChild(
                         element

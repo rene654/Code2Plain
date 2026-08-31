@@ -80,3 +80,29 @@ def test_learning_page_displays_zero_retention_notice():
         "¿Qué significa esto?"
         in response.text
     )
+
+
+def test_learning_page_exposes_human_feedback_endpoint():
+    response = client.get("/learn")
+
+    assert response.status_code == 200
+
+    assert (
+        "/v1/learning/answer"
+        in response.text
+    )
+
+    assert (
+        "sendLearningFeedback"
+        in response.text
+    )
+
+
+def test_learning_page_shows_skill_self_assessment():
+    response = client.get("/learn")
+
+    assert response.status_code == 200
+
+    assert "Estás practicando:" in response.text
+    assert "La respondí bien" in response.text
+    assert "Necesito repasarlo" in response.text
