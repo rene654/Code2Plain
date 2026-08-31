@@ -84,18 +84,26 @@ def learning_page():
         }
 
         .learning-feedback-actions button {
-            padding: 7px 10px;
+            padding: 8px 12px;
             border-radius: 8px;
-            border: 1px solid rgba(125, 125, 125, 0.22);
-            background: transparent;
+            border: 1px solid #d4d4d4;
+            background: #ffffff;
+            color: #171717;
             cursor: pointer;
             font-size: 12px;
+            font-weight: 600;
+        }
+
+        .learning-feedback-actions button:hover {
+            background: #f5f5f5;
         }
 
         .learning-feedback-message {
-            margin-top: 8px;
+            margin-top: 10px;
             font-size: 12px;
             line-height: 1.45;
+            color: #525252;
+            max-width: 760px;
         }
 
         .privacy-note {
@@ -534,7 +542,7 @@ button.addEventListener(
                         );
 
                     whyTitle.textContent =
-                        "Why?";
+                        "¿Por qué?";
 
                     const whyText =
                         document.createElement(
