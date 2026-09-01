@@ -32,7 +32,10 @@ class LearningMotivationEngine:
             + incorrect
         )
 
-        if seen <= 1:
+        if (
+            attempts == 0
+            and seen <= 1
+        ):
             return MotivationalFeedback(
                 mastery_level="nuevo",
                 message=(
@@ -40,25 +43,57 @@ class LearningMotivationEngine:
                     f"la habilidad: {skill_name}."
                 ),
                 next_step=(
-                    "Primero entiende qué entra "
-                    "y qué resultado produce."
+                    "Primero observa qué entra, "
+                    "qué ocurre y qué resultado sale."
                 ),
             )
 
         if (
-            attempts >= 2
-            and incorrect > correct
+            attempts == 0
+            and seen > 1
         ):
+            return MotivationalFeedback(
+                mastery_level="familiarizándose",
+                message=(
+                    f"Ya has encontrado "
+                    f"`{skill_name}` {seen} veces."
+                ),
+                next_step=(
+                    "Verlo varias veces aumenta la "
+                    "familiaridad, pero todavía necesitamos "
+                    "una respuesta correcta para comprobar "
+                    "comprensión."
+                ),
+            )
+
+        if incorrect > correct:
             return MotivationalFeedback(
                 mastery_level="reforzar",
                 message=(
-                    f"Esta habilidad todavía necesita práctica. "
-                    f"Eso nos indica exactamente dónde enfocar "
-                    f"las siguientes explicaciones."
+                    "Esta habilidad todavía necesita práctica. "
+                    "Eso nos muestra exactamente dónde "
+                    "conviene enfocar el aprendizaje."
                 ),
                 next_step=(
-                    "La próxima vez recibirás una explicación "
-                    "más guiada y una pregunta sencilla."
+                    "La próxima vez recibirás más apoyo "
+                    "y una explicación más guiada."
+                ),
+            )
+
+        if (
+            correct == 1
+            and incorrect == 0
+        ):
+            return MotivationalFeedback(
+                mastery_level="comprensión inicial",
+                message=(
+                    f"Reconociste correctamente "
+                    f"`{skill_name}` una vez."
+                ),
+                next_step=(
+                    "Es una primera evidencia de comprensión. "
+                    "Vamos a comprobarlo de nuevo en otro "
+                    "fragmento antes de reducir la ayuda."
                 ),
             )
 
@@ -70,7 +105,8 @@ class LearningMotivationEngine:
                 mastery_level="dominado",
                 message=(
                     f"Has reconocido correctamente "
-                    f"`{skill_name}` varias veces."
+                    f"`{skill_name}` varias veces "
+                    "sin errores."
                 ),
                 next_step=(
                     "Code2Plain dejará de explicarlo "
@@ -87,11 +123,11 @@ class LearningMotivationEngine:
                 mastery_level="avanzando",
                 message=(
                     f"Ya estás reconociendo "
-                    f"`{skill_name}` con menos ayuda."
+                    f"`{skill_name}` de forma consistente."
                 ),
                 next_step=(
                     "La próxima vez reduciremos parte "
-                    "de la explicación para comprobar "
+                    "de la ayuda para comprobar "
                     "que puedes identificarlo solo."
                 ),
             )
@@ -99,15 +135,15 @@ class LearningMotivationEngine:
         return MotivationalFeedback(
             mastery_level="en aprendizaje",
             message=(
-                f"Ya has visto `{skill_name}` "
-                f"{seen} veces. La familiaridad "
-                f"está aumentando."
+                f"Ya estás practicando "
+                f"`{skill_name}` con evidencia real."
             ),
             next_step=(
-                "Seguiremos practicándolo dentro "
-                "de código real."
+                "Seguiremos comprobando comprensión "
+                "con ejemplos de código distintos."
             ),
         )
+
 
 
 learning_motivation = (
