@@ -39,8 +39,135 @@ def learning_page():
         }
 
         main {
-            width: min(920px, 92%);
-            margin: 64px auto;
+            width: min(1440px, 94%);
+            margin: 32px auto 64px;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .brand-lockup {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-mark {
+            display: grid;
+            place-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #171717;
+            color: #ffffff;
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                monospace;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .brand-copy h1 {
+            margin: 0;
+            font-size: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-copy p {
+            margin: 3px 0 0;
+            color: #737373;
+            font-size: 12px;
+        }
+
+        .privacy-badge {
+            padding: 7px 11px;
+            border: 1px solid #e5e5e5;
+            border-radius: 999px;
+            background: #ffffff;
+            color: #525252;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns:
+                minmax(360px, 0.9fr)
+                minmax(480px, 1.1fr);
+            gap: 18px;
+            align-items: start;
+        }
+
+        .workspace-panel {
+            border: 1px solid #e5e5e5;
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow:
+                0 10px 30px
+                rgba(0, 0, 0, 0.035);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            min-height: 54px;
+            padding: 0 18px;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .panel-title {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .panel-kicker {
+            color: #8a8a8a;
+            font-size: 11px;
+        }
+
+        .source-panel-body {
+            padding: 18px;
+        }
+
+        .learning-panel-body {
+            min-height: 560px;
+            padding: 8px 14px 14px;
+        }
+
+        .learning-empty {
+            display: grid;
+            place-items: center;
+            min-height: 480px;
+            padding: 48px;
+            text-align: center;
+            color: #737373;
+        }
+
+        .learning-empty strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #262626;
+            font-size: 15px;
+        }
+
+        @media (max-width: 900px) {
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .app-header {
+                align-items: flex-start;
+            }
         }
 
         h1 {
@@ -55,7 +182,7 @@ def learning_page():
 
         input[type="url"] {
             width: 100%;
-            margin-top: 28px;
+            margin-top: 0;
             padding: 13px 15px;
             border:
                 1px solid #dedede;
@@ -139,8 +266,8 @@ def learning_page():
 
         textarea {
             width: 100%;
-            min-height: 260px;
-            margin-top: 28px;
+            min-height: 360px;
+            margin-top: 18px;
             padding: 20px;
             resize: vertical;
 
@@ -174,7 +301,7 @@ def learning_page():
         }
 
         #results {
-            margin-top: 30px;
+            margin-top: 0;
         }
 
         .item {
@@ -279,50 +406,111 @@ def learning_page():
 
 <body>
 <main>
-    <h1>Code2Plain</h1>
+    <header class="app-header">
+        <div class="brand-lockup">
+            <div class="brand-mark">
+                C2P
+            </div>
 
-    <p class="subtitle">
-        Entiende el código que estás usando.
-    </p>
+            <div class="brand-copy">
+                <h1>Code2Plain</h1>
+                <p>
+                    Aprende con el código que ya estás usando.
+                </p>
+            </div>
+        </div>
 
-    <input
-        id="githubUrl"
-        type="url"
-        placeholder="URL de archivo GitHub (opcional)"
-    >
+        <div class="privacy-badge">
+            🔒 Código temporal · no almacenado
+        </div>
+    </header>
 
-    <div class="source-separator">
-        o
-    </div>
+    <section class="workspace">
+        <div class="workspace-panel">
+            <div class="panel-header">
+                <span class="panel-title">
+                    Tu código
+                </span>
 
-    <textarea
-        id="code"
-        placeholder="Pega o escribe código aquí..."
-        spellcheck="false"
-    ></textarea>
+                <span class="panel-kicker">
+                    Python
+                </span>
+            </div>
 
-    <button id="learn">
-        Explicar código
-    </button>
+            <div class="source-panel-body">
+                <input
+                    id="githubUrl"
+                    type="url"
+                    placeholder="Abrir archivo desde GitHub"
+                >
 
-    <div class="privacy-note">
-        🔒 Tu código se procesa temporalmente y no se guarda.
-        Solo conservamos conceptos de aprendizaje y progreso.
-        <details>
-            <summary>
-                ¿Qué significa esto?
-            </summary>
-            <p>
-                Code2Plain analiza el código en memoria para generar
-                la explicación. El código fuente y los fragmentos
-                analizados no se almacenan en la memoria de aprendizaje.
-                La persistencia solo conserva conceptos abstractos,
-                como funciones, clases o condiciones, junto con tu progreso.
-            </p>
-        </details>
-    </div>
+                <div class="source-separator">
+                    o pega código
+                </div>
 
-    <div id="results"></div>
+                <textarea
+                    id="code"
+                    placeholder="Pega o escribe código aquí..."
+                    spellcheck="false"
+                ></textarea>
+
+                <button id="learn">
+                    Explicar código
+                </button>
+
+                <div class="privacy-note">
+                    🔒 Tu código se procesa temporalmente
+                    y no se guarda.
+                    Solo conservamos conceptos
+                    de aprendizaje y progreso.
+
+                    <details>
+                        <summary>
+                            ¿Qué significa esto?
+                        </summary>
+
+                        <p>
+                            El código se utiliza únicamente
+                            para generar la explicación actual.
+                            No se conserva como memoria de
+                            aprendizaje. Code2Plain recuerda
+                            conceptos abstractos y tu progreso.
+                        </p>
+                    </details>
+                </div>
+            </div>
+        </div>
+
+        <div class="workspace-panel">
+            <div class="panel-header">
+                <span class="panel-title">
+                    Entiende este código
+                </span>
+
+                <span class="panel-kicker">
+                    Aprendizaje adaptativo
+                </span>
+            </div>
+
+            <div class="learning-panel-body">
+                <div
+                    id="learningEmpty"
+                    class="learning-empty"
+                >
+                    <div>
+                        <strong>
+                            Tu explicación aparecerá aquí
+                        </strong>
+
+                        Pega código o abre un archivo
+                        de GitHub para empezar.
+                    </div>
+                </div>
+
+                <div id="results"></div>
+            </div>
+        </div>
+    </section>
 </main>
 
 <script>
@@ -347,6 +535,11 @@ const githubUrl =
 
 const results =
     document.getElementById("results");
+
+const learningEmpty =
+    document.getElementById(
+        "learningEmpty"
+    );
 
 
 async function sendLearningFeedback(
@@ -410,6 +603,11 @@ button.addEventListener(
             "Analizando...";
 
         results.innerHTML = "";
+
+        if (learningEmpty) {
+            learningEmpty.style.display =
+                "none";
+        }
 
         try {
             const endpoint =

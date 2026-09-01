@@ -64,16 +64,20 @@ def test_learning_page_displays_zero_retention_notice():
 
     assert response.status_code == 200
 
+    normalized = " ".join(
+        response.text.split()
+    )
+
     assert (
         "Tu código se procesa temporalmente "
         "y no se guarda"
-        in response.text
+        in normalized
     )
 
     assert (
         "Solo conservamos conceptos "
         "de aprendizaje y progreso"
-        in response.text
+        in normalized
     )
 
     assert (
