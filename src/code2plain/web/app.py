@@ -192,6 +192,83 @@ def learning_page():
             font-size: 14px;
         }
 
+        .learning-check {
+            margin-top: 10px;
+            border-top: 1px solid #eeeeee;
+            padding-top: 9px;
+        }
+
+        .learning-check summary {
+            list-style: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            color: #404040;
+        }
+
+        .learning-check summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .learning-check summary::after {
+            content: " ▾";
+            color: #8a8a8a;
+        }
+
+        .learning-check[open] summary::after {
+            content: " ▴";
+        }
+
+        .learning-check-body {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ececec;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+
+        .learning-check-question {
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.45;
+        }
+
+        .learning-check-option {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            margin: 7px 0;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .learning-check-verify {
+            margin-top: 8px;
+            padding: 7px 11px;
+            border: 0;
+            border-radius: 8px;
+            background: #171717;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .learning-check-result {
+            margin-top: 8px;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .learning-check-result.success {
+            color: #166534;
+        }
+
+        .learning-check-result.review {
+            color: #991b1b;
+        }
+
         .learning-feedback {
             margin-top: 12px;
             padding-top: 10px;
@@ -957,99 +1034,214 @@ button.addEventListener(
                         conceptText
                     );
 
-                    const feedback =
+                    const learningCheck =
                         document.createElement(
-                            "div"
+                            "details"
                         );
 
-                    feedback.className =
-                        "learning-feedback";
+                    learningCheck.className =
+                        "learning-check";
 
                     if (
-                        item.skill_id
-                        && item.skill_name
+                        item.check
+                        && item.skill_id
                     ) {
-                        const feedbackTitle =
+                        const summary =
+                            document.createElement(
+                                "summary"
+                            );
+
+                        summary.textContent =
+                            "Comprueba lo que entendiste";
+
+                        const body =
                             document.createElement(
                                 "div"
                             );
 
-                        feedbackTitle.className =
-                            "learning-feedback-title";
+                        body.className =
+                            "learning-check-body";
 
-                        feedbackTitle.textContent =
-                            "Estás practicando: "
-                            + item.skill_name;
-
-                        const actions =
+                        const question =
                             document.createElement(
                                 "div"
                             );
 
-                        actions.className =
-                            "learning-feedback-actions";
+                        question.className =
+                            "learning-check-question";
 
-                        const correctButton =
-                            document.createElement(
-                                "button"
-                            );
+                        question.textContent =
+                            item.check.question;
 
-                        correctButton.type =
-                            "button";
+                        const optionInputs = [];
 
-                        correctButton.textContent =
-                            "La respondí bien";
+                        item.check.options.forEach(
+                            (option, optionIndex) => {
+                                const label =
+                                    document.createElement(
+                                        "label"
+                                    );
 
-                        const reviewButton =
-                            document.createElement(
-                                "button"
-                            );
+                                label.className =
+                                    "learning-check-option";
 
-                        reviewButton.type =
-                            "button";
+                                const radio =
+                                    document.createElement(
+                                        "input"
+                                    );
 
-                        reviewButton.textContent =
-                            "Necesito repasarlo";
+                                radio.type = "radio";
 
-                        const feedbackMessage =
-                            document.createElement(
-                                "div"
-                            );
+                                radio.name =
+                                    "check-"
+                                    + index;
 
-                        feedbackMessage.className =
-                            "learning-feedback-message";
+                                radio.value =
+                                    optionIndex;
 
-                        correctButton.addEventListener(
-                            "click",
-                            async () => {
-                                await sendLearningFeedback(
-                                    item.skill_id,
-                                    true,
-                                    feedbackMessage
+                                const optionText =
+                                    document.createElement(
+                                        "span"
+                                    );
+
+                                optionText.textContent =
+                                    option;
+
+                                label.append(
+                                    radio,
+                                    optionText
+                                );
+
+                                optionInputs.push(
+                                    radio
+                                );
+
+                                body.append(
+                                    label
                                 );
                             }
                         );
 
-                        reviewButton.addEventListener(
+                        const verifyButton =
+                            document.createElement(
+                                "button"
+                            );
+
+                        verifyButton.type =
+                            "button";
+
+                        verifyButton.className =
+                            "learning-check-verify";
+
+                        verifyButton.textContent =
+                            "Verificar";
+
+                        const resultMessage =
+                            document.createElement(
+                                "div"
+                            );
+
+                        resultMessage.className =
+                            "learning-check-result";
+
+                        verifyButton.addEventListener(
                             "click",
                             async () => {
-                                await sendLearningFeedback(
-                                    item.skill_id,
-                                    false,
-                                    feedbackMessage
+                                const selected =
+                                    optionInputs.find(
+                                        input =>
+                                            input.checked
+                                    );
+
+                                if (!selected) {
+                                    resultMessage.textContent =
+                                        "Selecciona una opción.";
+                                    return;
+                                }
+
+                                verifyButton.disabled =
+                                    true;
+
+                                const response =
+                                    await fetch(
+                                        "/v1/learning/check-answer",
+                                        {
+                                            method: "POST",
+                                            headers: {
+                                                "Content-Type":
+                                                    "application/json"
+                                            },
+                                            body:
+                                                JSON.stringify({
+                                                    user_id:
+                                                        "default-user",
+                                                    skill_id:
+                                                        item.skill_id,
+                                                    code:
+                                                        item.code,
+                                                    input_from:
+                                                        item.input_from,
+                                                    output_to:
+                                                        item.output_to,
+                                                    selected_index:
+                                                        Number(
+                                                            selected.value
+                                                        )
+                                                })
+                                        }
+                                    );
+
+                                const data =
+                                    await response.json();
+
+                                if (!response.ok) {
+                                    resultMessage.textContent =
+                                        "No pude verificar la respuesta.";
+                                    verifyButton.disabled =
+                                        false;
+                                    return;
+                                }
+
+                                resultMessage.className =
+                                    "learning-check-result "
+                                    + (
+                                        data.correct
+                                        ? "success"
+                                        : "review"
+                                    );
+
+                                resultMessage.textContent =
+                                    (
+                                        data.correct
+                                        ? "✓ Correcto. "
+                                        : "↻ Repasar. "
+                                    )
+                                    + data.explanation;
+
+                                verifyButton.style.display =
+                                    "none";
+
+                                optionInputs.forEach(
+                                    input => {
+                                        input.disabled =
+                                            true;
+                                    }
                                 );
                             }
                         );
 
-                        actions.append(
-                            correctButton,
-                            reviewButton
+                        body.append(
+                            question
                         );
 
-                        feedback.append(
-                            feedbackTitle,
-                            actions,
-                            feedbackMessage
+                        body.append(
+                            verifyButton,
+                            resultMessage
+                        );
+
+                        learningCheck.append(
+                            summary,
+                            body
                         );
                     }
 
@@ -1063,11 +1255,11 @@ button.addEventListener(
                     );
 
                     if (
-                        item.skill_id
-                        && item.skill_name
+                        item.check
+                        && item.skill_id
                     ) {
                         element.append(
-                            feedback
+                            learningCheck
                         );
                     }
 

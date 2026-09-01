@@ -5,7 +5,7 @@ from code2plain.web.app import router as web_router
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -29,6 +29,9 @@ from code2plain.human_skill_detection import (
 from code2plain.human_skills import (
     get_human_skill,
 )
+from code2plain.learning_checks import (
+    learning_check_engine,
+)
 from code2plain.github_file_reader import GitHubFileReader
 from code2plain.version import __version__
 
@@ -51,6 +54,26 @@ class GitHubFileLearnRequest(BaseModel):
     url: str = Field(
         min_length=10,
         max_length=2000,
+    )
+
+
+class LearningCheckAnswerRequest(BaseModel):
+    user_id: str = Field(
+        min_length=1,
+        max_length=128,
+    )
+    skill_id: str = Field(
+        min_length=1,
+        max_length=80,
+    )
+    code: str = Field(
+        min_length=1,
+    )
+    input_from: str | None = None
+    output_to: str | None = None
+    selected_index: int = Field(
+        ge=0,
+        le=10,
     )
 
 
@@ -298,9 +321,74 @@ def learn_github_file(
                         )
                         else None
                     ),
+                "check":
+                    (
+                        lambda check: {
+                            "question":
+                                check.question,
+                            "options":
+                                list(
+                                    check.options
+                                ),
+                            "explanation":
+                                check.explanation,
+                        }
+                    )(
+                        learning_check_engine.build(
+                            code=item.code,
+                            input_from=item.input_from,
+                            output_to=item.output_to,
+                        )
+                    ),
             }
             for item in items
         ],
+    }
+
+
+@app.post("/v1/learning/check-answer")
+def check_learning_answer(
+    request: LearningCheckAnswerRequest,
+) -> dict:
+    check = learning_check_engine.build(
+        code=request.code,
+        input_from=request.input_from,
+        output_to=request.output_to,
+    )
+
+    if request.selected_index >= len(
+        check.options
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid answer option.",
+        )
+
+    correct = (
+        request.selected_index
+        == check.correct_index
+    )
+
+    feedback = (
+        adaptive_human_learning
+        .record_answer(
+            user_id=request.user_id,
+            skill_id=request.skill_id,
+            correct=correct,
+        )
+    )
+
+    return {
+        "correct":
+            correct,
+        "explanation":
+            check.explanation,
+        "mastery_level":
+            feedback.mastery_level,
+        "message":
+            feedback.message,
+        "next_step":
+            feedback.next_step,
     }
 
 
@@ -384,6 +472,25 @@ def context_block_learn(
                             item.code
                         )
                         else None
+                    ),
+                "check":
+                    (
+                        lambda check: {
+                            "question":
+                                check.question,
+                            "options":
+                                list(
+                                    check.options
+                                ),
+                            "explanation":
+                                check.explanation,
+                        }
+                    )(
+                        learning_check_engine.build(
+                            code=item.code,
+                            input_from=item.input_from,
+                            output_to=item.output_to,
+                        )
                     ),
             }
             for item in items

@@ -102,23 +102,11 @@ def test_learning_page_exposes_human_feedback_endpoint():
     )
 
 
-def test_learning_page_shows_skill_self_assessment():
-    response = client.get("/learn")
-
-    assert response.status_code == 200
-
-    assert "Estás practicando:" in response.text
-    assert "La respondí bien" in response.text
-    assert "Necesito repasarlo" in response.text
-
-
 def test_learning_feedback_buttons_are_visible():
     response = client.get("/learn")
 
     assert response.status_code == 200
 
-    assert "La respondí bien" in response.text
-    assert "Necesito repasarlo" in response.text
 
     assert "color: #171717" in response.text
     assert "background: #ffffff" in response.text
@@ -128,3 +116,23 @@ def test_learning_page_uses_spanish_why_label():
     response = client.get("/learn")
 
     assert "¿Por qué?" in response.text
+
+
+
+def test_learning_page_has_compact_evaluable_check():
+    response = client.get("/learn")
+
+    assert response.status_code == 200
+
+    assert (
+        "Comprueba lo que entendiste"
+        in response.text
+    )
+
+    assert (
+        "/v1/learning/check-answer"
+        in response.text
+    )
+
+    assert "Verificar" in response.text
+    assert "learning-check" in response.text
