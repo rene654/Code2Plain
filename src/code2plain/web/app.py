@@ -613,6 +613,62 @@ const learningEmpty =
     );
 
 
+function getOrCreateLearningUserId() {
+    const storageKey =
+        "code2plain.learning_user_id";
+
+    try {
+        const existing =
+            window.localStorage.getItem(
+                storageKey
+            );
+
+        if (existing) {
+            return existing;
+        }
+
+        const generated =
+            (
+                window.crypto
+                && window.crypto.randomUUID
+            )
+            ? (
+                "anon-"
+                + window.crypto.randomUUID()
+            )
+            : (
+                "anon-"
+                + Date.now().toString(36)
+                + "-"
+                + Math.random()
+                    .toString(36)
+                    .slice(2)
+            );
+
+        window.localStorage.setItem(
+            storageKey,
+            generated
+        );
+
+        return generated;
+
+    } catch (error) {
+        return (
+            "session-"
+            + Date.now().toString(36)
+            + "-"
+            + Math.random()
+                .toString(36)
+                .slice(2)
+        );
+    }
+}
+
+
+const learningUserId =
+    getOrCreateLearningUserId();
+
+
 async function sendLearningFeedback(
     skillId,
     correct,
@@ -628,7 +684,7 @@ async function sendLearningFeedback(
             },
             body: JSON.stringify({
                 user_id:
-                    "default-user",
+                    learningUserId,
                 skill_id:
                     skillId,
                 correct
@@ -1168,7 +1224,7 @@ button.addEventListener(
                                             body:
                                                 JSON.stringify({
                                                     user_id:
-                                                        "default-user",
+                                                        learningUserId,
                                                     skill_id:
                                                         item.skill_id,
                                                     code:

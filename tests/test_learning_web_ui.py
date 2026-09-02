@@ -136,3 +136,40 @@ def test_learning_page_has_compact_evaluable_check():
 
     assert "Verificar" in response.text
     assert "learning-check" in response.text
+
+
+def test_learning_page_uses_persistent_anonymous_identity():
+    response = client.get("/learn")
+
+    assert response.status_code == 200
+
+    assert (
+        "code2plain.learning_user_id"
+        in response.text
+    )
+
+    assert (
+        "getOrCreateLearningUserId"
+        in response.text
+    )
+
+    assert (
+        "localStorage"
+        in response.text
+    )
+
+    assert (
+        "learningUserId"
+        in response.text
+    )
+
+
+def test_learning_page_does_not_share_default_user():
+    response = client.get("/learn")
+
+    assert response.status_code == 200
+
+    assert (
+        "default-user"
+        not in response.text
+    )
