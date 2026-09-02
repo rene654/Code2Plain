@@ -4,6 +4,8 @@ services:
     runtime: python
     plan: free
 
+    branch: refactor/editor-learning-layer
+
     buildCommand: |
       python -m pip install --upgrade pip
       python -m pip install -e .
@@ -14,5 +16,9 @@ services:
         --port $PORT
 
     healthCheckPath: /health
+
+    envVars:
+      - key: CODE2PLAIN_DEMO_SECRET
+        generateValue: true
 
     autoDeploy: true
