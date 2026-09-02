@@ -3,6 +3,7 @@ from uuid import uuid4
 from fastapi.testclient import TestClient
 
 from code2plain.api.app import app
+from tests.demo_test_helper import demo_credentials
 from code2plain.human_skill_memory import (
     human_skill_memory,
 )
@@ -28,11 +29,17 @@ def _user() -> str:
 def test_new_user_receives_full_guidance():
     user_id = _user()
 
+    _, token = demo_credentials(
+        client,
+        user_id,
+    )
+
     response = client.post(
         "/v1/context-block-learn",
         json={
             "code": CODE,
             "user_id": user_id,
+            "demo_token": token,
         },
     )
 
@@ -61,11 +68,17 @@ def test_new_user_receives_full_guidance():
 def test_demonstrated_progress_reduces_help():
     user_id = _user()
 
+    _, token = demo_credentials(
+        client,
+        user_id,
+    )
+
     initial = client.post(
         "/v1/context-block-learn",
         json={
             "code": CODE,
             "user_id": user_id,
+            "demo_token": token,
         },
     ).json()
 
@@ -82,11 +95,17 @@ def test_demonstrated_progress_reduces_help():
             correct=True,
         )
 
+    _, token = demo_credentials(
+        client,
+        user_id,
+    )
+
     response = client.post(
         "/v1/context-block-learn",
         json={
             "code": CODE,
             "user_id": user_id,
+            "demo_token": token,
         },
     )
 
@@ -115,11 +134,17 @@ def test_demonstrated_progress_reduces_help():
 def test_struggling_user_keeps_full_support():
     user_id = _user()
 
+    _, token = demo_credentials(
+        client,
+        user_id,
+    )
+
     initial = client.post(
         "/v1/context-block-learn",
         json={
             "code": CODE,
             "user_id": user_id,
+            "demo_token": token,
         },
     ).json()
 
@@ -135,11 +160,17 @@ def test_struggling_user_keeps_full_support():
         correct=False,
     )
 
+    _, token = demo_credentials(
+        client,
+        user_id,
+    )
+
     response = client.post(
         "/v1/context-block-learn",
         json={
             "code": CODE,
             "user_id": user_id,
+            "demo_token": token,
         },
     )
 
@@ -166,16 +197,15 @@ def test_struggling_user_keeps_full_support():
     assert policy["show_why"] is True
 
 
-def test_request_without_user_still_works():
+def test_request_without_user_is_blocked():
     response = client.post(
         "/v1/context-block-learn",
         json={
-            "code": CODE,
+            "code":
+                CODE,
         },
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 403
 
-    assert response.json()[
-        "total_ideas"
-    ] > 0
+

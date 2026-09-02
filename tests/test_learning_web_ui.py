@@ -210,3 +210,42 @@ def test_learning_page_exposes_visible_adaptive_policy():
         'policy.level'
         in response.text
     )
+
+
+def test_learning_page_exposes_twenty_minute_demo():
+    response = client.get("/learn")
+
+    assert response.status_code == 200
+
+    assert "demoTimer" in response.text
+
+    assert (
+        "/v1/demo/start"
+        in response.text
+    )
+
+    assert (
+        "/v1/demo/status"
+        in response.text
+    )
+
+    assert "demoToken" in response.text
+
+    assert (
+        "Demo 20:00"
+        in response.text
+    )
+
+
+def test_expired_demo_is_not_automatically_reissued():
+    response = client.get("/learn")
+
+    assert response.status_code == 200
+
+    text = response.text
+
+    assert (
+        "An expired token is NOT "
+        "replaced automatically"
+        in text
+    )

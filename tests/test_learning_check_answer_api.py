@@ -1,15 +1,24 @@
 from fastapi.testclient import TestClient
 
 from code2plain.api.app import app
+from tests.demo_test_helper import demo_credentials
 
 
 client = TestClient(app)
 
 
 def test_public_check_does_not_reveal_answer_key():
+    user_id, token = demo_credentials(
+        client
+    )
+
     response = client.post(
         "/v1/context-block-learn",
         json={
+            "user_id":
+                user_id,
+            "demo_token":
+                token,
             "code": (
                 'result = active'
                 '.groupby("customer_id")'
@@ -28,6 +37,11 @@ def test_public_check_does_not_reveal_answer_key():
 
 
 def test_correct_selection_is_verified_server_side():
+    _, token = demo_credentials(
+        client,
+        "quiz-user-correct",
+    )
+
     response = client.post(
         "/v1/learning/check-answer",
         json={
@@ -46,6 +60,8 @@ def test_correct_selection_is_verified_server_side():
                 "result",
             "selected_index":
                 0,
+            "demo_token":
+                token,
         },
     )
 
@@ -58,6 +74,11 @@ def test_correct_selection_is_verified_server_side():
 
 
 def test_wrong_selection_is_verified_server_side():
+    _, token = demo_credentials(
+        client,
+        "quiz-user-wrong",
+    )
+
     response = client.post(
         "/v1/learning/check-answer",
         json={
@@ -76,6 +97,8 @@ def test_wrong_selection_is_verified_server_side():
                 "result",
             "selected_index":
                 2,
+            "demo_token":
+                token,
         },
     )
 
@@ -92,6 +115,11 @@ def test_wrong_selection_is_verified_server_side():
 
 
 def test_invalid_selection_is_rejected():
+    _, token = demo_credentials(
+        client,
+        "quiz-user-invalid",
+    )
+
     response = client.post(
         "/v1/learning/check-answer",
         json={
@@ -107,6 +135,8 @@ def test_invalid_selection_is_rejected():
                 "result",
             "selected_index":
                 9,
+            "demo_token":
+                token,
         },
     )
 

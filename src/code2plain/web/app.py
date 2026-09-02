@@ -77,6 +77,25 @@ def learning_page():
             font-size: 12px;
         }
 
+        .demo-timer {
+            margin-left: auto;
+            margin-right: 10px;
+            padding: 7px 11px;
+            border: 1px solid #e5e5e5;
+            border-radius: 999px;
+            background: #ffffff;
+            color: #404040;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .demo-timer.expired {
+            border-color: #fecaca;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
         .privacy-badge {
             padding: 7px 11px;
             border: 1px solid #e5e5e5;
@@ -511,6 +530,13 @@ def learning_page():
             </div>
         </div>
 
+        <div
+            id="demoTimer"
+            class="demo-timer"
+        >
+            Demo 20:00
+        </div>
+
         <div class="privacy-badge">
             🔒 Código temporal · no almacenado
         </div>
@@ -689,6 +715,220 @@ const learningUserId =
     getOrCreateLearningUserId();
 
 
+const demoTimer =
+    document.getElementById(
+        "demoTimer"
+    );
+
+
+let demoToken = null;
+let demoExpiresAt = null;
+
+
+async function startOrRestoreDemo() {
+    const tokenKey =
+        "code2plain.demo_token";
+
+    const expiryKey =
+        "code2plain.demo_expires_at";
+
+    const storedToken =
+        window.localStorage.getItem(
+            tokenKey
+        );
+
+    const storedExpiry =
+        window.localStorage.getItem(
+            expiryKey
+        );
+
+    if (
+        storedToken
+        && storedExpiry
+    ) {
+        const response =
+            await fetch(
+                "/v1/demo/status",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body:
+                        JSON.stringify({
+                            token:
+                                storedToken
+                        })
+                }
+            );
+
+        const status =
+            await response.json();
+
+        if (
+            response.ok
+            && status.valid
+            && status.user_id
+                === learningUserId
+        ) {
+            demoToken =
+                storedToken;
+
+            demoExpiresAt =
+                status.expires_at;
+
+            return;
+        }
+
+        /*
+        Important:
+        An expired token is NOT replaced automatically.
+        Otherwise refreshing or reopening the browser
+        would create unlimited trials.
+        */
+        if (
+            response.ok
+            && !status.valid
+        ) {
+            demoToken =
+                storedToken;
+
+            demoExpiresAt =
+                storedExpiry;
+
+            return;
+        }
+    }
+
+    const response =
+        await fetch(
+            "/v1/demo/start",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+                body:
+                    JSON.stringify({
+                        user_id:
+                            learningUserId
+                    })
+            }
+        );
+
+    if (!response.ok) {
+        throw new Error(
+            "Could not start demo."
+        );
+    }
+
+    const data =
+        await response.json();
+
+    demoToken =
+        data.token;
+
+    demoExpiresAt =
+        data.expires_at;
+
+    window.localStorage.setItem(
+        tokenKey,
+        demoToken
+    );
+
+    window.localStorage.setItem(
+        expiryKey,
+        demoExpiresAt
+    );
+}
+
+
+function updateDemoTimer() {
+    if (
+        !demoTimer
+        || !demoExpiresAt
+    ) {
+        return;
+    }
+
+    const remaining =
+        Math.max(
+            0,
+            Math.floor(
+                (
+                    new Date(
+                        demoExpiresAt
+                    ).getTime()
+                    - Date.now()
+                )
+                / 1000
+            )
+        );
+
+    const minutes =
+        Math.floor(
+            remaining / 60
+        );
+
+    const seconds =
+        remaining % 60;
+
+    if (remaining > 0) {
+        demoTimer.textContent =
+            "Demo "
+            + String(minutes)
+            + ":"
+            + String(seconds)
+                .padStart(
+                    2,
+                    "0"
+                );
+
+        return;
+    }
+
+    demoTimer.textContent =
+        "Demo terminada";
+
+    demoTimer.classList.add(
+        "expired"
+    );
+
+    button.disabled =
+        true;
+
+    button.textContent =
+        "Demo terminada";
+}
+
+
+startOrRestoreDemo()
+    .then(
+        () => {
+            updateDemoTimer();
+
+            window.setInterval(
+                updateDemoTimer,
+                1000
+            );
+        }
+    )
+    .catch(
+        () => {
+            if (demoTimer) {
+                demoTimer.textContent =
+                    "Demo no disponible";
+
+                demoTimer.classList.add(
+                    "expired"
+                );
+            }
+        }
+    );
+
+
 async function sendLearningFeedback(
     skillId,
     correct,
@@ -768,7 +1008,9 @@ button.addEventListener(
                 : {
                     code: text,
                     user_id:
-                        learningUserId
+                        learningUserId,
+                    demo_token:
+                        demoToken
                 };
 
             const response =
@@ -1260,7 +1502,9 @@ button.addEventListener(
                                                     selected_index:
                                                         Number(
                                                             selected.value
-                                                        )
+                                                        ),
+                                                    demo_token:
+                                                        demoToken
                                                 })
                                         }
                                     );

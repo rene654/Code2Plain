@@ -40,6 +40,9 @@ from code2plain.human_skill_memory import (
 )
 from code2plain.github_file_reader import GitHubFileReader
 from code2plain.version import __version__
+from code2plain.demo_access import (
+    demo_access_service,
+)
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -63,6 +66,20 @@ class GitHubFileLearnRequest(BaseModel):
     )
 
 
+class DemoStartRequest(BaseModel):
+    user_id: str = Field(
+        min_length=1,
+        max_length=128,
+    )
+
+
+class DemoStatusRequest(BaseModel):
+    token: str = Field(
+        min_length=1,
+        max_length=4096,
+    )
+
+
 class LearningCheckAnswerRequest(BaseModel):
     user_id: str = Field(
         min_length=1,
@@ -80,6 +97,10 @@ class LearningCheckAnswerRequest(BaseModel):
     selected_index: int = Field(
         ge=0,
         le=10,
+    )
+    demo_token: str | None = Field(
+        default=None,
+        max_length=4096,
     )
 
 
@@ -105,6 +126,10 @@ class LineByLineRequest(BaseModel):
         min_length=1,
         max_length=128,
     )
+    demo_token: str | None = Field(
+        default=None,
+        max_length=4096,
+    )
 
 
 class GitHubFeedbackRequest(BaseModel):
@@ -126,6 +151,37 @@ class ExplainCodeRequest(BaseModel):
         ),
     )
     language: str = "es"
+
+
+def _require_valid_demo(
+    *,
+    user_id: str | None,
+    token: str | None,
+) -> None:
+    if not token:
+        raise HTTPException(
+            status_code=403,
+            detail="Demo access required.",
+        )
+
+    status = demo_access_service.verify(
+        token
+    )
+
+    if not status.valid:
+        raise HTTPException(
+            status_code=403,
+            detail="Demo expired or invalid.",
+        )
+
+    if (
+        user_id
+        and status.user_id != user_id
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail="Demo token does not match user.",
+        )
 
 
 app = FastAPI(
@@ -165,6 +221,44 @@ def visual_learning_ui() -> FileResponse:
     return FileResponse(
         WEB_DIR / "index.html"
     )
+
+
+@app.post("/v1/demo/start")
+def start_demo(
+    request: DemoStartRequest,
+) -> dict:
+    access = demo_access_service.issue(
+        user_id=request.user_id
+    )
+
+    return {
+        "token":
+            access.token,
+        "expires_at":
+            access.expires_at,
+        "duration_minutes":
+            access.duration_minutes,
+    }
+
+
+@app.post("/v1/demo/status")
+def demo_status(
+    request: DemoStatusRequest,
+) -> dict:
+    status = demo_access_service.verify(
+        request.token
+    )
+
+    return {
+        "valid":
+            status.valid,
+        "user_id":
+            status.user_id,
+        "expires_at":
+            status.expires_at,
+        "remaining_seconds":
+            status.remaining_seconds,
+    }
 
 
 @app.get("/health")
@@ -361,6 +455,11 @@ def learn_github_file(
 def check_learning_answer(
     request: LearningCheckAnswerRequest,
 ) -> dict:
+    _require_valid_demo(
+        user_id=request.user_id,
+        token=request.demo_token,
+    )
+
     check = learning_check_engine.build(
         code=request.code,
         input_from=request.input_from,
@@ -444,6 +543,11 @@ def record_learning_answer(
 def context_block_learn(
     request: LineByLineRequest,
 ) -> dict:
+    _require_valid_demo(
+        user_id=request.user_id,
+        token=request.demo_token,
+    )
+
     items = context_block_teaching.explain(
         request.code
     )

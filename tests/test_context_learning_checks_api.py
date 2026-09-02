@@ -1,15 +1,24 @@
 from fastapi.testclient import TestClient
 
 from code2plain.api.app import app
+from tests.demo_test_helper import demo_credentials
 
 
 client = TestClient(app)
 
 
 def test_context_block_returns_evaluable_check():
+    user_id, token = demo_credentials(
+        client
+    )
+
     response = client.post(
         "/v1/context-block-learn",
         json={
+            "user_id":
+                user_id,
+            "demo_token":
+                token,
             "code": (
                 'result = active'
                 '.groupby("customer_id")'
@@ -32,9 +41,17 @@ def test_context_block_returns_evaluable_check():
 
 
 def test_context_csv_check_has_expected_answer():
+    user_id, token = demo_credentials(
+        client
+    )
+
     response = client.post(
         "/v1/context-block-learn",
         json={
+            "user_id":
+                user_id,
+            "demo_token":
+                token,
             "code":
                 'sales = '
                 'pd.read_csv("sales.csv")'
