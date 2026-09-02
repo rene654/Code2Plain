@@ -58,19 +58,11 @@ def learning_page():
         }
 
         .brand-mark {
-            display: grid;
-            place-items: center;
+            display: block;
             width: 40px;
             height: 40px;
-            border-radius: 12px;
-            background: #171717;
-            color: #ffffff;
-            font-family:
-                "SFMono-Regular",
-                Consolas,
-                monospace;
-            font-size: 14px;
-            font-weight: 800;
+            object-fit: contain;
+            flex: 0 0 auto;
         }
 
         .brand-copy h1 {
@@ -485,9 +477,11 @@ def learning_page():
 <main>
     <header class="app-header">
         <div class="brand-lockup">
-            <div class="brand-mark">
-                C2P
-            </div>
+            <img
+                class="brand-mark"
+                src="/static/brand/code2plain-monogram.png"
+                alt="Code2Plain"
+            >
 
             <div class="brand-copy">
                 <h1>Code2Plain</h1>
