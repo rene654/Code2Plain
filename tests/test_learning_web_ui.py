@@ -173,3 +173,40 @@ def test_learning_page_does_not_share_default_user():
         "default-user"
         not in response.text
     )
+
+
+def test_learning_page_sends_user_identity_for_adaptation():
+    response = client.get("/learn")
+
+    assert response.status_code == 200
+
+    assert (
+        "user_id:"
+        in response.text
+    )
+
+    assert (
+        "learningUserId"
+        in response.text
+    )
+
+
+def test_learning_page_exposes_visible_adaptive_policy():
+    response = client.get("/learn")
+
+    assert response.status_code == 200
+
+    assert (
+        "item.teaching_policy"
+        in response.text
+    )
+
+    assert (
+        "adaptive-note"
+        in response.text
+    )
+
+    assert (
+        'policy.level'
+        in response.text
+    )

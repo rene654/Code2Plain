@@ -184,6 +184,26 @@ def learning_page():
             font-size: 14px;
         }
 
+        .adaptive-note {
+            margin: 8px 0 0;
+            padding: 7px 9px;
+            border-radius: 8px;
+            background: #f7f7f7;
+            color: #525252;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .adaptive-note.reduced {
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .adaptive-note.reinforcement {
+            background: #fff7ed;
+            color: #9a3412;
+        }
+
         .learning-check {
             margin-top: 10px;
             border-top: 1px solid #eeeeee;
@@ -745,7 +765,11 @@ button.addEventListener(
             const requestBody =
                 url
                 ? { url }
-                : { code: text };
+                : {
+                    code: text,
+                    user_id:
+                        learningUserId
+                };
 
             const response =
                 await fetch(
@@ -1295,6 +1319,81 @@ button.addEventListener(
                         );
                     }
 
+                    const policyNote =
+                        document.createElement(
+                            "div"
+                        );
+
+                    policyNote.className =
+                        "adaptive-note";
+
+                    const policy =
+                        item.teaching_policy;
+
+                    if (policy) {
+                        if (
+                            policy.level
+                            === "reduced"
+                        ) {
+                            policyNote.classList.add(
+                                "reduced"
+                            );
+
+                            policyNote.textContent =
+                                policy.message
+                                || (
+                                    "Ya tienes progreso en "
+                                    + "esta habilidad, así que "
+                                    + "reduciré parte de la ayuda."
+                                );
+
+                            why.style.display =
+                                "none";
+
+                            challenge.style.display =
+                                "none";
+                        }
+
+                        if (
+                            policy.level
+                            === "independent"
+                        ) {
+                            policyNote.classList.add(
+                                "reduced"
+                            );
+
+                            policyNote.textContent =
+                                policy.message
+                                || (
+                                    "Esta habilidad ya muestra "
+                                    + "dominio consistente."
+                                );
+
+                            why.style.display =
+                                "none";
+
+                            challenge.style.display =
+                                "none";
+                        }
+
+                        if (
+                            policy.level
+                            === "reinforcement"
+                        ) {
+                            policyNote.classList.add(
+                                "reinforcement"
+                            );
+
+                            policyNote.textContent =
+                                policy.message
+                                || (
+                                    "Esta habilidad necesita "
+                                    + "más práctica, así que "
+                                    + "mantendré la explicación completa."
+                                );
+                        }
+                    }
+
                     element.append(
                         meta,
                         concept,
@@ -1303,6 +1402,15 @@ button.addEventListener(
                         challenge,
                         snippet
                     );
+
+                    if (
+                        policy
+                        && policy.message
+                    ) {
+                        element.append(
+                            policyNote
+                        );
+                    }
 
                     if (
                         item.check

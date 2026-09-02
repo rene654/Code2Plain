@@ -32,6 +32,12 @@ from code2plain.human_skills import (
 from code2plain.learning_checks import (
     learning_check_engine,
 )
+from code2plain.adaptive_teaching_policy import (
+    adaptive_teaching_policy,
+)
+from code2plain.human_skill_memory import (
+    human_skill_memory,
+)
 from code2plain.github_file_reader import GitHubFileReader
 from code2plain.version import __version__
 
@@ -93,6 +99,11 @@ class LineByLineRequest(BaseModel):
     code: str = Field(
         min_length=1,
         max_length=200_000,
+    )
+    user_id: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=128,
     )
 
 
@@ -437,9 +448,46 @@ def context_block_learn(
         request.code
     )
 
-    return {
-        "total_ideas": len(items),
-        "items": [
+    response_items = []
+
+    for item in items:
+        skill_id = primary_human_skill(
+            item.code
+        )
+
+        skill = (
+            get_human_skill(skill_id)
+            if skill_id
+            else None
+        )
+
+        policy = None
+
+        if (
+            request.user_id
+            and skill_id
+            and skill is not None
+        ):
+            progress = human_skill_memory.get(
+                user_id=request.user_id,
+                skill_id=skill_id,
+            )
+
+            policy = (
+                adaptive_teaching_policy.decide(
+                    seen=progress.seen,
+                    correct=progress.correct,
+                    incorrect=progress.incorrect,
+                )
+            )
+
+        check = learning_check_engine.build(
+            code=item.code,
+            input_from=item.input_from,
+            output_to=item.output_to,
+        )
+
+        response_items.append(
             {
                 "start_line":
                     item.start_line,
@@ -458,43 +506,51 @@ def context_block_learn(
                 "experiment":
                     item.experiment,
                 "skill_id":
-                    primary_human_skill(
-                        item.code
-                    ),
+                    skill_id,
                 "skill_name":
                     (
-                        get_human_skill(
-                            primary_human_skill(
-                                item.code
-                            )
-                        ).name
-                        if primary_human_skill(
-                            item.code
-                        )
+                        skill.name
+                        if skill
+                        else None
+                    ),
+                "teaching_policy":
+                    (
+                        {
+                            "level":
+                                policy.level,
+                            "explanation_depth":
+                                policy.explanation_depth,
+                            "show_why":
+                                policy.show_why,
+                            "show_input_output":
+                                policy.show_input_output,
+                            "show_experiment":
+                                policy.show_experiment,
+                            "require_check":
+                                policy.require_check,
+                            "message":
+                                policy.message,
+                        }
+                        if policy
                         else None
                     ),
                 "check":
-                    (
-                        lambda check: {
-                            "question":
-                                check.question,
-                            "options":
-                                list(
-                                    check.options
-                                ),
-                            "explanation":
-                                check.explanation,
-                        }
-                    )(
-                        learning_check_engine.build(
-                            code=item.code,
-                            input_from=item.input_from,
-                            output_to=item.output_to,
-                        )
-                    ),
+                    {
+                        "question":
+                            check.question,
+                        "options":
+                            list(
+                                check.options
+                            ),
+                    },
             }
-            for item in items
-        ],
+        )
+
+    return {
+        "total_ideas": len(
+            response_items
+        ),
+        "items": response_items,
     }
 
 

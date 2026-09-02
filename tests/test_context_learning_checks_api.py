@@ -28,8 +28,7 @@ def test_context_block_returns_evaluable_check():
     assert len(check["options"]) == 3
 
     assert "correct_index" not in check
-
-    assert check["explanation"]
+    assert "explanation" not in check
 
 
 def test_context_csv_check_has_expected_answer():
