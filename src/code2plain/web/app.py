@@ -77,6 +77,24 @@ def learning_page():
             font-size: 12px;
         }
 
+        .owner-access-button {
+            margin: 0;
+            padding: 7px 10px;
+            border: 1px solid #e5e5e5;
+            border-radius: 999px;
+            background: #ffffff;
+            color: #525252;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .owner-access-button.active {
+            background: #171717;
+            color: #ffffff;
+            border-color: #171717;
+        }
+
         .demo-timer {
             margin-left: auto;
             margin-right: 10px;
@@ -530,6 +548,14 @@ def learning_page():
             </div>
         </div>
 
+        <button
+            id="ownerAccessButton"
+            class="owner-access-button"
+            type="button"
+        >
+            Owner
+        </button>
+
         <div
             id="demoTimer"
             class="demo-timer"
@@ -724,6 +750,156 @@ const demoTimer =
 let demoToken = null;
 let demoExpiresAt = null;
 
+let ownerToken = null;
+
+
+const ownerAccessButton =
+    document.getElementById(
+        "ownerAccessButton"
+    );
+
+
+async function restoreOwnerSession() {
+    const key =
+        "code2plain.owner_token";
+
+    const storedToken =
+        window.localStorage.getItem(
+            key
+        );
+
+    if (!storedToken) {
+        return false;
+    }
+
+    const response =
+        await fetch(
+            "/v1/owner/status",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+                body:
+                    JSON.stringify({
+                        token:
+                            storedToken
+                    })
+            }
+        );
+
+    if (!response.ok) {
+        window.localStorage.removeItem(
+            key
+        );
+
+        return false;
+    }
+
+    const status =
+        await response.json();
+
+    if (!status.valid) {
+        window.localStorage.removeItem(
+            key
+        );
+
+        return false;
+    }
+
+    ownerToken =
+        storedToken;
+
+    if (ownerAccessButton) {
+        ownerAccessButton.textContent =
+            "Owner mode";
+
+        ownerAccessButton.classList.add(
+            "active"
+        );
+    }
+
+    return true;
+}
+
+
+async function loginOwner() {
+    const credential =
+        window.prompt(
+            "Owner access"
+        );
+
+    if (!credential) {
+        return;
+    }
+
+    const response =
+        await fetch(
+            "/v1/owner/login",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+                body:
+                    JSON.stringify({
+                        credential
+                    })
+            }
+        );
+
+    if (!response.ok) {
+        window.alert(
+            "Credencial incorrecta."
+        );
+
+        return;
+    }
+
+    const data =
+        await response.json();
+
+    ownerToken =
+        data.token;
+
+    window.localStorage.setItem(
+        "code2plain.owner_token",
+        ownerToken
+    );
+
+    if (ownerAccessButton) {
+        ownerAccessButton.textContent =
+            "Owner mode";
+
+        ownerAccessButton.classList.add(
+            "active"
+        );
+    }
+
+    demoTimer.textContent =
+        "Acceso completo";
+
+    demoTimer.classList.remove(
+        "expired"
+    );
+
+    button.disabled =
+        false;
+
+    button.textContent =
+        "Explicar código";
+}
+
+
+if (ownerAccessButton) {
+    ownerAccessButton.addEventListener(
+        "click",
+        loginOwner
+    );
+}
+
 
 async function startOrRestoreDemo() {
     const tokenKey =
@@ -846,6 +1022,20 @@ async function startOrRestoreDemo() {
 
 
 function updateDemoTimer() {
+    if (ownerToken) {
+        demoTimer.textContent =
+            "Acceso completo";
+
+        demoTimer.classList.remove(
+            "expired"
+        );
+
+        button.disabled =
+            false;
+
+        return;
+    }
+
     if (
         !demoTimer
         || !demoExpiresAt
@@ -904,15 +1094,34 @@ function updateDemoTimer() {
 }
 
 
-startOrRestoreDemo()
+restoreOwnerSession()
     .then(
-        () => {
-            updateDemoTimer();
+        ownerActive => {
+            if (ownerActive) {
+                demoTimer.textContent =
+                    "Acceso completo";
 
-            window.setInterval(
-                updateDemoTimer,
-                1000
-            );
+                updateDemoTimer();
+
+                window.setInterval(
+                    updateDemoTimer,
+                    1000
+                );
+
+                return;
+            }
+
+            return startOrRestoreDemo()
+                .then(
+                    () => {
+                        updateDemoTimer();
+
+                        window.setInterval(
+                            updateDemoTimer,
+                            1000
+                        );
+                    }
+                );
         }
     )
     .catch(
@@ -1010,7 +1219,9 @@ button.addEventListener(
                     user_id:
                         learningUserId,
                     demo_token:
-                        demoToken
+                        demoToken,
+                    owner_token:
+                        ownerToken
                 };
 
             const response =
@@ -1504,7 +1715,9 @@ button.addEventListener(
                                                             selected.value
                                                         ),
                                                     demo_token:
-                                                        demoToken
+                                                        demoToken,
+                                                    owner_token:
+                                                        ownerToken
                                                 })
                                         }
                                     );

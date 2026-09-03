@@ -43,6 +43,9 @@ from code2plain.version import __version__
 from code2plain.demo_access import (
     demo_access_service,
 )
+from code2plain.owner_access import (
+    owner_access_service,
+)
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -63,6 +66,20 @@ class GitHubFileLearnRequest(BaseModel):
     url: str = Field(
         min_length=10,
         max_length=2000,
+    )
+
+
+class OwnerLoginRequest(BaseModel):
+    credential: str = Field(
+        min_length=1,
+        max_length=4096,
+    )
+
+
+class OwnerStatusRequest(BaseModel):
+    token: str = Field(
+        min_length=1,
+        max_length=4096,
     )
 
 
@@ -102,6 +119,10 @@ class LearningCheckAnswerRequest(BaseModel):
         default=None,
         max_length=4096,
     )
+    owner_token: str | None = Field(
+        default=None,
+        max_length=4096,
+    )
 
 
 class HumanLearningAnswerRequest(BaseModel):
@@ -130,6 +151,10 @@ class LineByLineRequest(BaseModel):
         default=None,
         max_length=4096,
     )
+    owner_token: str | None = Field(
+        default=None,
+        max_length=4096,
+    )
 
 
 class GitHubFeedbackRequest(BaseModel):
@@ -153,22 +178,32 @@ class ExplainCodeRequest(BaseModel):
     language: str = "es"
 
 
-def _require_valid_demo(
+def _require_valid_access(
     *,
     user_id: str | None,
-    token: str | None,
+    demo_token: str | None,
+    owner_token: str | None,
 ) -> None:
-    if not token:
-        raise HTTPException(
-            status_code=403,
-            detail="Demo access required.",
+    owner_status = (
+        owner_access_service.verify_session(
+            owner_token
         )
-
-    status = demo_access_service.verify(
-        token
     )
 
-    if not status.valid:
+    if owner_status.valid:
+        return
+
+    if not demo_token:
+        raise HTTPException(
+            status_code=403,
+            detail="Valid demo or owner access required.",
+        )
+
+    demo_status = demo_access_service.verify(
+        demo_token
+    )
+
+    if not demo_status.valid:
         raise HTTPException(
             status_code=403,
             detail="Demo expired or invalid.",
@@ -176,7 +211,7 @@ def _require_valid_demo(
 
     if (
         user_id
-        and status.user_id != user_id
+        and demo_status.user_id != user_id
     ):
         raise HTTPException(
             status_code=403,
@@ -221,6 +256,44 @@ def visual_learning_ui() -> FileResponse:
     return FileResponse(
         WEB_DIR / "index.html"
     )
+
+
+@app.post("/v1/owner/login")
+def owner_login(
+    request: OwnerLoginRequest,
+) -> dict:
+    session = owner_access_service.issue_session(
+        request.credential
+    )
+
+    if session is None:
+        raise HTTPException(
+            status_code=403,
+            detail="Invalid owner credential.",
+        )
+
+    return {
+        "token":
+            session.token,
+        "expires_at":
+            session.expires_at,
+    }
+
+
+@app.post("/v1/owner/status")
+def owner_status(
+    request: OwnerStatusRequest,
+) -> dict:
+    status = owner_access_service.verify_session(
+        request.token
+    )
+
+    return {
+        "valid":
+            status.valid,
+        "expires_at":
+            status.expires_at,
+    }
 
 
 @app.post("/v1/demo/start")
@@ -455,9 +528,10 @@ def learn_github_file(
 def check_learning_answer(
     request: LearningCheckAnswerRequest,
 ) -> dict:
-    _require_valid_demo(
+    _require_valid_access(
         user_id=request.user_id,
-        token=request.demo_token,
+        demo_token=request.demo_token,
+        owner_token=request.owner_token,
     )
 
     check = learning_check_engine.build(
@@ -543,9 +617,10 @@ def record_learning_answer(
 def context_block_learn(
     request: LineByLineRequest,
 ) -> dict:
-    _require_valid_demo(
+    _require_valid_access(
         user_id=request.user_id,
-        token=request.demo_token,
+        demo_token=request.demo_token,
+        owner_token=request.owner_token,
     )
 
     items = context_block_teaching.explain(

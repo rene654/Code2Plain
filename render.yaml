@@ -21,4 +21,10 @@ services:
       - key: CODE2PLAIN_DEMO_SECRET
         generateValue: true
 
+      - key: CODE2PLAIN_OWNER_SECRET
+        sync: false
+
+      - key: CODE2PLAIN_OWNER_SIGNING_SECRET
+        generateValue: true
+
     autoDeploy: true

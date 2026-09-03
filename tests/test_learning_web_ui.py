@@ -249,3 +249,23 @@ def test_expired_demo_is_not_automatically_reissued():
         "replaced automatically"
         in text
     )
+
+
+def test_learning_page_exposes_owner_mode():
+    response = client.get("/learn")
+
+    assert response.status_code == 200
+
+    assert "ownerAccessButton" in response.text
+    assert "/v1/owner/login" in response.text
+    assert "/v1/owner/status" in response.text
+    assert "ownerToken" in response.text
+    assert "Acceso completo" in response.text
+
+
+def test_learning_page_sends_owner_token():
+    response = client.get("/learn")
+
+    assert response.status_code == 200
+
+    assert "owner_token" in response.text
