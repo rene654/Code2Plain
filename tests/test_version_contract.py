@@ -4,9 +4,9 @@ from code2plain.api.app import app
 from code2plain.version import __version__
 
 
-def test_code2plain_version_is_v1_1_0():
+def test_code2plain_version_is_v1_2_0():
 
-    assert __version__ == "1.1.2"
+    assert __version__ == "1.2.0"
 
 
 def test_fastapi_version_matches_product_version():
