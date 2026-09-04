@@ -896,6 +896,267 @@ def learning_page():
             }
         }
 
+
+        /* CODE2PLAIN PREMIUM LEARNING CARDS */
+
+        .item {
+            margin: 10px 0;
+            padding: 13px 15px;
+
+            border:
+                1px solid
+                var(--c2p-border);
+
+            border-left:
+                3px solid
+                var(--c2p-cyan);
+
+            border-radius: 12px;
+
+            background:
+                var(--c2p-surface);
+
+            box-shadow:
+                0 3px 12px
+                rgba(15, 23, 42, 0.025);
+        }
+
+        .meta {
+            align-items: center;
+            color: var(--c2p-muted);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+        }
+
+        .concept {
+            margin-top: 4px;
+            gap: 5px;
+            color: var(--c2p-navy);
+            font-size: 13px;
+            font-weight: 750;
+            line-height: 1.35;
+        }
+
+        .concept-chip {
+            padding: 2px 6px;
+
+            border:
+                1px solid
+                rgba(6, 182, 212, 0.18);
+
+            border-radius: 999px;
+
+            background:
+                var(--c2p-cyan-soft);
+
+            color:
+                var(--c2p-navy-soft);
+
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .explanation {
+            margin-top: 5px;
+            color: var(--c2p-text);
+            font-size: 14px;
+            line-height: 1.48;
+            letter-spacing: -0.01em;
+        }
+
+        .code {
+            margin-top: 8px;
+            padding: 8px 10px;
+
+            overflow-x: auto;
+
+            border:
+                1px solid
+                var(--c2p-border);
+
+            border-radius: 8px;
+
+            background:
+                var(--c2p-surface-soft);
+
+            color:
+                var(--c2p-navy-soft);
+
+            font-size: 11px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .code2plain-code-highlight {
+            padding: 1px 2px;
+            border-radius: 3px;
+            background:
+                rgba(6, 182, 212, 0.08);
+        }
+
+        .item > details:not(.learning-check) {
+            margin-top: 6px;
+            color: var(--c2p-muted);
+        }
+
+        .item > details:not(.learning-check) summary {
+            color: var(--c2p-muted);
+            font-size: 11px;
+            font-weight: 650;
+            opacity: 1;
+        }
+
+        .challenge {
+            margin-top: 6px;
+            color: var(--c2p-muted);
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        .adaptive-note {
+            margin-top: 7px;
+            padding: 6px 8px;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .learning-check {
+            margin-top: 9px;
+            padding-top: 8px;
+
+            border-top:
+                1px solid
+                var(--c2p-border);
+        }
+
+        .learning-check summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+
+            color:
+                var(--c2p-navy-soft);
+
+            font-size: 11px;
+            font-weight: 700;
+            opacity: 1;
+        }
+
+        .learning-check summary::after {
+            margin-left: auto;
+            color: var(--c2p-muted);
+            font-size: 10px;
+        }
+
+        .learning-check[open] summary {
+            color: var(--c2p-navy);
+        }
+
+        .learning-check-body {
+            margin-top: 8px;
+            padding: 9px 10px;
+
+            border:
+                1px solid
+                var(--c2p-border);
+
+            border-radius: 9px;
+
+            background:
+                var(--c2p-surface-soft);
+        }
+
+        .learning-check-question {
+            margin-bottom: 7px;
+
+            color: var(--c2p-navy);
+
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+        .learning-check-option {
+            margin: 3px 0;
+            padding: 5px 6px;
+
+            border-radius: 7px;
+
+            color:
+                var(--c2p-navy-soft);
+
+            font-size: 10px;
+            line-height: 1.35;
+
+            transition:
+                background 120ms ease;
+        }
+
+        .learning-check-option:hover {
+            background: #ffffff;
+        }
+
+        .learning-check-option input {
+            flex: 0 0 auto;
+            margin-top: 2px;
+        }
+
+        .learning-check-verify {
+            margin-top: 7px;
+            padding: 7px 10px;
+
+            border-radius: 7px;
+
+            background:
+                var(--c2p-navy);
+
+            font-size: 10px;
+        }
+
+        .learning-check-result {
+            margin-top: 7px;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 640px) {
+            .item {
+                margin: 8px 0;
+                padding: 11px 12px;
+                border-radius: 11px;
+            }
+
+            .concept {
+                font-size: 12px;
+            }
+
+            .explanation {
+                font-size: 13px;
+                line-height: 1.45;
+            }
+
+            .code {
+                padding: 7px 9px;
+                font-size: 11px;
+            }
+
+            .challenge {
+                font-size: 10px;
+            }
+
+            .learning-check {
+                margin-top: 8px;
+                padding-top: 7px;
+            }
+
+            .learning-check-body {
+                padding: 8px;
+            }
+        }
+
 </style>
 </head>
 
@@ -1114,6 +1375,48 @@ const demoTimer =
     document.getElementById(
         "demoTimer"
     );
+
+
+
+document.addEventListener(
+    "click",
+    (event) => {
+        if (
+            !(event.target instanceof Element)
+        ) {
+            return;
+        }
+
+        const summary =
+            event.target.closest(
+                ".learning-check > summary"
+            );
+
+        if (!summary) {
+            return;
+        }
+
+        const currentCheck =
+            summary.parentElement;
+
+        document
+            .querySelectorAll(
+                ".learning-check[open]"
+            )
+            .forEach(
+                (check) => {
+                    if (
+                        check
+                        !== currentCheck
+                    ) {
+                        check.removeAttribute(
+                            "open"
+                        );
+                    }
+                }
+            );
+    }
+);
 
 
 let demoToken = null;
