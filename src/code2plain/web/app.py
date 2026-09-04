@@ -813,7 +813,7 @@ async function restoreOwnerSession() {
 
     if (ownerAccessButton) {
         ownerAccessButton.textContent =
-            "Owner mode";
+            "Exit Owner";
 
         ownerAccessButton.classList.add(
             "active"
@@ -821,6 +821,58 @@ async function restoreOwnerSession() {
     }
 
     return true;
+}
+
+
+async function exitOwner() {
+    const key =
+        "code2plain.owner_token";
+
+    ownerToken = null;
+
+    window.localStorage.removeItem(
+        key
+    );
+
+    if (ownerAccessButton) {
+        ownerAccessButton.textContent =
+            "Owner";
+
+        ownerAccessButton.classList.remove(
+            "active"
+        );
+    }
+
+    demoToken = null;
+    demoExpiresAt = null;
+
+    try {
+        await startOrRestoreDemo();
+    } catch (error) {
+        demoTimer.textContent =
+            "Demo unavailable";
+
+        demoTimer.classList.add(
+            "expired"
+        );
+
+        button.disabled =
+            true;
+
+        return;
+    }
+
+    updateDemoTimer();
+}
+
+
+async function handleOwnerAccess() {
+    if (ownerToken) {
+        await exitOwner();
+        return;
+    }
+
+    await loginOwner();
 }
 
 
@@ -871,7 +923,7 @@ async function loginOwner() {
 
     if (ownerAccessButton) {
         ownerAccessButton.textContent =
-            "Owner mode";
+            "Exit Owner";
 
         ownerAccessButton.classList.add(
             "active"
@@ -896,7 +948,7 @@ async function loginOwner() {
 if (ownerAccessButton) {
     ownerAccessButton.addEventListener(
         "click",
-        loginOwner
+        handleOwnerAccess
     );
 }
 
