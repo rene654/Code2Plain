@@ -78,3 +78,35 @@ def test_mcp_routes_to_requested_session(
         latest["explanation"]["language"]
         == "fr"
     )
+
+
+def test_mcp_line_by_line_contract():
+    from code2plain.mcp.server import (
+        explain_line_by_line,
+    )
+
+    result = explain_line_by_line(
+        'active = sales['
+        'sales["status"] == "active"]\n'
+        'result = active.groupby("customer_id")'
+        '["amount"].sum()'
+    )
+
+    assert result["explained_lines"] == 2
+    assert result["items"]
+
+    concepts = {
+        item["concept"]
+        for item in result["items"]
+        if item["concept"]
+    }
+
+    assert any(
+        "FILTER" in concept
+        for concept in concepts
+    )
+
+    assert any(
+        "GROUP" in concept
+        for concept in concepts
+    )

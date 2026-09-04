@@ -194,7 +194,7 @@ def test_latest_after_is_session_scoped(
     )
 
 
-def test_old_database_is_migrated(
+def test_legacy_database_is_not_loaded_into_ephemeral_store(
     tmp_path,
 ):
     import sqlite3
@@ -242,16 +242,12 @@ def test_old_database_is_migrated(
         database
     )
 
-    latest = store.latest()
+    # Privacy boundary:
+    # legacy persistent payloads are NOT restored.
+    assert store.latest() is None
 
-    assert latest is not None
+    # Existing legacy DB is left untouched;
+    # the ephemeral store does not write to it.
+    assert database.exists()
 
-    assert (
-        latest["session_id"]
-        == "default"
-    )
 
-    assert (
-        latest["explanation"]["summary"]
-        == "Legacy"
-    )
