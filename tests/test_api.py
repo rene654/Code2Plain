@@ -15,7 +15,7 @@ def test_health_endpoint():
 
     assert data["status"] == "ok"
     assert data["service"] == "code2plain"
-    assert data["version"] == "1.2.0"
+    assert data["version"] == "1.2.1"
 
 
 def test_explain_endpoint():

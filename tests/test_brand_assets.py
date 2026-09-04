@@ -28,4 +28,4 @@ def test_index_uses_code2plain_brand():
     assert "code2plain-monogram.png" in text
     assert "code2plain-wordmark.png" in text
     assert "code2plain-app-icon.png" in text
-    assert "Code2Plain v1.2.0" in text
+    assert "Code2Plain v1.2.1" in text
