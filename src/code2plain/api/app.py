@@ -170,6 +170,7 @@ class ExplainCodeRequest(BaseModel):
     code: str = Field(
         ...,
         min_length=1,
+        max_length=200_000,
         description=(
             "Source code that Code2Plain "
             "should explain."

@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
 
-    branch: refactor/editor-learning-layer
+    branch: main
 
     buildCommand: |
       python -m pip install --upgrade pip
@@ -13,7 +13,8 @@ services:
     startCommand: |
       uvicorn code2plain.deployment:app \
         --host 0.0.0.0 \
-        --port $PORT
+        --port $PORT \
+        --limit-concurrency 20
 
     healthCheckPath: /health
 
