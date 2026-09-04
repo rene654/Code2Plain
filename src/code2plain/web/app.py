@@ -527,7 +527,376 @@ def learning_page():
         .empty {
             color: #737373;
         }
-    </style>
+
+        /* CODE2PLAIN PROFESSIONAL UI SYSTEM */
+
+        :root {
+            --c2p-navy: #0f172a;
+            --c2p-navy-soft: #1e293b;
+            --c2p-cyan: #06b6d4;
+            --c2p-cyan-soft: #ecfeff;
+            --c2p-ivory: #faf9f6;
+            --c2p-surface: #ffffff;
+            --c2p-surface-soft: #f8fafc;
+            --c2p-border: #e2e8f0;
+            --c2p-border-strong: #cbd5e1;
+            --c2p-text: #0f172a;
+            --c2p-muted: #64748b;
+            --c2p-danger: #b91c1c;
+            --c2p-success: #166534;
+            --c2p-radius-lg: 18px;
+            --c2p-radius-md: 12px;
+            --c2p-shadow:
+                0 18px 50px rgba(15, 23, 42, 0.06);
+        }
+
+        body {
+            background:
+                radial-gradient(
+                    circle at top,
+                    rgba(6, 182, 212, 0.055),
+                    transparent 34%
+                ),
+                var(--c2p-ivory);
+            color: var(--c2p-text);
+        }
+
+        .app-shell {
+            max-width: 1480px;
+            margin: 0 auto;
+            padding:
+                28px
+                clamp(18px, 3vw, 42px)
+                42px;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 22px;
+            padding: 4px 2px;
+        }
+
+        .brand {
+            min-width: 0;
+            margin-right: auto;
+        }
+
+        .brand-copy h1 {
+            color: var(--c2p-navy);
+            letter-spacing: -0.035em;
+        }
+
+        .brand-copy p {
+            color: var(--c2p-muted);
+        }
+
+        .owner-access-button,
+        .demo-timer,
+        .privacy-badge {
+            flex: 0 0 auto;
+            min-height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-color: var(--c2p-border);
+            box-shadow:
+                0 1px 2px rgba(15, 23, 42, 0.025);
+        }
+
+        .owner-access-button {
+            transition:
+                transform 150ms ease,
+                border-color 150ms ease,
+                background 150ms ease,
+                box-shadow 150ms ease;
+        }
+
+        .owner-access-button:hover {
+            transform: translateY(-1px);
+            border-color: var(--c2p-border-strong);
+            box-shadow:
+                0 4px 12px rgba(15, 23, 42, 0.07);
+        }
+
+        .owner-access-button.active {
+            background: var(--c2p-navy);
+            border-color: var(--c2p-navy);
+        }
+
+        .demo-timer {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .workspace {
+            grid-template-columns:
+                minmax(340px, 0.92fr)
+                minmax(440px, 1.08fr);
+            gap: 20px;
+        }
+
+        .workspace-panel {
+            border-color: var(--c2p-border);
+            border-radius: var(--c2p-radius-lg);
+            box-shadow: var(--c2p-shadow);
+        }
+
+        .panel-header {
+            min-height: 56px;
+            padding: 0 20px;
+            border-bottom-color: var(--c2p-border);
+            background:
+                linear-gradient(
+                    180deg,
+                    #ffffff,
+                    #fdfefe
+                );
+        }
+
+        .panel-title {
+            color: var(--c2p-navy);
+            font-size: 13px;
+            font-weight: 750;
+            letter-spacing: -0.01em;
+        }
+
+        .panel-kicker {
+            color: var(--c2p-muted);
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .source-panel-body {
+            padding: 20px;
+        }
+
+        .learning-panel-body {
+            min-height: 440px;
+            padding: 10px 16px 16px;
+        }
+
+        .learning-empty {
+            min-height: 360px;
+            padding: 36px;
+        }
+
+        input[type="url"],
+        textarea {
+            border-color: var(--c2p-border-strong);
+            background: #ffffff;
+            transition:
+                border-color 150ms ease,
+                box-shadow 150ms ease;
+        }
+
+        input[type="url"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--c2p-cyan);
+            box-shadow:
+                0 0 0 3px rgba(6, 182, 212, 0.12);
+        }
+
+        textarea {
+            min-height: 250px;
+            margin-top: 16px;
+            padding: 18px;
+            border-radius: var(--c2p-radius-md);
+            line-height: 1.55;
+        }
+
+        #learn {
+            min-height: 42px;
+            padding: 11px 18px;
+            border-radius: 10px;
+            background: var(--c2p-navy);
+            box-shadow:
+                0 5px 14px rgba(15, 23, 42, 0.14);
+            transition:
+                transform 150ms ease,
+                box-shadow 150ms ease,
+                opacity 150ms ease;
+        }
+
+        #learn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow:
+                0 8px 18px rgba(15, 23, 42, 0.18);
+        }
+
+        #learn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .privacy-note {
+            border-color: var(--c2p-border);
+            background: var(--c2p-surface-soft);
+            color: var(--c2p-muted);
+        }
+
+        .learning-card {
+            border-color: var(--c2p-border);
+            border-radius: 14px;
+            background: var(--c2p-surface);
+            box-shadow:
+                0 4px 16px rgba(15, 23, 42, 0.035);
+        }
+
+        .learning-check-body {
+            border-color: var(--c2p-border);
+            background: var(--c2p-surface-soft);
+        }
+
+        @media (max-width: 1100px) {
+            .app-shell {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .workspace {
+                grid-template-columns:
+                    minmax(320px, 0.95fr)
+                    minmax(400px, 1.05fr);
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .app-shell {
+                padding:
+                    20px
+                    18px
+                    32px;
+            }
+
+            .app-header {
+                display: grid;
+                grid-template-columns:
+                    1fr auto auto;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 18px;
+            }
+
+            .brand {
+                grid-column: 1 / -1;
+                margin-bottom: 4px;
+            }
+
+            .workspace {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            textarea {
+                min-height: 220px;
+            }
+
+            .learning-panel-body {
+                min-height: 320px;
+            }
+
+            .learning-empty {
+                min-height: 260px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .app-shell {
+                padding:
+                    14px
+                    12px
+                    26px;
+            }
+
+            .app-header {
+                grid-template-columns:
+                    auto
+                    1fr;
+                gap: 8px;
+            }
+
+            .brand {
+                grid-column: 1 / -1;
+            }
+
+            .owner-access-button {
+                grid-column: 1;
+                min-width: 76px;
+            }
+
+            .demo-timer {
+                grid-column: 2;
+                justify-self: start;
+            }
+
+            .privacy-badge {
+                grid-column: 1 / -1;
+                justify-self: stretch;
+                text-align: center;
+                white-space: normal;
+            }
+
+            .workspace-panel {
+                border-radius: 14px;
+            }
+
+            .panel-header {
+                min-height: 50px;
+                padding: 0 15px;
+            }
+
+            .source-panel-body {
+                padding: 14px;
+            }
+
+            textarea {
+                min-height: 190px;
+                padding: 15px;
+                font-size: 13px;
+            }
+
+            #learn {
+                width: 100%;
+                min-height: 44px;
+            }
+
+            .privacy-note {
+                margin-top: 10px;
+            }
+
+            .learning-panel-body {
+                min-height: 260px;
+                padding:
+                    8px
+                    12px
+                    12px;
+            }
+
+            .learning-empty {
+                min-height: 210px;
+                padding: 24px 18px;
+            }
+        }
+
+        @media (max-width: 390px) {
+            .panel-kicker {
+                max-width: 130px;
+                text-align: right;
+            }
+
+            .owner-access-button,
+            .demo-timer,
+            .privacy-badge {
+                font-size: 10px;
+            }
+        }
+
+</style>
 </head>
 
 <body>
