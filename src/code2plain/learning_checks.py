@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+
 from dataclasses import dataclass
 
 
@@ -21,6 +23,70 @@ class LearningCheckEngine:
     """
 
     def build(
+        self,
+        *,
+        code: str,
+        input_from: str | None,
+        output_to: str | None,
+    ) -> LearningCheck:
+        """
+        Build a check with a stable but varied option order.
+
+        The API rebuilds the same check when an answer is
+        verified, so ordinary random shuffling would make
+        selected_index unreliable.
+        """
+        check = self._build_unordered(
+            code=code,
+            input_from=input_from,
+            output_to=output_to,
+        )
+
+        # STABLE OPTION ORDER
+        option_count = len(check.options)
+
+        if option_count <= 1:
+            return check
+
+        fingerprint = "\x1f".join(
+            (
+                code.strip(),
+                input_from or "",
+                output_to or "",
+                check.question,
+            )
+        )
+
+        digest = hashlib.sha256(
+            fingerprint.encode("utf-8")
+        ).digest()
+
+        rotation = (
+            int.from_bytes(
+                digest[:2],
+                "big",
+            )
+            % option_count
+        )
+
+        reordered_options = (
+            check.options[rotation:]
+            + check.options[:rotation]
+        )
+
+        reordered_correct_index = (
+            check.correct_index
+            - rotation
+        ) % option_count
+
+        return LearningCheck(
+            question=check.question,
+            options=reordered_options,
+            correct_index=reordered_correct_index,
+            explanation=check.explanation,
+        )
+
+    def _build_unordered(
         self,
         *,
         code: str,

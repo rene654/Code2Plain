@@ -29,9 +29,10 @@ def test_read_csv_has_evaluable_answer():
         output_to="sales",
     )
 
-    assert check.correct_index == 0
     assert "nuevo archivo" in (
-        check.options[0]
+        check.options[
+            check.correct_index
+        ]
     )
 
 
@@ -64,9 +65,10 @@ def test_groupby_has_evaluable_answer():
         output_to="result",
     )
 
-    assert check.correct_index == 0
     assert "grupos diferentes" in (
-        check.options[0]
+        check.options[
+            check.correct_index
+        ]
     )
 
 
