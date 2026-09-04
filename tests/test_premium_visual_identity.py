@@ -12,79 +12,88 @@ def _source() -> str:
     )
 
 
-def _identity() -> str:
+def _shell() -> str:
     source = _source()
 
     return source.split(
-        "CODE2PLAIN PREMIUM VISUAL IDENTITY",
+        "CODE2PLAIN PREMIUM APP SHELL 178C",
         1,
     )[1]
 
 
-def test_reference_palette_is_present():
-    identity = _identity()
+def test_real_app_shell_is_attached_to_main():
+    source = _source()
+
+    assert (
+        '<main class="app-shell">'
+        in source
+    )
+
+
+def test_product_strip_gives_workspace_identity():
+    source = _source()
+
+    assert (
+        'class="product-strip"'
+        in source
+    )
+
+    assert (
+        "De código a comprensión real."
+        in source
+    )
+
+    assert (
+        "AI-assisted learning workspace"
+        in source
+    )
+
+
+def test_code_input_is_rendered_as_editor_shell():
+    source = _source()
+
+    assert (
+        'class="code-editor-shell"'
+        in source
+    )
+
+    assert (
+        'class="code-editor-toolbar"'
+        in source
+    )
+
+    assert "main.py" in source
+    assert "Python · Ready" in source
+
+
+def test_reference_blue_navy_palette_is_preserved():
+    shell = _shell()
 
     for color in (
         "#081f46",
-        "#163470",
+        "#04142f",
         "#1165e7",
-        "#2c4f91",
-        "#a3bbe3",
-        "#eaf0f9",
         "#1aa8d9",
     ):
-        assert color in identity
+        assert color in shell
 
 
-def test_primary_action_is_full_width_blue_cta():
-    identity = _identity()
+def test_learning_results_have_timeline():
+    shell = _shell()
 
-    learn = identity.split(
-        "#learn {",
-        1,
-    )[1].split(
-        "}",
-        1,
-    )[0]
-
-    assert "width: 100%;" in learn
-    assert "#1165e7" in learn
-    assert "linear-gradient" in learn
+    assert "#results::before" in shell
+    assert "counter-reset:" in shell
+    assert ".item::before" in shell
+    assert "counter-increment:" in shell
 
 
-def test_header_has_premium_surface():
-    identity = _identity()
+def test_mobile_keeps_dark_technology_background():
+    shell = _shell()
 
-    header = identity.split(
-        ".app-header {",
-        1,
-    )[1].split(
-        "}",
-        1,
-    )[0]
+    assert (
+        "@media (max-width: 640px)"
+        in shell
+    )
 
-    assert "border-radius: 18px;" in header
-    assert "backdrop-filter" in header
-    assert "rgba(255, 255, 255, 0.82)" in header
-
-
-def test_learning_cards_use_consistent_blue_brand_language():
-    identity = _identity()
-
-    item = identity.split(
-        ".item {",
-        1,
-    )[1].split(
-        "}",
-        1,
-    )[0]
-
-    assert "var(--c2p-blue)" in item
-    assert "linear-gradient" in item
-
-
-def test_learning_empty_has_visual_anchor():
-    identity = _identity()
-
-    assert ".learning-empty::before" in identity
-    assert 'content: "✦";' in identity
+    assert "#09285a" in shell
+    assert "#04142f" in shell
