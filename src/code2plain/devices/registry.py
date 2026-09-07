@@ -4,11 +4,10 @@ import hashlib
 import secrets
 import sqlite3
 import uuid
-
 from datetime import (
+    UTC,
     datetime,
     timedelta,
-    timezone,
 )
 from pathlib import Path
 
@@ -20,7 +19,7 @@ from code2plain.devices.models import (
 
 def utc_now() -> datetime:
     return datetime.now(
-        timezone.utc
+        UTC
     )
 
 

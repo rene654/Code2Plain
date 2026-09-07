@@ -2,7 +2,6 @@ from code2plain.owner_access import (
     OwnerAccessService,
 )
 
-
 OWNER_SECRET = (
     "owner-secret-0123456789abcdef-0123456789abcd"
 )

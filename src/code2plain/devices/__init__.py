@@ -1,9 +1,3 @@
-from code2plain.devices.ntfy_models import (
-    NtfyEndpoint,
-)
-from code2plain.devices.ntfy_registry import (
-    NtfyEndpointRegistry,
-)
 from code2plain.devices.apple_registration import (
     ApplePushRegistrationResult,
     ApplePushRegistrationService,
@@ -11,6 +5,12 @@ from code2plain.devices.apple_registration import (
 from code2plain.devices.models import (
     DeviceRecord,
     PairingRequest,
+)
+from code2plain.devices.ntfy_models import (
+    NtfyEndpoint,
+)
+from code2plain.devices.ntfy_registry import (
+    NtfyEndpointRegistry,
 )
 from code2plain.devices.push_models import (
     ApplePushEndpoint,
@@ -23,13 +23,13 @@ from code2plain.devices.registry import (
 )
 
 __all__ = [
-    "NtfyEndpoint",
-    "NtfyEndpointRegistry",
+    "ApplePushEndpoint",
     "ApplePushRegistrationResult",
     "ApplePushRegistrationService",
-    "ApplePushEndpoint",
     "ApplePushRegistry",
     "DeviceRecord",
     "DeviceRegistry",
+    "NtfyEndpoint",
+    "NtfyEndpointRegistry",
     "PairingRequest",
 ]

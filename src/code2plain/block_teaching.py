@@ -3,12 +3,11 @@ from __future__ import annotations
 import ast
 from dataclasses import dataclass
 
-from code2plain.semantic_fallback import semantic_fallback
-
 from code2plain.semantic_blocks import (
     SemanticBlock,
     semantic_block_extractor,
 )
+from code2plain.semantic_fallback import semantic_fallback
 
 
 @dataclass(frozen=True)

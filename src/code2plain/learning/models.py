@@ -5,14 +5,14 @@ from dataclasses import (
     field,
 )
 from datetime import (
+    UTC,
     datetime,
-    timezone,
 )
 
 
 def utc_now() -> datetime:
     return datetime.now(
-        timezone.utc
+        UTC
     )
 
 

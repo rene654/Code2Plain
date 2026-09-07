@@ -4,8 +4,8 @@ from code2plain.devices import (
     DeviceRegistry,
 )
 from code2plain.entitlements.service import (
-    EntitlementService,
     FEATURE_MOBILE_DIGEST,
+    EntitlementService,
 )
 from code2plain.learning.adaptive_digest import (
     AdaptiveSessionDigest,

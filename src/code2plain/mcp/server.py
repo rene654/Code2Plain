@@ -1,29 +1,29 @@
 from __future__ import annotations
 
 import contextlib
-from typing import Any, AsyncIterator
+from collections.abc import AsyncIterator
+from typing import Any
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp.server import Settings as FastMCPSettings
 from mcp.server.transport_security import (
     TransportSecuritySettings,
 )
-from mcp.server.fastmcp.server import Settings as FastMCPSettings
 from starlette.applications import Starlette
 from starlette.routing import Mount
 
-from code2plain.service import Code2PlainService
-from code2plain.live_store import live_store
-from code2plain.line_learning import line_by_line_explainer
+from code2plain.detection.confidence import (
+    ExplanationConfidenceAssessor,
+)
 from code2plain.detection.learning_pipeline import (
     AutomaticLearningPipeline,
 )
 from code2plain.detection.models import (
     ContentCandidate,
 )
-from code2plain.detection.confidence import (
-    ExplanationConfidenceAssessor,
-)
-
+from code2plain.line_learning import line_by_line_explainer
+from code2plain.live_store import live_store
+from code2plain.service import Code2PlainService
 
 # MCP 1.x defines Settings as a generic BaseSettings model.
 # Rebuild it explicitly before FastMCP instantiation so

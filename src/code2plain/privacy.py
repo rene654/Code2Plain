@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Any
 
-
 FORBIDDEN_PERSISTENT_FIELDS = {
     "code",
     "source_code",

@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 WEB_APP = Path(
     "src/code2plain/web/app.py"
 )

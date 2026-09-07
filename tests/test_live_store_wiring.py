@@ -4,7 +4,6 @@ import code2plain.api.app as api_module
 import code2plain.mcp.server as mcp_module
 from code2plain.api.app import app
 
-
 client = TestClient(app)
 
 

@@ -3,7 +3,6 @@ from fastapi.testclient import TestClient
 from code2plain.api.app import app
 from tests.demo_test_helper import demo_credentials
 
-
 client = TestClient(app)
 
 

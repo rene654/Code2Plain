@@ -17,7 +17,6 @@ from code2plain.devices import (
     DeviceRegistry,
 )
 
-
 router = APIRouter(
     prefix="/api/v1/devices/apple",
     tags=[

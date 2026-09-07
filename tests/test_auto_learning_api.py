@@ -2,7 +2,6 @@ from fastapi.testclient import TestClient
 
 from code2plain.api.app import app
 
-
 client = TestClient(app)
 
 

@@ -1,6 +1,6 @@
 from datetime import (
+    UTC,
     datetime,
-    timezone,
 )
 
 from code2plain.devices import (
@@ -13,14 +13,13 @@ from code2plain.notifications import (
     NotificationMessage,
 )
 
-
 BASE = datetime(
     2026,
     8,
     16,
     12,
     0,
-    tzinfo=timezone.utc,
+    tzinfo=UTC,
 )
 
 

@@ -6,7 +6,6 @@ from datetime import UTC, datetime, timedelta
 
 import jwt
 
-
 DEFAULT_DEMO_MINUTES = 20
 
 

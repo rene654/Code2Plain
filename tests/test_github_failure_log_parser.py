@@ -2,7 +2,6 @@ from code2plain.feedback.github_log_parser import (
     GitHubFailureLogParser,
 )
 
-
 LOG = """
 FAILED tests/test_ci_feedback_probe.py::test_ci_feedback_probe - assert (2 + 2) == 5
 tests/test_ci_feedback_probe.py:2: AssertionError

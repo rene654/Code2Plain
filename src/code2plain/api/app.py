@@ -1,30 +1,33 @@
 from __future__ import annotations
 
-from code2plain.web.app import router as web_router
-
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from code2plain.service import Code2PlainService
-from code2plain.feedback.service import FeedbackService
+from code2plain.adaptive_human_learning import adaptive_human_learning
+from code2plain.adaptive_learning import AdaptiveLearningEngine
+from code2plain.adaptive_teaching_policy import (
+    adaptive_teaching_policy,
+)
+from code2plain.block_teaching import context_block_teaching
+from code2plain.context_learning import context_aware_teaching
+from code2plain.demo_access import (
+    demo_access_service,
+)
+from code2plain.detection.confidence import ExplanationConfidenceAssessor
 from code2plain.detection.learning_pipeline import AutomaticLearningPipeline
 from code2plain.detection.models import ContentCandidate
-from code2plain.detection.confidence import ExplanationConfidenceAssessor
-from code2plain.learning_interaction import LearningInteractionBuilder
-from code2plain.learning_memory import learning_memory
-from code2plain.learning_memory_store import learning_memory_store
-from code2plain.adaptive_learning import AdaptiveLearningEngine
-from code2plain.line_learning import line_by_line_explainer
-from code2plain.context_learning import context_aware_teaching
-from code2plain.block_teaching import context_block_teaching
-from code2plain.adaptive_human_learning import adaptive_human_learning
+from code2plain.feedback.service import FeedbackService
+from code2plain.github_file_reader import GitHubFileReader
 from code2plain.human_skill_detection import (
     primary_human_skill,
+)
+from code2plain.human_skill_memory import (
+    human_skill_memory,
 )
 from code2plain.human_skills import (
     get_human_skill,
@@ -32,21 +35,16 @@ from code2plain.human_skills import (
 from code2plain.learning_checks import (
     learning_check_engine,
 )
-from code2plain.adaptive_teaching_policy import (
-    adaptive_teaching_policy,
-)
-from code2plain.human_skill_memory import (
-    human_skill_memory,
-)
-from code2plain.github_file_reader import GitHubFileReader
-from code2plain.version import __version__
-from code2plain.demo_access import (
-    demo_access_service,
-)
+from code2plain.learning_interaction import LearningInteractionBuilder
+from code2plain.learning_memory import learning_memory
+from code2plain.learning_memory_store import learning_memory_store
+from code2plain.line_learning import line_by_line_explainer
 from code2plain.owner_access import (
     owner_access_service,
 )
-
+from code2plain.service import Code2PlainService
+from code2plain.version import __version__
+from code2plain.web.app import router as web_router
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -361,9 +359,8 @@ def explain_code(
 # LIVE LEARNING CHANNEL
 # ============================================================
 
-from code2plain.live_store import live_store
 from code2plain.api.apple_push import router as apple_push_router
-
+from code2plain.live_store import live_store
 
 _live_store = live_store
 

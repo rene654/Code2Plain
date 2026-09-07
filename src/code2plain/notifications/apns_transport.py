@@ -13,7 +13,6 @@ from code2plain.notifications.apns_provider import (
     APNsTransport,
 )
 
-
 APNS_HOSTS = {
     "sandbox":
         "https://api.sandbox.push.apple.com",

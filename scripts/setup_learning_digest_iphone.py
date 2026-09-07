@@ -7,7 +7,6 @@ from code2plain.devices import (
     NtfyEndpointRegistry,
 )
 
-
 DATABASE = Path(
     "code2plain_devices.db"
 )

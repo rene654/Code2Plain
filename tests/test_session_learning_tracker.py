@@ -1,6 +1,6 @@
 from datetime import (
+    UTC,
     datetime,
-    timezone,
 )
 
 import pytest
@@ -201,7 +201,7 @@ def test_observed_timestamp_can_be_supplied():
         16,
         12,
         0,
-        tzinfo=timezone.utc,
+        tzinfo=UTC,
     )
 
     tracker.observe_explanation(

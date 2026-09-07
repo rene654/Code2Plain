@@ -2,7 +2,6 @@ from code2plain.block_teaching import (
     ContextBlockTeachingEngine,
 )
 
-
 CODE = '''
 import pandas as pd
 

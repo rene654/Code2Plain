@@ -1,12 +1,10 @@
-from pathlib import Path
 
-from code2plain.live_store import (
-    LiveExplanationStore,
-)
 from code2plain.learning_memory_store import (
     LearningMemoryStore,
 )
-
+from code2plain.live_store import (
+    LiveExplanationStore,
+)
 
 SECRET = (
     "TOP_SECRET_CLIENT_"

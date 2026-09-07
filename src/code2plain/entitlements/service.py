@@ -7,7 +7,6 @@ from code2plain.entitlements.models import (
     SubscriptionPlan,
 )
 
-
 FEATURE_MOBILE_DIGEST = "mobile_digest"
 FEATURE_ADAPTIVE_DIGEST = "adaptive_digest"
 FEATURE_MULTI_DEVICE = "multi_device"

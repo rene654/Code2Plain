@@ -2,7 +2,6 @@ from code2plain.adaptive_teaching_policy import (
     AdaptiveTeachingPolicy,
 )
 
-
 policy = AdaptiveTeachingPolicy()
 
 

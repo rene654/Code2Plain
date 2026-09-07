@@ -1,10 +1,9 @@
 from datetime import (
+    UTC,
     datetime,
-    timezone,
 )
 
 import jwt
-
 from cryptography.hazmat.primitives.asymmetric.ec import (
     SECP256R1,
     generate_private_key,
@@ -20,14 +19,13 @@ from code2plain.notifications import (
     APNsJWTProvider,
 )
 
-
 BASE = datetime(
     2026,
     8,
     16,
     12,
     0,
-    tzinfo=timezone.utc,
+    tzinfo=UTC,
 )
 
 

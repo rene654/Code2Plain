@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 HTML = Path(
     "src/code2plain/web/index.html"
 ).read_text(

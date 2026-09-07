@@ -2,7 +2,6 @@ from code2plain.learning_checks import (
     LearningCheckEngine,
 )
 
-
 engine = LearningCheckEngine()
 
 

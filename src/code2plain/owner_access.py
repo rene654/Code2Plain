@@ -8,7 +8,6 @@ from datetime import UTC, datetime, timedelta
 
 import jwt
 
-
 OWNER_SESSION_HOURS = 12
 
 

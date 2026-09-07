@@ -3,11 +3,10 @@ from uuid import uuid4
 from fastapi.testclient import TestClient
 
 from code2plain.api.app import app
-from tests.demo_test_helper import demo_credentials
 from code2plain.human_skill_memory import (
     human_skill_memory,
 )
-
+from tests.demo_test_helper import demo_credentials
 
 client = TestClient(app)
 
