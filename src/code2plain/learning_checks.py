@@ -103,18 +103,19 @@ class LearningCheckEngine:
         ):
             return LearningCheck(
                 question=(
-                    "¿Para qué sirve esta línea "
-                    "dentro del programa?"
+                    "Esta línea dice `import pandas as pd`. "
+                    "¿Qué está haciendo?"
                 ),
                 options=(
-                    "Para borrar una herramienta externa.",
-                    "Para hacer disponible código de otro módulo.",
-                    "Para imprimir automáticamente un resultado.",
+                    "Está cargando una herramienta para poder usarla después.",
+                    "Está creando automáticamente una tabla con datos.",
+                    "Está guardando el resultado final del programa.",
                 ),
-                correct_index=1,
+                correct_index=0,
                 explanation=(
-                    "Una importación hace disponible código "
-                    "definido en otro módulo para poder usarlo."
+                    "Importar significa traer una herramienta al programa "
+                    "para poder usarla después. Aquí `pd` será el nombre corto "
+                    "para usar pandas."
                 ),
             )
 

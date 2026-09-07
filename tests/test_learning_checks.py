@@ -16,8 +16,8 @@ def test_import_has_evaluable_answer():
     assert check.options[
         check.correct_index
     ] == (
-        "Para hacer disponible código "
-        "de otro módulo."
+        "Está cargando una herramienta "
+        "para poder usarla después."
     )
 
 
