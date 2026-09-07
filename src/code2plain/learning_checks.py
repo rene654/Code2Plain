@@ -98,9 +98,8 @@ class LearningCheckEngine:
         # Imports
         # ------------------------------------------
 
-        if (
-            source.startswith("import ")
-            or source.startswith("from ")
+        if source.startswith(
+            ("import ", "from ")
         ):
             return LearningCheck(
                 question=(
@@ -203,8 +202,10 @@ class LearningCheckEngine:
                     "con el cálculo anterior?"
                 ),
                 options=(
-                    "El cálculo puede seguir ocurriendo, "
-                    "pero no se muestra aquí.",
+                    (
+                        "El cálculo puede seguir ocurriendo, "
+                        "pero no se muestra aquí."
+                    ),
                     "Todo el programa deja obligatoriamente de calcular.",
                     "Python borra automáticamente el resultado.",
                 ),

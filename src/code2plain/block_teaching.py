@@ -438,8 +438,6 @@ class ContextBlockTeachingEngine:
         self,
         expression: str,
     ) -> str | None:
-        marker = ")]"
-
         try:
             group_end = expression.index(
                 ".groupby("
@@ -488,8 +486,8 @@ class ContextBlockTeachingEngine:
                 return ast.unparse(
                     tree.body.args[0]
                 )
-        except Exception:
-            pass
+        except (SyntaxError, ValueError):
+            return None
 
         return None
 
