@@ -28,7 +28,7 @@ def test_read_csv_has_evaluable_answer():
         output_to="sales",
     )
 
-    assert "nuevo archivo" in (
+    assert "abra ese archivo" in (
         check.options[
             check.correct_index
         ]
@@ -49,7 +49,7 @@ def test_filter_has_evaluable_answer():
         check.options[
             check.correct_index
         ]
-        == "La condición que se evalúa."
+        == "La condición que compara los datos."
     )
 
 
@@ -64,7 +64,7 @@ def test_groupby_has_evaluable_answer():
         output_to="result",
     )
 
-    assert "grupos diferentes" in (
+    assert "Forma grupos" in (
         check.options[
             check.correct_index
         ]
@@ -78,7 +78,7 @@ def test_print_has_evaluable_answer():
         output_to=None,
     )
 
-    assert "puede seguir ocurriendo" in (
+    assert "puede seguir existiendo" in (
         check.options[
             check.correct_index
         ]
