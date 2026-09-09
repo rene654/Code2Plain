@@ -64,6 +64,6 @@ def test_context_csv_check_has_expected_answer():
     assert "correct_index" not in check
 
     assert any(
-        "nuevo archivo" in option
+        "abra ese archivo" in option
         for option in check["options"]
     )

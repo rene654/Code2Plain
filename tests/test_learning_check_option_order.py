@@ -61,4 +61,4 @@ def test_reordering_preserves_correct_answer():
         check.correct_index
     ]
 
-    assert "nuevo archivo" in correct_option
+    assert "abra ese archivo" in correct_option
