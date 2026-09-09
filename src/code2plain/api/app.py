@@ -13,6 +13,7 @@ from code2plain.adaptive_learning import AdaptiveLearningEngine
 from code2plain.adaptive_teaching_policy import (
     adaptive_teaching_policy,
 )
+from code2plain.beginner_exercises import beginner_exercise_engine
 from code2plain.block_teaching import context_block_teaching
 from code2plain.context_learning import context_aware_teaching
 from code2plain.demo_access import (
@@ -498,24 +499,22 @@ def learn_github_file(
                         else None
                     ),
                 "check":
-                    (
-                        lambda check: {
-                            "question":
-                                check.question,
-                            "options":
-                                list(
-                                    check.options
-                                ),
-                            "explanation":
-                                check.explanation,
-                        }
-                    )(
-                        learning_check_engine.build(
-                            code=item.code,
-                            input_from=item.input_from,
-                            output_to=item.output_to,
-                        )
-                    ),
+                    {
+                        "question":
+                            (
+                                check := learning_check_engine.build(
+                                    code=item.code,
+                                    input_from=item.input_from,
+                                    output_to=item.output_to,
+                                )
+                            ).question,
+                        "options":
+                            list(
+                                check.options
+                            ),
+                        "explanation":
+                            check.explanation,
+                    },
             }
             for item in items
         ],
@@ -664,6 +663,10 @@ def context_block_learn(
             output_to=item.output_to,
         )
 
+        exercise = beginner_exercise_engine.build_fill_blank(
+            code=item.code,
+        )
+
         response_items.append(
             {
                 "start_line":
@@ -720,6 +723,23 @@ def context_block_learn(
                                 check.options
                             ),
                     },
+                "exercise":
+                    (
+                        {
+                            "kind":
+                                exercise.kind,
+                            "concept":
+                                exercise.concept,
+                            "prompt":
+                                exercise.prompt,
+                            "options":
+                                list(
+                                    exercise.options
+                                ),
+                        }
+                        if exercise
+                        else None
+                    ),
             }
         )
 

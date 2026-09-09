@@ -4303,6 +4303,75 @@ button.addEventListener(
                                             true;
                                     }
                                 );
+
+                                if (item.exercise) {
+                                    const exercise =
+                                        document.createElement(
+                                            "div"
+                                        );
+
+                                    exercise.className =
+                                        "learning-check";
+
+                                    const exerciseTitle =
+                                        document.createElement(
+                                            "div"
+                                        );
+
+                                    exerciseTitle.className =
+                                        "learning-check-summary";
+
+                                    exerciseTitle.textContent =
+                                        "Mini reto · Completa la línea";
+
+                                    const exerciseBody =
+                                        document.createElement(
+                                            "div"
+                                        );
+
+                                    exerciseBody.className =
+                                        "learning-check-body";
+
+                                    const prompt =
+                                        document.createElement(
+                                            "pre"
+                                        );
+
+                                    prompt.textContent =
+                                        item.exercise.prompt;
+
+                                    exerciseBody.append(
+                                        prompt
+                                    );
+
+                                    item.exercise.options.forEach(
+                                        option => {
+                                            const chip =
+                                                document.createElement(
+                                                    "span"
+                                                );
+
+                                            chip.className =
+                                                "learning-tag";
+
+                                            chip.textContent =
+                                                option;
+
+                                            exerciseBody.append(
+                                                chip
+                                            );
+                                        }
+                                    );
+
+                                    exercise.append(
+                                        exerciseTitle,
+                                        exerciseBody
+                                    );
+
+                                    learningCheck.after(
+                                        exercise
+                                    );
+                                }
                             }
                         );
 

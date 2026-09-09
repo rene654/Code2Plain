@@ -67,3 +67,30 @@ def test_context_csv_check_has_expected_answer():
         "abra ese archivo" in option
         for option in check["options"]
     )
+
+
+def test_csv_block_includes_beginner_exercise():
+    user_id, token = demo_credentials(
+        client
+    )
+
+    response = client.post(
+        "/v1/context-block-learn",
+        json={
+            "user_id": user_id,
+            "demo_token": token,
+            "code": 'sales = pd.read_csv("sales.csv")',
+        },
+    )
+
+    assert response.status_code == 200
+
+    exercise = response.json()[
+        "items"
+    ][0]["exercise"]
+
+    assert exercise is not None
+    assert exercise["kind"] == "fill_blank"
+    assert "________" in exercise["prompt"]
+    assert "read_csv" in exercise["options"]
+    assert "correct_index" not in exercise
