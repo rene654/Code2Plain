@@ -524,11 +524,12 @@ def learn_github_file(
 class BeginnerExerciseAnswerRequest(BaseModel):
     user_id: str | None = None
     code: str
-    selected_index: int = Field(ge=0)
+    answer: str = Field(
+        min_length=1,
+        max_length=100,
+    )
     demo_token: str | None = None
     owner_token: str | None = None
-
-
 @app.post("/v1/learning/check-answer")
 def check_learning_answer(
     request: LearningCheckAnswerRequest,
@@ -627,32 +628,25 @@ def check_beginner_exercise_answer(
         demo_token=request.demo_token,
         owner_token=request.owner_token,
     )
-
     exercise = beginner_exercise_engine.build_fill_blank(
         code=request.code,
     )
-
     if exercise is None:
         raise HTTPException(
             status_code=400,
             detail="No exercise available.",
         )
-
-    if request.selected_index >= len(exercise.options):
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid selection.",
-        )
-
+    expected = exercise.options[
+        exercise.correct_index
+    ]
+    correct = (
+        request.answer.strip().casefold()
+        == expected.strip().casefold()
+    )
     return {
-        "correct":
-            request.selected_index
-            == exercise.correct_index,
-        "explanation":
-            exercise.explanation,
+        "correct": correct,
+        "explanation": exercise.explanation,
     }
-
-
 @app.post("/v1/context-block-learn")
 def context_block_learn(
     request: LineByLineRequest,

@@ -4344,86 +4344,44 @@ button.addEventListener(
                                         prompt
                                     );
 
-                                    const exerciseInputs = [];
-
-                                    item.exercise.options.forEach(
-                                        (option, optionIndex) => {
-                                            const label =
-                                                document.createElement(
-                                                    "label"
-                                                );
-
-                                            label.className =
-                                                "learning-check-option";
-
-                                            const radio =
-                                                document.createElement(
-                                                    "input"
-                                                );
-
-                                            radio.type = "radio";
-                                            radio.name =
-                                                "exercise-" + index;
-                                            radio.value =
-                                                optionIndex;
-
-                                            const optionText =
-                                                document.createElement(
-                                                    "span"
-                                                );
-
-                                            optionText.textContent =
-                                                option;
-
-                                            label.append(
-                                                radio,
-                                                optionText
-                                            );
-
-                                            exerciseInputs.push(
-                                                radio
-                                            );
-
-                                            exerciseBody.append(
-                                                label
-                                            );
-                                        }
-                                    );
-
+                                    const answerInput =
+                                        document.createElement(
+                                            "input"
+                                        );
+                                    answerInput.type = "text";
+                                    answerInput.autocomplete = "off";
+                                    answerInput.spellcheck = false;
+                                    answerInput.placeholder =
+                                        "Escribe lo que falta...";
+                                    answerInput.className =
+                                        "learning-check-input";
                                     const exerciseButton =
                                         document.createElement(
                                             "button"
                                         );
-
                                     exerciseButton.type = "button";
                                     exerciseButton.className =
                                         "learning-check-verify";
                                     exerciseButton.textContent =
                                         "Comprobar";
-
                                     const exerciseResult =
                                         document.createElement(
                                             "div"
                                         );
-
                                     exerciseResult.className =
                                         "learning-check-result";
-
                                     exerciseButton.addEventListener(
                                         "click",
                                         async () => {
-                                            const selected =
-                                                exerciseInputs.find(
-                                                    input =>
-                                                        input.checked
-                                                );
-
-                                            if (!selected) {
+                                            const answer =
+                                                answerInput.value.trim();
+                                            if (!answer) {
                                                 exerciseResult.textContent =
-                                                    "Elige una opción.";
+                                                    "Escribe una respuesta 🙂";
+                                                answerInput.focus();
                                                 return;
                                             }
-
+                                            exerciseButton.disabled = true;
                                             const response =
                                                 await fetch(
                                                     "/v1/learning/exercise-answer",
@@ -4439,10 +4397,8 @@ button.addEventListener(
                                                                     learningUserId,
                                                                 code:
                                                                     item.code,
-                                                                selected_index:
-                                                                    Number(
-                                                                        selected.value
-                                                                    ),
+                                                                answer:
+                                                                    answer,
                                                                 demo_token:
                                                                     demoToken,
                                                                 owner_token:
@@ -4450,16 +4406,14 @@ button.addEventListener(
                                                             })
                                                     }
                                                 );
-
                                             const data =
                                                 await response.json();
-
+                                            exerciseButton.disabled = false;
                                             if (!response.ok) {
                                                 exerciseResult.textContent =
                                                     "No pude comprobarlo.";
                                                 return;
                                             }
-
                                             exerciseResult.className =
                                                 "learning-check-result "
                                                 + (
@@ -4467,30 +4421,31 @@ button.addEventListener(
                                                     ? "success"
                                                     : "review"
                                                 );
-
-                                            exerciseResult.textContent =
-                                                (
-                                                    data.correct
-                                                    ? "✓ ¡Bien! "
-                                                    : "↻ Casi. Intenta otra vez. "
-                                                )
-                                                + data.explanation;
-
                                             if (data.correct) {
+                                                exerciseResult.textContent =
+                                                    "🎉 ¡Correcto! Lo lograste 🚀 "
+                                                    + data.explanation;
+                                                answerInput.disabled = true;
                                                 exerciseButton.style.display =
                                                     "none";
-
-                                                exerciseInputs.forEach(
-                                                    input => {
-                                                        input.disabled =
-                                                            true;
-                                                    }
-                                                );
+                                            } else {
+                                                exerciseResult.textContent =
+                                                    "Casi 👀. Inténtalo otra vez.";
+                                                answerInput.focus();
+                                                answerInput.select();
                                             }
                                         }
                                     );
-
+                                    answerInput.addEventListener(
+                                        "keydown",
+                                        event => {
+                                            if (event.key === "Enter") {
+                                                exerciseButton.click();
+                                            }
+                                        }
+                                    );
                                     exerciseBody.append(
+                                        answerInput,
                                         exerciseButton,
                                         exerciseResult
                                     );

@@ -15,7 +15,7 @@ def test_beginner_exercise_correct_answer():
             "user_id": user_id,
             "demo_token": token,
             "code": 'sales = pd.read_csv("sales.csv")',
-            "selected_index": 0,
+            "answer": "read_csv",
         },
     )
 
@@ -33,7 +33,7 @@ def test_beginner_exercise_wrong_answer():
             "user_id": user_id,
             "demo_token": token,
             "code": 'sales = pd.read_csv("sales.csv")',
-            "selected_index": 1,
+            "answer": "groupby",
         },
     )
 
