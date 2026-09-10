@@ -4344,23 +4344,155 @@ button.addEventListener(
                                         prompt
                                     );
 
+                                    const exerciseInputs = [];
+
                                     item.exercise.options.forEach(
-                                        option => {
-                                            const chip =
+                                        (option, optionIndex) => {
+                                            const label =
+                                                document.createElement(
+                                                    "label"
+                                                );
+
+                                            label.className =
+                                                "learning-check-option";
+
+                                            const radio =
+                                                document.createElement(
+                                                    "input"
+                                                );
+
+                                            radio.type = "radio";
+                                            radio.name =
+                                                "exercise-" + index;
+                                            radio.value =
+                                                optionIndex;
+
+                                            const optionText =
                                                 document.createElement(
                                                     "span"
                                                 );
 
-                                            chip.className =
-                                                "learning-tag";
-
-                                            chip.textContent =
+                                            optionText.textContent =
                                                 option;
 
+                                            label.append(
+                                                radio,
+                                                optionText
+                                            );
+
+                                            exerciseInputs.push(
+                                                radio
+                                            );
+
                                             exerciseBody.append(
-                                                chip
+                                                label
                                             );
                                         }
+                                    );
+
+                                    const exerciseButton =
+                                        document.createElement(
+                                            "button"
+                                        );
+
+                                    exerciseButton.type = "button";
+                                    exerciseButton.className =
+                                        "learning-check-verify";
+                                    exerciseButton.textContent =
+                                        "Comprobar";
+
+                                    const exerciseResult =
+                                        document.createElement(
+                                            "div"
+                                        );
+
+                                    exerciseResult.className =
+                                        "learning-check-result";
+
+                                    exerciseButton.addEventListener(
+                                        "click",
+                                        async () => {
+                                            const selected =
+                                                exerciseInputs.find(
+                                                    input =>
+                                                        input.checked
+                                                );
+
+                                            if (!selected) {
+                                                exerciseResult.textContent =
+                                                    "Elige una opción.";
+                                                return;
+                                            }
+
+                                            const response =
+                                                await fetch(
+                                                    "/v1/learning/exercise-answer",
+                                                    {
+                                                        method: "POST",
+                                                        headers: {
+                                                            "Content-Type":
+                                                                "application/json"
+                                                        },
+                                                        body:
+                                                            JSON.stringify({
+                                                                user_id:
+                                                                    learningUserId,
+                                                                code:
+                                                                    item.code,
+                                                                selected_index:
+                                                                    Number(
+                                                                        selected.value
+                                                                    ),
+                                                                demo_token:
+                                                                    demoToken,
+                                                                owner_token:
+                                                                    ownerToken
+                                                            })
+                                                    }
+                                                );
+
+                                            const data =
+                                                await response.json();
+
+                                            if (!response.ok) {
+                                                exerciseResult.textContent =
+                                                    "No pude comprobarlo.";
+                                                return;
+                                            }
+
+                                            exerciseResult.className =
+                                                "learning-check-result "
+                                                + (
+                                                    data.correct
+                                                    ? "success"
+                                                    : "review"
+                                                );
+
+                                            exerciseResult.textContent =
+                                                (
+                                                    data.correct
+                                                    ? "✓ ¡Bien! "
+                                                    : "↻ Casi. Intenta otra vez. "
+                                                )
+                                                + data.explanation;
+
+                                            if (data.correct) {
+                                                exerciseButton.style.display =
+                                                    "none";
+
+                                                exerciseInputs.forEach(
+                                                    input => {
+                                                        input.disabled =
+                                                            true;
+                                                    }
+                                                );
+                                            }
+                                        }
+                                    );
+
+                                    exerciseBody.append(
+                                        exerciseButton,
+                                        exerciseResult
                                     );
 
                                     exercise.append(
