@@ -1115,12 +1115,94 @@ def learning_page():
             font-size: 10px;
         }
 
-        .learning-check-result {
-            margin-top: 7px;
-            font-size: 10px;
-            line-height: 1.4;
+        .learning-check-input {
+            width: 100%;
+            min-height: 42px;
+            margin-top: 10px;
+            padding: 10px 12px;
+            box-sizing: border-box;
+            border: 1px solid var(--c2p-border);
+            border-radius: 10px;
+            background: #ffffff;
+            color: var(--c2p-text);
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                monospace;
+            font-size: 13px;
+            font-weight: 600;
         }
-
+        .learning-check-input:focus {
+            outline: 2px solid rgba(17, 101, 231, 0.18);
+            border-color: var(--c2p-blue);
+        }
+        .learning-check-result {
+            margin-top: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .learning-check-result.success {
+            padding: 11px 13px;
+            border: 1px solid rgba(22, 132, 91, 0.22);
+            border-radius: 10px;
+            background: rgba(22, 132, 91, 0.08);
+            color: var(--c2p-success);
+            font-weight: 700;
+            animation: c2p-success-pop 280ms ease-out;
+        }
+        .learning-confetti-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .learning-confetti-piece {
+            position: absolute;
+            top: -24px;
+            width: 9px;
+            height: 14px;
+            border-radius: 2px;
+            animation-name: c2p-confetti-fall;
+            animation-timing-function: ease-out;
+            animation-fill-mode: forwards;
+        }
+        @keyframes c2p-success-pop {
+            from {
+                opacity: 0;
+                transform: scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        @keyframes c2p-confetti-fall {
+            from {
+                opacity: 1;
+                transform:
+                    translate3d(0, -5vh, 0)
+                    rotate(0deg);
+            }
+            to {
+                opacity: 0;
+                transform:
+                    translate3d(
+                        var(--drift),
+                        105vh,
+                        0
+                    )
+                    rotate(var(--spin));
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .learning-confetti-layer {
+                display: none;
+            }
+            .learning-check-result.success {
+                animation: none;
+            }
+        }
         @media (max-width: 640px) {
             .item {
                 margin: 8px 0;
@@ -1153,6 +1235,17 @@ def learning_page():
 
             .learning-check-body {
                 padding: 8px;
+            }
+            .learning-check-input {
+                min-height: 46px;
+                font-size: 16px;
+            }
+            .learning-check-result {
+                font-size: 14px;
+                line-height: 1.5;
+            }
+            .learning-check-result.success {
+                padding: 12px 13px;
             }
         }
 
@@ -4215,6 +4308,98 @@ button.addEventListener(
 
                         resultMessage.className =
                             "learning-check-result";
+                        resultMessage.setAttribute(
+                            "role",
+                            "status"
+                        );
+                        resultMessage.setAttribute(
+                            "aria-live",
+                            "polite"
+                        );
+                        const celebrateLearningSuccess =
+                            () => {
+                                if (
+                                    window.matchMedia(
+                                        "(prefers-reduced-motion: reduce)"
+                                    ).matches
+                                ) {
+                                    return;
+                                }
+                                const layer =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                layer.className =
+                                    "learning-confetti-layer";
+                                const colors = [
+                                    "#1165e7",
+                                    "#1aa8d9",
+                                    "#7ad7f2",
+                                    "#16845b",
+                                    "#f5b942",
+                                    "#ef5da8"
+                                ];
+                                for (
+                                    let i = 0;
+                                    i < 42;
+                                    i += 1
+                                ) {
+                                    const piece =
+                                        document.createElement(
+                                            "span"
+                                        );
+                                    piece.className =
+                                        "learning-confetti-piece";
+                                    piece.style.left =
+                                        (
+                                            Math.random()
+                                            * 100
+                                        )
+                                        + "%";
+                                    piece.style.backgroundColor =
+                                        colors[
+                                            i
+                                            % colors.length
+                                        ];
+                                    piece.style.animationDelay =
+                                        (
+                                            Math.random()
+                                            * 160
+                                        )
+                                        + "ms";
+                                    piece.style.animationDuration =
+                                        (
+                                            950
+                                            + Math.random()
+                                            * 650
+                                        )
+                                        + "ms";
+                                    piece.style.setProperty(
+                                        "--drift",
+                                        (
+                                            -100
+                                            + Math.random()
+                                            * 200
+                                        )
+                                        + "px"
+                                    );
+                                    piece.style.setProperty(
+                                        "--spin",
+                                        (
+                                            360
+                                            + Math.random()
+                                            * 720
+                                        )
+                                        + "deg"
+                                    );
+                                    layer.append(piece);
+                                }
+                                document.body.append(layer);
+                                window.setTimeout(
+                                    () => layer.remove(),
+                                    1900
+                                );
+                            };
 
                         verifyButton.addEventListener(
                             "click",
@@ -4286,13 +4471,16 @@ button.addEventListener(
                                         : "review"
                                     );
 
-                                resultMessage.textContent =
-                                    (
-                                        data.correct
-                                        ? "✓ Correcto. "
-                                        : "↻ Repasar. "
-                                    )
-                                    + data.explanation;
+                                if (data.correct) {
+                                    resultMessage.textContent =
+                                        "🎉 ¡Correcto! Lo lograste 🚀 "
+                                        + data.explanation;
+                                    celebrateLearningSuccess();
+                                } else {
+                                    resultMessage.textContent =
+                                        "↻ Repasar. "
+                                        + data.explanation;
+                                }
 
                                 verifyButton.style.display =
                                     "none";
@@ -4425,6 +4613,7 @@ button.addEventListener(
                                                 exerciseResult.textContent =
                                                     "🎉 ¡Correcto! Lo lograste 🚀 "
                                                     + data.explanation;
+                                                celebrateLearningSuccess();
                                                 answerInput.disabled = true;
                                                 exerciseButton.style.display =
                                                     "none";

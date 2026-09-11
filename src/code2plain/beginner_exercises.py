@@ -32,7 +32,7 @@ class BeginnerExerciseEngine:
                 concept="READ CSV",
                 prompt=(
                     'Completa la línea:\n\n'
-                    'sales = pd.________("sales.csv")'
+                    'customers = pd.________("customers.csv")'
                 ),
                 options=(
                     "read_csv",
