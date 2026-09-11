@@ -3030,6 +3030,88 @@ def learning_page():
             }
         }
 
+
+        /* CODE2PLAIN COMPACT LEARNING DENSITY */
+        .item {
+            margin: 8px 0;
+            padding: 12px 14px;
+        }
+        .meta {
+            margin-bottom: 4px;
+        }
+        .concept {
+            margin-bottom: 4px;
+        }
+        .explanation {
+            margin-bottom: 5px;
+            line-height: 1.42;
+        }
+        .item details {
+            margin-top: 4px;
+        }
+        .challenge {
+            margin-top: 4px;
+            margin-bottom: 5px;
+        }
+        .code {
+            margin-top: 6px;
+            padding: 8px 10px;
+        }
+        .learning-check {
+            margin-top: 7px;
+            padding-top: 7px;
+        }
+        .learning-check-summary {
+            margin-bottom: 5px;
+        }
+        .learning-check-body {
+            padding: 9px 10px;
+        }
+        .learning-check-option {
+            margin: 5px 0;
+        }
+        .learning-check-input {
+            margin-top: 6px;
+        }
+        .learning-check-verify {
+            margin-top: 6px;
+        }
+        .learning-check-result {
+            margin-top: 7px;
+        }
+        .learning-check-result.success {
+            padding: 9px 11px;
+        }
+        @media (max-width: 640px) {
+            .item {
+                margin: 6px 0;
+                padding: 10px 11px;
+            }
+            .meta {
+                margin-bottom: 3px;
+            }
+            .concept {
+                margin-bottom: 3px;
+            }
+            .explanation {
+                margin-bottom: 4px;
+            }
+            .code {
+                margin-top: 5px;
+                padding: 7px 9px;
+            }
+            .learning-check {
+                margin-top: 6px;
+                padding-top: 6px;
+            }
+            .learning-check-body {
+                padding: 8px 9px;
+            }
+            .learning-check-result.success {
+                padding: 10px 11px;
+            }
+        }
+
 </style>
 </head>
 
