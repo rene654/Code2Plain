@@ -3263,6 +3263,92 @@ def learning_page():
             }
         }
 
+
+        /* CODE2PLAIN BLOCK OVERVIEW */
+        .block-overview-trigger {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: fit-content;
+            margin: 0 0 8px auto;
+            padding: 6px 9px;
+            border:
+                1px solid rgba(17, 101, 231, 0.18);
+            border-radius: 9px;
+            background:
+                rgba(255, 255, 255, 0.72);
+            color:
+                var(--c2p-navy);
+            font-size: 11px;
+            font-weight: 750;
+            cursor: pointer;
+            backdrop-filter:
+                blur(8px);
+            -webkit-backdrop-filter:
+                blur(8px);
+        }
+        .block-overview-trigger:hover {
+            background:
+                rgba(17, 101, 231, 0.08);
+        }
+        .block-overview-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+        .block-overview-step {
+            display: grid;
+            grid-template-columns:
+                28px 1fr;
+            gap: 9px;
+            align-items: start;
+            padding: 9px 10px;
+            border:
+                1px solid rgba(104, 124, 153, 0.12);
+            border-radius: 10px;
+            background:
+                rgba(245, 249, 255, 0.72);
+        }
+        .block-overview-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            background:
+                rgba(17, 101, 231, 0.10);
+            color:
+                var(--c2p-blue);
+            font-size: 11px;
+            font-weight: 800;
+        }
+        .block-overview-step-title {
+            margin-bottom: 2px;
+            color:
+                var(--c2p-text);
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .block-overview-step-detail {
+            color:
+                var(--c2p-muted);
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        @media (max-width: 640px) {
+            .block-overview-trigger {
+                margin-bottom: 6px;
+                font-size: 12px;
+            }
+            .block-overview-step-title {
+                font-size: 13px;
+            }
+            .block-overview-step-detail {
+                font-size: 13px;
+            }
+        }
+
 </style>
 </head>
 
@@ -4126,6 +4212,160 @@ button.addEventListener(
                 return;
             }
 
+            if (payload.overview) {
+                const overviewButton =
+                    document.createElement(
+                        "button"
+                    );
+                overviewButton.type =
+                    "button";
+                overviewButton.className =
+                    "block-overview-trigger";
+                overviewButton.textContent =
+                    "✨ Entender bloque";
+                overviewButton.addEventListener(
+                    "click",
+                    () => {
+                        const overlay =
+                            document.createElement(
+                                "div"
+                            );
+                        overlay.className =
+                            "line-breakdown-overlay";
+                        const panel =
+                            document.createElement(
+                                "div"
+                            );
+                        panel.className =
+                            "line-breakdown-panel";
+                        panel.setAttribute(
+                            "role",
+                            "dialog"
+                        );
+                        panel.setAttribute(
+                            "aria-modal",
+                            "true"
+                        );
+                        const header =
+                            document.createElement(
+                                "div"
+                            );
+                        header.className =
+                            "line-breakdown-header";
+                        const title =
+                            document.createElement(
+                                "div"
+                            );
+                        title.className =
+                            "line-breakdown-title";
+                        title.textContent =
+                            "✨ "
+                            + payload.overview.title;
+                        const closeButton =
+                            document.createElement(
+                                "button"
+                            );
+                        closeButton.type =
+                            "button";
+                        closeButton.className =
+                            "line-breakdown-close";
+                        closeButton.textContent =
+                            "×";
+                        header.append(
+                            title,
+                            closeButton
+                        );
+                        const summary =
+                            document.createElement(
+                                "div"
+                            );
+                        summary.className =
+                            "line-breakdown-summary";
+                        summary.textContent =
+                            payload.overview.summary;
+                        const flow =
+                            document.createElement(
+                                "div"
+                            );
+                        flow.className =
+                            "block-overview-flow";
+                        payload.overview.steps.forEach(
+                            (step, stepIndex) => {
+                                const row =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                row.className =
+                                    "block-overview-step";
+                                const number =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                number.className =
+                                    "block-overview-number";
+                                number.textContent =
+                                    String(
+                                        stepIndex + 1
+                                    );
+                                const content =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                const stepTitle =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                stepTitle.className =
+                                    "block-overview-step-title";
+                                stepTitle.textContent =
+                                    step.title;
+                                const detail =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                detail.className =
+                                    "block-overview-step-detail";
+                                detail.textContent =
+                                    step.detail;
+                                content.append(
+                                    stepTitle,
+                                    detail
+                                );
+                                row.append(
+                                    number,
+                                    content
+                                );
+                                flow.append(row);
+                            }
+                        );
+                        panel.append(
+                            header,
+                            summary,
+                            flow
+                        );
+                        const closePanel =
+                            () => overlay.remove();
+                        closeButton.addEventListener(
+                            "click",
+                            closePanel
+                        );
+                        overlay.addEventListener(
+                            "click",
+                            event => {
+                                if (
+                                    event.target
+                                    === overlay
+                                ) {
+                                    closePanel();
+                                }
+                            }
+                        );
+                        overlay.append(panel);
+                        document.body.append(overlay);
+                    }
+                );
+                results.append(overviewButton);
+            }
             payload.items.forEach(
                 (item, index) => {
 

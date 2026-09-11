@@ -14,6 +14,7 @@ from code2plain.adaptive_teaching_policy import (
     adaptive_teaching_policy,
 )
 from code2plain.beginner_exercises import beginner_exercise_engine
+from code2plain.block_overview import block_overview_engine
 from code2plain.block_teaching import context_block_teaching
 from code2plain.context_learning import context_aware_teaching
 from code2plain.demo_access import (
@@ -807,10 +808,35 @@ def context_block_learn(
             }
         )
 
+    overview = block_overview_engine.build(
+        code=request.code,
+    )
     return {
         "total_ideas": len(
             response_items
         ),
+        "overview":
+            (
+                {
+                    "title":
+                        overview.title,
+                    "summary":
+                        overview.summary,
+                    "steps":
+                        [
+                            {
+                                "title":
+                                    step.title,
+                                "detail":
+                                    step.detail,
+                            }
+                            for step
+                            in overview.steps
+                        ],
+                }
+                if overview
+                else None
+            ),
         "items": response_items,
     }
 
