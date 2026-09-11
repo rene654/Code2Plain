@@ -8,6 +8,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from code2plain.active_modification import active_modification_engine
 from code2plain.adaptive_human_learning import adaptive_human_learning
 from code2plain.adaptive_learning import AdaptiveLearningEngine
 from code2plain.adaptive_teaching_policy import (
@@ -524,6 +525,15 @@ def learn_github_file(
     }
 
 
+class ActiveModificationAnswerRequest(BaseModel):
+    user_id: str | None = None
+    code: str
+    answer: str = Field(
+        min_length=1,
+        max_length=1000,
+    )
+    demo_token: str | None = None
+    owner_token: str | None = None
 class BeginnerExerciseAnswerRequest(BaseModel):
     user_id: str | None = None
     code: str
@@ -622,6 +632,37 @@ def record_learning_answer(
     }
 
 
+@app.post("/v1/learning/modification-answer")
+def check_active_modification_answer(
+    request: ActiveModificationAnswerRequest,
+) -> dict:
+    _require_valid_access(
+        user_id=request.user_id,
+        demo_token=request.demo_token,
+        owner_token=request.owner_token,
+    )
+    challenge = active_modification_engine.build(
+        code=request.code,
+    )
+    if challenge is None:
+        raise HTTPException(
+            status_code=400,
+            detail="No modification challenge available.",
+        )
+    correct = active_modification_engine.verify(
+        original_code=request.code,
+        answer=request.answer,
+    )
+    return {
+        "correct": correct,
+        "message":
+            (
+                "Entendiste cómo modificar este filtro."
+                if correct
+                else
+                "La estructura todavía no produce el cambio pedido."
+            ),
+    }
 @app.post("/v1/learning/exercise-answer")
 def check_beginner_exercise_answer(
     request: BeginnerExerciseAnswerRequest,
@@ -710,6 +751,9 @@ def context_block_learn(
         breakdown = line_breakdown_engine.build(
             code=item.code,
         )
+        modification = active_modification_engine.build(
+            code=item.code,
+        )
         response_items.append(
             {
                 "start_line":
@@ -781,6 +825,19 @@ def context_block_learn(
                                 ),
                         }
                         if exercise
+                        else None
+                    ),
+                "modification":
+                    (
+                        {
+                            "kind":
+                                modification.kind,
+                            "concept":
+                                modification.concept,
+                            "prompt":
+                                modification.prompt,
+                        }
+                        if modification
                         else None
                     ),
                 "breakdown":

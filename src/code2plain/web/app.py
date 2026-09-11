@@ -3349,6 +3349,113 @@ def learning_page():
             }
         }
 
+
+        /* CODE2PLAIN ACTIVE MODIFICATION */
+        .line-learning-actions {
+            display: flex;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 7px;
+        }
+        .line-learning-actions .line-breakdown-trigger {
+            margin: 0;
+        }
+        .active-modification-trigger {
+            margin: 0;
+            padding: 5px 8px;
+            border: 1px solid rgba(22, 132, 91, 0.20);
+            border-radius: 8px;
+            background: rgba(22, 132, 91, 0.07);
+            color: var(--c2p-success);
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .active-modification-input {
+            width: 100%;
+            min-height: 82px;
+            margin-top: 10px;
+            padding: 10px 11px;
+            box-sizing: border-box;
+            border: 1px solid var(--c2p-border);
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .active-modification-result {
+            margin-top: 8px;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+        .active-modification-result.success {
+            padding: 10px 11px;
+            border-radius: 10px;
+            background: rgba(22, 132, 91, 0.08);
+            color: var(--c2p-success);
+            font-weight: 700;
+        }
+        .active-modification-result.review {
+            color: var(--c2p-danger);
+        }
+        @media (max-width: 640px) {
+            .active-modification-input {
+                min-height: 96px;
+                font-size: 16px;
+            }
+        }
+
+
+        /* CODE2PLAIN ACTIVE MODIFICATION DETAILS */
+        .active-modification-prompt {
+            margin-bottom: 10px;
+            padding: 10px 11px;
+            border-radius: 10px;
+            background:
+                rgba(22, 132, 91, 0.07);
+            color:
+                var(--c2p-text);
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.45;
+        }
+        .active-modification-original {
+            margin: 0;
+            padding: 9px 10px;
+            border:
+                1px solid rgba(104, 124, 153, 0.14);
+            border-radius: 10px;
+            background:
+                var(--c2p-surface-blue);
+            color:
+                var(--c2p-navy);
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+        @media (max-width: 640px) {
+            .line-learning-actions {
+                justify-content: flex-start;
+            }
+            .active-modification-trigger,
+            .line-learning-actions
+            .line-breakdown-trigger {
+                font-size: 11px;
+            }
+            .active-modification-prompt,
+            .active-modification-result {
+                font-size: 14px;
+            }
+            .active-modification-original {
+                font-size: 13px;
+            }
+        }
+
 </style>
 </head>
 
@@ -4366,6 +4473,88 @@ button.addEventListener(
                 );
                 results.append(overviewButton);
             }
+            function launchModificationConfetti() {
+                if (
+                    window.matchMedia(
+                        "(prefers-reduced-motion: reduce)"
+                    ).matches
+                ) {
+                    return;
+                }
+                const layer =
+                    document.createElement(
+                        "div"
+                    );
+                layer.className =
+                    "learning-confetti-layer";
+                const colors = [
+                    "#1165e7",
+                    "#1aa8d9",
+                    "#16845b",
+                    "#f5b942",
+                    "#ef5da8"
+                ];
+                for (
+                    let i = 0;
+                    i < 42;
+                    i += 1
+                ) {
+                    const piece =
+                        document.createElement(
+                            "span"
+                        );
+                    piece.className =
+                        "learning-confetti-piece";
+                    piece.style.left =
+                        (
+                            Math.random()
+                            * 100
+                        )
+                        + "%";
+                    piece.style.backgroundColor =
+                        colors[
+                            i
+                            % colors.length
+                        ];
+                    piece.style.animationDelay =
+                        (
+                            Math.random()
+                            * 140
+                        )
+                        + "ms";
+                    piece.style.animationDuration =
+                        (
+                            950
+                            + Math.random()
+                            * 650
+                        )
+                        + "ms";
+                    piece.style.setProperty(
+                        "--drift",
+                        (
+                            -100
+                            + Math.random()
+                            * 200
+                        )
+                        + "px"
+                    );
+                    piece.style.setProperty(
+                        "--spin",
+                        (
+                            360
+                            + Math.random()
+                            * 720
+                        )
+                        + "deg"
+                    );
+                    layer.append(piece);
+                }
+                document.body.append(layer);
+                window.setTimeout(
+                    () => layer.remove(),
+                    1900
+                );
+            }
             payload.items.forEach(
                 (item, index) => {
 
@@ -4671,6 +4860,12 @@ button.addEventListener(
                         item.code,
                         conceptText
                     );
+                    const learningActions =
+                        document.createElement(
+                            "div"
+                        );
+                    learningActions.className =
+                        "line-learning-actions";
                     if (item.breakdown) {
                         const breakdownButton =
                             document.createElement(
@@ -4804,11 +4999,239 @@ button.addEventListener(
                                 );
                             }
                         );
-                        snippet.append(
+                        learningActions.append(
                             breakdownButton
                         );
                     }
 
+                    if (item.modification) {
+                        const modificationButton =
+                            document.createElement(
+                                "button"
+                            );
+                        modificationButton.type =
+                            "button";
+                        modificationButton.className =
+                            "active-modification-trigger";
+                        modificationButton.textContent =
+                            "🎯 Modifícalo tú";
+                        modificationButton.addEventListener(
+                            "click",
+                            () => {
+                                const overlay =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                overlay.className =
+                                    "line-breakdown-overlay";
+                                const panel =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                panel.className =
+                                    "line-breakdown-panel";
+                                panel.setAttribute(
+                                    "role",
+                                    "dialog"
+                                );
+                                panel.setAttribute(
+                                    "aria-modal",
+                                    "true"
+                                );
+                                const header =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                header.className =
+                                    "line-breakdown-header";
+                                const title =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                title.className =
+                                    "line-breakdown-title";
+                                title.textContent =
+                                    "🎯 Ahora modifícalo tú";
+                                const closeButton =
+                                    document.createElement(
+                                        "button"
+                                    );
+                                closeButton.type =
+                                    "button";
+                                closeButton.className =
+                                    "line-breakdown-close";
+                                closeButton.textContent =
+                                    "×";
+                                header.append(
+                                    title,
+                                    closeButton
+                                );
+                                const prompt =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                prompt.className =
+                                    "active-modification-prompt";
+                                prompt.textContent =
+                                    item.modification.prompt;
+                                const original =
+                                    document.createElement(
+                                        "pre"
+                                    );
+                                original.className =
+                                    "active-modification-original";
+                                original.textContent =
+                                    item.code;
+                                const answer =
+                                    document.createElement(
+                                        "textarea"
+                                    );
+                                answer.className =
+                                    "active-modification-input";
+                                answer.placeholder =
+                                    "Escribe aquí la línea modificada...";
+                                answer.spellcheck =
+                                    false;
+                                const verify =
+                                    document.createElement(
+                                        "button"
+                                    );
+                                verify.type =
+                                    "button";
+                                verify.className =
+                                    "learning-check-verify";
+                                verify.textContent =
+                                    "Comprobar cambio";
+                                const result =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                result.className =
+                                    "active-modification-result";
+                                result.setAttribute(
+                                    "role",
+                                    "status"
+                                );
+                                result.setAttribute(
+                                    "aria-live",
+                                    "polite"
+                                );
+                                verify.addEventListener(
+                                    "click",
+                                    async () => {
+                                        const value =
+                                            answer.value.trim();
+                                        if (!value) {
+                                            result.textContent =
+                                                "Escribe tu modificación 🙂";
+                                            answer.focus();
+                                            return;
+                                        }
+                                        verify.disabled =
+                                            true;
+                                        const response =
+                                            await fetch(
+                                                "/v1/learning/modification-answer",
+                                                {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Content-Type":
+                                                            "application/json"
+                                                    },
+                                                    body:
+                                                        JSON.stringify({
+                                                            user_id:
+                                                                learningUserId,
+                                                            code:
+                                                                item.code,
+                                                            answer:
+                                                                value,
+                                                            demo_token:
+                                                                demoToken,
+                                                            owner_token:
+                                                                ownerToken
+                                                        })
+                                                }
+                                            );
+                                        const data =
+                                            await response.json();
+                                        verify.disabled =
+                                            false;
+                                        if (!response.ok) {
+                                            result.textContent =
+                                                "No pude comprobar el cambio.";
+                                            return;
+                                        }
+                                        if (data.correct) {
+                                            result.className =
+                                                "active-modification-result "
+                                                + "success";
+                                            result.textContent =
+                                                "🎉 Lo modificaste tú. "
+                                                + "Ya no solo reconoces "
+                                                + "este patrón. 🚀";
+                                            answer.disabled =
+                                                true;
+                                            verify.style.display =
+                                                "none";
+                                            launchModificationConfetti();
+                                        } else {
+                                            result.className =
+                                                "active-modification-result "
+                                                + "review";
+                                            result.textContent =
+                                                "Casi 👀. Revisa qué parte "
+                                                + "controla el límite e "
+                                                + "inténtalo otra vez.";
+                                            answer.focus();
+                                            answer.select();
+                                        }
+                                    }
+                                );
+                                panel.append(
+                                    header,
+                                    prompt,
+                                    original,
+                                    answer,
+                                    verify,
+                                    result
+                                );
+                                const closePanel =
+                                    () => overlay.remove();
+                                closeButton.addEventListener(
+                                    "click",
+                                    closePanel
+                                );
+                                overlay.addEventListener(
+                                    "click",
+                                    event => {
+                                        if (
+                                            event.target
+                                            === overlay
+                                        ) {
+                                            closePanel();
+                                        }
+                                    }
+                                );
+                                overlay.append(panel);
+                                document.body.append(
+                                    overlay
+                                );
+                                answer.focus();
+                            }
+                        );
+                        learningActions.append(
+                            modificationButton
+                        );
+                    }
+                    if (
+                        learningActions.childElementCount
+                        > 0
+                    ) {
+                        snippet.append(
+                            learningActions
+                        );
+                    }
                     const learningCheck =
                         document.createElement(
                             "details"
