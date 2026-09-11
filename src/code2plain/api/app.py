@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import FileResponse
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -253,9 +253,10 @@ app.include_router(web_router)
 
 
 @app.get("/")
-def visual_learning_ui() -> FileResponse:
-    return FileResponse(
-        WEB_DIR / "index.html"
+def visual_learning_ui() -> RedirectResponse:
+    return RedirectResponse(
+        url="/learn",
+        status_code=307,
     )
 
 

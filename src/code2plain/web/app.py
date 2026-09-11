@@ -3112,6 +3112,157 @@ def learning_page():
             }
         }
 
+
+        /* CODE2PLAIN LINE BREAKDOWN PANEL */
+        .line-breakdown-trigger {
+            display: flex;
+            width: fit-content;
+            margin: 8px 0 0 auto;
+            padding: 5px 8px;
+            border:
+                1px solid rgba(17, 101, 231, 0.16);
+            border-radius: 8px;
+            background:
+                rgba(17, 101, 231, 0.06);
+            color:
+                var(--c2p-navy);
+            font-family:
+                inherit;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .line-breakdown-trigger:hover {
+            background:
+                rgba(17, 101, 231, 0.11);
+        }
+        .line-breakdown-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background:
+                rgba(4, 20, 47, 0.40);
+            backdrop-filter:
+                blur(9px);
+            -webkit-backdrop-filter:
+                blur(9px);
+        }
+        .line-breakdown-panel {
+            width: min(560px, 100%);
+            max-height: 78vh;
+            overflow-y: auto;
+            padding: 18px;
+            border:
+                1px solid rgba(255, 255, 255, 0.58);
+            border-radius: 18px;
+            background:
+                rgba(255, 255, 255, 0.94);
+            box-shadow:
+                0 24px 70px
+                rgba(4, 20, 47, 0.28);
+            color:
+                var(--c2p-text);
+        }
+        .line-breakdown-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .line-breakdown-title {
+            font-size: 15px;
+            font-weight: 800;
+        }
+        .line-breakdown-close {
+            margin: 0;
+            padding: 4px 8px;
+            border-radius: 8px;
+            background:
+                rgba(8, 31, 70, 0.07);
+            color:
+                var(--c2p-navy);
+            font-size: 16px;
+            line-height: 1;
+        }
+        .line-breakdown-summary {
+            margin-bottom: 12px;
+            padding: 10px 11px;
+            border-radius: 10px;
+            background:
+                var(--c2p-surface-blue);
+            font-size: 13px;
+            line-height: 1.45;
+        }
+        .line-breakdown-part {
+            display: grid;
+            grid-template-columns:
+                minmax(120px, 0.8fr)
+                1.5fr;
+            gap: 10px;
+            padding: 9px 0;
+            border-bottom:
+                1px solid
+                rgba(104, 124, 153, 0.13);
+        }
+        .line-breakdown-part:last-child {
+            border-bottom: 0;
+        }
+        .line-breakdown-code {
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color:
+                var(--c2p-blue);
+        }
+        .line-breakdown-meaning {
+            font-size: 12px;
+            line-height: 1.45;
+            color:
+                var(--c2p-muted);
+        }
+        @media (max-width: 640px) {
+            .line-breakdown-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+            .line-breakdown-panel {
+                width: 100%;
+                max-height: 82vh;
+                padding:
+                    16px 15px
+                    calc(
+                        18px
+                        + env(safe-area-inset-bottom)
+                    );
+                border-radius:
+                    20px 20px 0 0;
+            }
+            .line-breakdown-title {
+                font-size: 16px;
+            }
+            .line-breakdown-summary {
+                font-size: 14px;
+            }
+            .line-breakdown-part {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+            .line-breakdown-code {
+                font-size: 13px;
+            }
+            .line-breakdown-meaning {
+                font-size: 13px;
+            }
+        }
+
 </style>
 </head>
 
@@ -4280,6 +4431,143 @@ button.addEventListener(
                         item.code,
                         conceptText
                     );
+                    if (item.breakdown) {
+                        const breakdownButton =
+                            document.createElement(
+                                "button"
+                            );
+                        breakdownButton.type =
+                            "button";
+                        breakdownButton.className =
+                            "line-breakdown-trigger";
+                        breakdownButton.textContent =
+                            "🧩 Desarmar línea";
+                        breakdownButton.addEventListener(
+                            "click",
+                            () => {
+                                const overlay =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                overlay.className =
+                                    "line-breakdown-overlay";
+                                const panel =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                panel.className =
+                                    "line-breakdown-panel";
+                                panel.setAttribute(
+                                    "role",
+                                    "dialog"
+                                );
+                                panel.setAttribute(
+                                    "aria-modal",
+                                    "true"
+                                );
+                                const header =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                header.className =
+                                    "line-breakdown-header";
+                                const title =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                title.className =
+                                    "line-breakdown-title";
+                                title.textContent =
+                                    "🧩 "
+                                    + item.breakdown.title;
+                                const closeButton =
+                                    document.createElement(
+                                        "button"
+                                    );
+                                closeButton.type =
+                                    "button";
+                                closeButton.className =
+                                    "line-breakdown-close";
+                                closeButton.textContent =
+                                    "×";
+                                header.append(
+                                    title,
+                                    closeButton
+                                );
+                                const summary =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                summary.className =
+                                    "line-breakdown-summary";
+                                summary.textContent =
+                                    item.breakdown.summary;
+                                panel.append(
+                                    header,
+                                    summary
+                                );
+                                item.breakdown.parts.forEach(
+                                    part => {
+                                        const row =
+                                            document.createElement(
+                                                "div"
+                                            );
+                                        row.className =
+                                            "line-breakdown-part";
+                                        const code =
+                                            document.createElement(
+                                                "div"
+                                            );
+                                        code.className =
+                                            "line-breakdown-code";
+                                        code.textContent =
+                                            part.code;
+                                        const meaning =
+                                            document.createElement(
+                                                "div"
+                                            );
+                                        meaning.className =
+                                            "line-breakdown-meaning";
+                                        meaning.textContent =
+                                            part.meaning;
+                                        row.append(
+                                            code,
+                                            meaning
+                                        );
+                                        panel.append(
+                                            row
+                                        );
+                                    }
+                                );
+                                const closePanel =
+                                    () => {
+                                        overlay.remove();
+                                    };
+                                closeButton.addEventListener(
+                                    "click",
+                                    closePanel
+                                );
+                                overlay.addEventListener(
+                                    "click",
+                                    event => {
+                                        if (
+                                            event.target
+                                            === overlay
+                                        ) {
+                                            closePanel();
+                                        }
+                                    }
+                                );
+                                overlay.append(panel);
+                                document.body.append(
+                                    overlay
+                                );
+                            }
+                        );
+                        snippet.append(
+                            breakdownButton
+                        );
+                    }
 
                     const learningCheck =
                         document.createElement(
@@ -4558,23 +4846,26 @@ button.addEventListener(
                                         "🎉 ¡Correcto! Lo lograste 🚀 "
                                         + data.explanation;
                                     celebrateLearningSuccess();
+                                    verifyButton.style.display =
+                                        "none";
+                                    optionInputs.forEach(
+                                        input => {
+                                            input.disabled =
+                                                true;
+                                        }
+                                    );
                                 } else {
                                     resultMessage.textContent =
-                                        "↻ Repasar. "
+                                        "↻ Casi. Revisa la explicación "
+                                        + "e inténtalo otra vez. "
                                         + data.explanation;
+                                    verifyButton.disabled =
+                                        false;
                                 }
-
-                                verifyButton.style.display =
-                                    "none";
-
-                                optionInputs.forEach(
-                                    input => {
-                                        input.disabled =
-                                            true;
-                                    }
-                                );
-
-                                if (item.exercise) {
+                                if (
+                                    data.correct
+                                    && item.exercise
+                                ) {
                                     const exercise =
                                         document.createElement(
                                             "div"
