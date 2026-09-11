@@ -39,6 +39,7 @@ from code2plain.learning_checks import (
 from code2plain.learning_interaction import LearningInteractionBuilder
 from code2plain.learning_memory import learning_memory
 from code2plain.learning_memory_store import learning_memory_store
+from code2plain.line_breakdown import line_breakdown_engine
 from code2plain.line_learning import line_by_line_explainer
 from code2plain.owner_access import (
     owner_access_service,
@@ -704,6 +705,9 @@ def context_block_learn(
             code=item.code,
         )
 
+        breakdown = line_breakdown_engine.build(
+            code=item.code,
+        )
         response_items.append(
             {
                 "start_line":
@@ -775,6 +779,28 @@ def context_block_learn(
                                 ),
                         }
                         if exercise
+                        else None
+                    ),
+                "breakdown":
+                    (
+                        {
+                            "title":
+                                breakdown.title,
+                            "summary":
+                                breakdown.summary,
+                            "parts":
+                                [
+                                    {
+                                        "code":
+                                            part.code,
+                                        "meaning":
+                                            part.meaning,
+                                    }
+                                    for part
+                                    in breakdown.parts
+                                ],
+                        }
+                        if breakdown
                         else None
                     ),
             }
