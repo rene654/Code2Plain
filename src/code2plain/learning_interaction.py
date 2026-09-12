@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import ClassVar
 
 
 @dataclass(frozen=True)
@@ -8,7 +9,7 @@ class LearningInteraction:
 
 
 class LearningInteractionBuilder:
-    WHY = {
+    WHY: ClassVar[dict[str, str]] = {
         "FILTER":
             "Se usa para conservar únicamente los datos que cumplen una condición.",
         "GROUP":
@@ -27,7 +28,7 @@ class LearningInteractionBuilder:
             "Se usa para controlar qué ocurre cuando una operación puede fallar.",
     }
 
-    CHALLENGE = {
+    CHALLENGE: ClassVar[dict[str, str]] = {
         "FILTER":
             "¿Qué cambiaría si la condición fuera status == 'cancelled'?",
         "GROUP":

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import ClassVar
 
 
 @dataclass(frozen=True)
@@ -16,7 +17,7 @@ class ExplanationConfidenceAssessor:
     detection confidence.
     """
 
-    BASE_SCORES = {
+    BASE_SCORES: ClassVar[dict[str, int]] = {
         "FILTER": 94,
         "GROUP": 95,
         "AGGREGATE": 95,

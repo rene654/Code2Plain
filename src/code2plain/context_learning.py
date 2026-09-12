@@ -96,7 +96,7 @@ class ContextAwareTeachingEngine:
                 assignments[target.id] = ast.unparse(
                     node.value
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001
                 assignments[target.id] = ""
 
         return assignments

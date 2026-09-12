@@ -1,4 +1,5 @@
 import re
+from typing import ClassVar
 
 from code2plain.detection.models import (
     ContentCandidate,
@@ -15,7 +16,7 @@ class AICodeDetector:
     than false negatives.
     """
 
-    AI_SOURCES = {
+    AI_SOURCES: ClassVar[set[str]] = {
         "chatgpt",
         "github_copilot",
         "claude",
@@ -23,7 +24,7 @@ class AICodeDetector:
         "code2plain",
     }
 
-    AI_ROLES = {
+    AI_ROLES: ClassVar[set[str]] = {
         "assistant",
         "ai",
     }

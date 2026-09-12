@@ -82,9 +82,7 @@ def check_no_runtime_database_tracked() -> GateResult:
         file
         for file in files
         if (
-            file.endswith(".db")
-            or file.endswith(".db-wal")
-            or file.endswith(".db-shm")
+            file.endswith((".db", ".db-wal", ".db-shm"))
         )
     ]
 

@@ -16,13 +16,7 @@ class FailureAnalyzer:
         self,
         failure: CheckFailure,
     ) -> LearningFeedback:
-        text = " ".join(
-            (
-                failure.name,
-                failure.summary,
-                failure.details,
-            )
-        ).lower()
+        text = f"{failure.name} {failure.summary} {failure.details}".lower()
 
         concept = self._detect_concept(text)
 

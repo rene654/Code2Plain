@@ -106,7 +106,7 @@ class NtfyNotificationProvider(
 
             response.raise_for_status()
 
-        except Exception as error:
+        except Exception as error:  # noqa: BLE001
 
             return NotificationResult(
                 success=False,
