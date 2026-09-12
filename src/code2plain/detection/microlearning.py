@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import ClassVar
 
 from code2plain.detection.relevance import (
     RelevantCodePart,
@@ -28,7 +29,7 @@ class MicroLearningPlanner:
     only on the most useful few.
     """
 
-    PRIORITY = {
+    PRIORITY: ClassVar[dict[str, int]] = {
         "ERROR HANDLING": 100,
         "FUNCTION": 90,
         "CLASS": 90,

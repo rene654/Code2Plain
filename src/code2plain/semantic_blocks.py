@@ -69,10 +69,7 @@ class SemanticBlockExtractor:
 
                 kind = "assignment"
 
-            elif isinstance(node, ast.Import) or isinstance(
-                node,
-                ast.ImportFrom,
-            ):
+            elif isinstance(node, (ast.Import, ast.ImportFrom)):
                 kind = "import"
 
             elif isinstance(node, ast.Expr):
@@ -80,7 +77,7 @@ class SemanticBlockExtractor:
                     expression = ast.unparse(
                         node.value
                     )
-                except Exception:
+                except Exception:  # noqa: BLE001
                     expression = source
 
                 kind = "expression"

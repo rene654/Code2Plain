@@ -97,14 +97,7 @@ class LineByLineExplainer:
                         "se usará dentro de cada grupo."
                     )
 
-                if (
-                    ".sum(" in line
-                    or line.endswith(".sum()")
-                ):
-                    if (
-                        "AGGREGATE"
-                        not in concepts
-                    ):
+                if ".sum(" in line and "AGGREGATE" not in concepts:
                         concepts.append(
                             "AGGREGATE"
                         )
@@ -244,8 +237,7 @@ class LineByLineExplainer:
         line: str,
     ) -> str:
         if (
-            line.startswith("import ")
-            or line.startswith("from ")
+            line.startswith(("import ", "from "))
         ):
             return (
                 "Porque el programa necesita acceder "
@@ -313,10 +305,8 @@ class LineByLineExplainer:
         line: str,
     ) -> int:
         if (
-            line.startswith("import ")
-            or line.startswith("from ")
+            line.startswith(("import ", "from ", "print("))
             or "read_csv(" in line
-            or line.startswith("print(")
             or line in {")", "]", "}"}
         ):
             return 96
@@ -335,8 +325,7 @@ class LineByLineExplainer:
         line: str,
     ) -> str:
         if (
-            line.startswith("import ")
-            or line.startswith("from ")
+            line.startswith(("import ", "from "))
         ):
             return (
                 "Carga código externo para poder "
@@ -355,8 +344,7 @@ class LineByLineExplainer:
             )
 
         if (
-            line.startswith('["')
-            or line.startswith("['")
+            line.startswith(('["', "['"))
         ):
             return (
                 "Selecciona una columna o elemento "

@@ -212,7 +212,7 @@ class SemanticFallbackEngine:
             return ast.unparse(
                 node
             )
-        except Exception:
+        except Exception:  # noqa: BLE001
             return None
 
 
