@@ -1,6 +1,6 @@
 from datetime import (
+    UTC,
     datetime,
-    timezone,
 )
 
 import pytest
@@ -11,14 +11,13 @@ from code2plain.devices import (
     DeviceRegistry,
 )
 
-
 BASE = datetime(
     2026,
     8,
     16,
     12,
     0,
-    tzinfo=timezone.utc,
+    tzinfo=UTC,
 )
 
 

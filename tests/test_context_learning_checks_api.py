@@ -3,7 +3,6 @@ from fastapi.testclient import TestClient
 from code2plain.api.app import app
 from tests.demo_test_helper import demo_credentials
 
-
 client = TestClient(app)
 
 
@@ -65,6 +64,33 @@ def test_context_csv_check_has_expected_answer():
     assert "correct_index" not in check
 
     assert any(
-        "nuevo archivo" in option
+        "abra ese archivo" in option
         for option in check["options"]
     )
+
+
+def test_csv_block_includes_beginner_exercise():
+    user_id, token = demo_credentials(
+        client
+    )
+
+    response = client.post(
+        "/v1/context-block-learn",
+        json={
+            "user_id": user_id,
+            "demo_token": token,
+            "code": 'sales = pd.read_csv("sales.csv")',
+        },
+    )
+
+    assert response.status_code == 200
+
+    exercise = response.json()[
+        "items"
+    ][0]["exercise"]
+
+    assert exercise is not None
+    assert exercise["kind"] == "fill_blank"
+    assert "________" in exercise["prompt"]
+    assert "read_csv" in exercise["options"]
+    assert "correct_index" not in exercise

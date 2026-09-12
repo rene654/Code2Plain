@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import sqlite3
-
 from datetime import (
+    UTC,
     datetime,
-    timezone,
 )
 from pathlib import Path
 
@@ -16,7 +15,7 @@ from code2plain.devices.push_models import (
 
 def utc_now() -> datetime:
     return datetime.now(
-        timezone.utc
+        UTC
     )
 
 

@@ -10,7 +10,6 @@ from code2plain.notifications import (
     NtfyNotificationProvider,
 )
 
-
 DATABASE = Path(
     "code2plain_devices.db"
 )

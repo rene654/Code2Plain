@@ -69,10 +69,7 @@ class SemanticBlockExtractor:
 
                 kind = "assignment"
 
-            elif isinstance(node, ast.Import):
-                kind = "import"
-
-            elif isinstance(
+            elif isinstance(node, ast.Import) or isinstance(
                 node,
                 ast.ImportFrom,
             ):

@@ -13,11 +13,11 @@ from code2plain.localization import (
     DEFAULT_LANGUAGE,
     Localizer,
 )
-from code2plain.semantic_enricher import (
-    SemanticEnricher,
-)
 from code2plain.quick_summary import (
     QuickSummaryBuilder,
+)
+from code2plain.semantic_enricher import (
+    SemanticEnricher,
 )
 
 

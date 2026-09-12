@@ -3,12 +3,11 @@ from __future__ import annotations
 import ast
 from dataclasses import dataclass
 
-from code2plain.semantic_fallback import semantic_fallback
-
 from code2plain.semantic_blocks import (
     SemanticBlock,
     semantic_block_extractor,
 )
+from code2plain.semantic_fallback import semantic_fallback
 
 
 @dataclass(frozen=True)
@@ -439,8 +438,6 @@ class ContextBlockTeachingEngine:
         self,
         expression: str,
     ) -> str | None:
-        marker = ")]"
-
         try:
             group_end = expression.index(
                 ".groupby("
@@ -489,8 +486,8 @@ class ContextBlockTeachingEngine:
                 return ast.unparse(
                     tree.body.args[0]
                 )
-        except Exception:
-            pass
+        except (SyntaxError, ValueError):
+            return None
 
         return None
 

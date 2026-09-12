@@ -2,7 +2,6 @@ from pathlib import Path
 
 from code2plain.service import Code2PlainService
 
-
 ROOT = (
     Path(__file__)
     .resolve()

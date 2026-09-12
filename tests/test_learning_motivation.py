@@ -2,7 +2,6 @@ from code2plain.learning_motivation import (
     LearningMotivationEngine,
 )
 
-
 engine = LearningMotivationEngine()
 
 

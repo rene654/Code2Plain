@@ -1,6 +1,6 @@
 from datetime import (
+    UTC,
     datetime,
-    timezone,
 )
 
 from code2plain.learning import (
@@ -204,7 +204,7 @@ def test_timestamps_survive_round_trip(
         16,
         15,
         30,
-        tzinfo=timezone.utc,
+        tzinfo=UTC,
     )
 
     tracker.observe_explanation(

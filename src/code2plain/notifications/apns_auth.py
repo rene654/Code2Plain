@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import (
+    UTC,
     datetime,
-    timezone,
 )
 from pathlib import Path
 
@@ -60,7 +60,7 @@ class APNsJWTProvider:
         timestamp = (
             now
             or datetime.now(
-                timezone.utc
+                UTC
             )
         )
 

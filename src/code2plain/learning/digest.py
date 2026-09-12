@@ -7,7 +7,6 @@ from code2plain.learning.models import (
     LearningSession,
 )
 
-
 _LABELS = {
     "es": {
         "IMPORT": "importaciones",

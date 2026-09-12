@@ -3,7 +3,6 @@ from code2plain.detection import (
     ContentCandidate,
 )
 
-
 detector = AICodeDetector()
 
 

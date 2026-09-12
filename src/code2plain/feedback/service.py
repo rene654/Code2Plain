@@ -6,11 +6,11 @@ from code2plain.adapters.github_feedback import (
 from code2plain.feedback.analyzer import (
     FailureAnalyzer,
 )
-from code2plain.feedback.models import (
-    LearningFeedback,
-)
 from code2plain.feedback.github_log_parser import (
     GitHubFailureLogParser,
+)
+from code2plain.feedback.models import (
+    LearningFeedback,
 )
 
 

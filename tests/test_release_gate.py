@@ -1,6 +1,5 @@
-from code2plain.service import Code2PlainService
 from code2plain.live_store import LiveExplanationStore
-
+from code2plain.service import Code2PlainService
 
 CODE = """
 import pandas as pd

@@ -3,10 +3,9 @@ from __future__ import annotations
 import hashlib
 import secrets
 import sqlite3
-
 from datetime import (
+    UTC,
     datetime,
-    timezone,
 )
 from pathlib import Path
 
@@ -17,7 +16,7 @@ from code2plain.devices.ntfy_models import (
 
 def utc_now() -> datetime:
     return datetime.now(
-        timezone.utc
+        UTC
     )
 
 

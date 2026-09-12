@@ -2,7 +2,6 @@ from code2plain.line_learning import (
     LineByLineExplainer,
 )
 
-
 CODE = '''import pandas as pd
 
 sales = pd.read_csv("sales.csv")

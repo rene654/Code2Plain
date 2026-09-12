@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-
 from dataclasses import dataclass
 
 
@@ -99,24 +98,24 @@ class LearningCheckEngine:
         # Imports
         # ------------------------------------------
 
-        if (
-            source.startswith("import ")
-            or source.startswith("from ")
+        if source.startswith(
+            ("import ", "from ")
         ):
             return LearningCheck(
                 question=(
-                    "¿Para qué sirve esta línea "
-                    "dentro del programa?"
+                    "Esta línea dice `import pandas as pd`. "
+                    "¿Qué está haciendo?"
                 ),
                 options=(
-                    "Para borrar una herramienta externa.",
-                    "Para hacer disponible código de otro módulo.",
-                    "Para imprimir automáticamente un resultado.",
+                    "Está cargando una herramienta para poder usarla después.",
+                    "Está creando automáticamente una tabla con datos.",
+                    "Está guardando el resultado final del programa.",
                 ),
-                correct_index=1,
+                correct_index=0,
                 explanation=(
-                    "Una importación hace disponible código "
-                    "definido en otro módulo para poder usarlo."
+                    "Importar significa traer una herramienta al programa "
+                    "para poder usarla después. Aquí `pd` será el nombre corto "
+                    "para usar pandas."
                 ),
             )
 
@@ -127,18 +126,18 @@ class LearningCheckEngine:
         if "read_csv(" in source:
             return LearningCheck(
                 question=(
-                    "¿Qué cambia principalmente si usas "
-                    "otro archivo dentro de read_csv()?"
+                    "Cuando ves `pd.read_csv(...)`, "
+                    "¿qué le estás pidiendo a pandas?"
                 ),
                 options=(
-                    "Se intentan cargar los datos del nuevo archivo.",
-                    "La variable deja de existir.",
-                    "Python convierte automáticamente el archivo en código.",
+                    "Que abra ese archivo y cargue sus datos.",
+                    "Que cree un archivo CSV nuevo y vacío.",
+                    "Que muestre el archivo directamente en pantalla.",
                 ),
                 correct_index=0,
                 explanation=(
-                    "read_csv() utiliza la ruta indicada para "
-                    "decidir qué archivo de datos debe cargar."
+                    "`read_csv` significa leer un archivo CSV. "
+                    "Piensa: read = leer, CSV = tipo de archivo."
                 ),
             )
 
@@ -153,18 +152,18 @@ class LearningCheckEngine:
         ):
             return LearningCheck(
                 question=(
-                    "¿Qué controla qué filas permanecen "
-                    "en el resultado?"
+                    "En este filtro, ¿qué decide "
+                    "qué filas se quedan?"
                 ),
                 options=(
-                    "El nombre de la variable de salida.",
-                    "La condición que se evalúa.",
-                    "La cantidad de líneas del programa.",
+                    "La condición que compara los datos.",
+                    "El nombre que le damos al resultado.",
+                    "La primera columna de la tabla.",
                 ),
-                correct_index=1,
+                correct_index=0,
                 explanation=(
-                    "El filtro conserva únicamente las filas "
-                    "para las que la condición resulta verdadera."
+                    "Piensa en un filtro como un colador: "
+                    "solo pasan las filas donde la condición es verdadera."
                 ),
             )
 
@@ -178,18 +177,18 @@ class LearningCheckEngine:
         ):
             return LearningCheck(
                 question=(
-                    "¿Qué ocurriría si cambias la columna "
-                    "utilizada en groupby()?"
+                    "¿Qué hace primero `groupby()` "
+                    "antes de aplicar `.sum()`?"
                 ),
                 options=(
-                    "Los datos se organizarían usando grupos diferentes.",
-                    "La suma dejaría siempre de funcionar.",
-                    "Se eliminaría el DataFrame original.",
+                    "Forma grupos y después suma dentro de cada grupo.",
+                    "Suma todo primero y después intenta separar los datos.",
+                    "Ordena automáticamente todas las filas alfabéticamente.",
                 ),
                 correct_index=0,
                 explanation=(
-                    "groupby() decide qué valores se utilizan "
-                    "para formar cada grupo."
+                    "Recuerda este orden: groupby = formar grupos; "
+                    "sum = sumar dentro de esos grupos."
                 ),
             )
 
@@ -200,19 +199,18 @@ class LearningCheckEngine:
         if source.startswith("print("):
             return LearningCheck(
                 question=(
-                    "Si eliminas esta línea, ¿qué ocurre "
-                    "con el cálculo anterior?"
+                    "Si quitas `print(result)`, "
+                    "¿qué cambia normalmente?"
                 ),
                 options=(
-                    "El cálculo puede seguir ocurriendo, "
-                    "pero no se muestra aquí.",
-                    "Todo el programa deja obligatoriamente de calcular.",
-                    "Python borra automáticamente el resultado.",
+                    "El resultado puede seguir existiendo, pero ya no se muestra.",
+                    "La variable `result` se borra automáticamente.",
+                    "Python deja de ejecutar todas las líneas anteriores.",
                 ),
                 correct_index=0,
                 explanation=(
-                    "print() muestra un valor; normalmente no es "
-                    "la operación que produjo ese valor."
+                    "Piensa en `print()` como una pantalla: "
+                    "muestra el resultado, pero normalmente no lo crea."
                 ),
             )
 

@@ -12,7 +12,6 @@ from code2plain.learning.models import (
     LearningSession,
 )
 
-
 # Pedagogical importance.
 #
 # This is NOT code complexity.

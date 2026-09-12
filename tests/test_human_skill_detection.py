@@ -2,7 +2,6 @@ from code2plain.human_skill_detection import (
     HumanSkillDetector,
 )
 
-
 detector = HumanSkillDetector()
 
 

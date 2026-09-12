@@ -1,7 +1,7 @@
 from datetime import (
+    UTC,
     datetime,
     timedelta,
-    timezone,
 )
 
 from code2plain.learning import (
@@ -11,14 +11,13 @@ from code2plain.learning import (
     SessionLearningTracker,
 )
 
-
 BASE = datetime(
     2026,
     8,
     16,
     12,
     0,
-    tzinfo=timezone.utc,
+    tzinfo=UTC,
 )
 
 

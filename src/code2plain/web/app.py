@@ -1127,12 +1127,94 @@ def learning_page():
             font-size: 10px;
         }
 
-        .learning-check-result {
-            margin-top: 7px;
-            font-size: 10px;
-            line-height: 1.4;
+        .learning-check-input {
+            width: 100%;
+            min-height: 42px;
+            margin-top: 10px;
+            padding: 10px 12px;
+            box-sizing: border-box;
+            border: 1px solid var(--c2p-border);
+            border-radius: 10px;
+            background: #ffffff;
+            color: var(--c2p-text);
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                monospace;
+            font-size: 13px;
+            font-weight: 600;
         }
-
+        .learning-check-input:focus {
+            outline: 2px solid rgba(17, 101, 231, 0.18);
+            border-color: var(--c2p-blue);
+        }
+        .learning-check-result {
+            margin-top: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .learning-check-result.success {
+            padding: 11px 13px;
+            border: 1px solid rgba(22, 132, 91, 0.22);
+            border-radius: 10px;
+            background: rgba(22, 132, 91, 0.08);
+            color: var(--c2p-success);
+            font-weight: 700;
+            animation: c2p-success-pop 280ms ease-out;
+        }
+        .learning-confetti-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .learning-confetti-piece {
+            position: absolute;
+            top: -24px;
+            width: 9px;
+            height: 14px;
+            border-radius: 2px;
+            animation-name: c2p-confetti-fall;
+            animation-timing-function: ease-out;
+            animation-fill-mode: forwards;
+        }
+        @keyframes c2p-success-pop {
+            from {
+                opacity: 0;
+                transform: scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        @keyframes c2p-confetti-fall {
+            from {
+                opacity: 1;
+                transform:
+                    translate3d(0, -5vh, 0)
+                    rotate(0deg);
+            }
+            to {
+                opacity: 0;
+                transform:
+                    translate3d(
+                        var(--drift),
+                        105vh,
+                        0
+                    )
+                    rotate(var(--spin));
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .learning-confetti-layer {
+                display: none;
+            }
+            .learning-check-result.success {
+                animation: none;
+            }
+        }
         @media (max-width: 640px) {
             .item {
                 margin: 8px 0;
@@ -1165,6 +1247,17 @@ def learning_page():
 
             .learning-check-body {
                 padding: 8px;
+            }
+            .learning-check-input {
+                min-height: 46px;
+                font-size: 16px;
+            }
+            .learning-check-result {
+                font-size: 14px;
+                line-height: 1.5;
+            }
+            .learning-check-result.success {
+                padding: 12px 13px;
             }
         }
 
@@ -2949,6 +3042,432 @@ def learning_page():
             }
         }
 
+
+        /* CODE2PLAIN COMPACT LEARNING DENSITY */
+        .item {
+            margin: 8px 0;
+            padding: 12px 14px;
+        }
+        .meta {
+            margin-bottom: 4px;
+        }
+        .concept {
+            margin-bottom: 4px;
+        }
+        .explanation {
+            margin-bottom: 5px;
+            line-height: 1.42;
+        }
+        .item details {
+            margin-top: 4px;
+        }
+        .challenge {
+            margin-top: 4px;
+            margin-bottom: 5px;
+        }
+        .code {
+            margin-top: 6px;
+            padding: 8px 10px;
+        }
+        .learning-check {
+            margin-top: 7px;
+            padding-top: 7px;
+        }
+        .learning-check-summary {
+            margin-bottom: 5px;
+        }
+        .learning-check-body {
+            padding: 9px 10px;
+        }
+        .learning-check-option {
+            margin: 5px 0;
+        }
+        .learning-check-input {
+            margin-top: 6px;
+        }
+        .learning-check-verify {
+            margin-top: 6px;
+        }
+        .learning-check-result {
+            margin-top: 7px;
+        }
+        .learning-check-result.success {
+            padding: 9px 11px;
+        }
+        @media (max-width: 640px) {
+            .item {
+                margin: 6px 0;
+                padding: 10px 11px;
+            }
+            .meta {
+                margin-bottom: 3px;
+            }
+            .concept {
+                margin-bottom: 3px;
+            }
+            .explanation {
+                margin-bottom: 4px;
+            }
+            .code {
+                margin-top: 5px;
+                padding: 7px 9px;
+            }
+            .learning-check {
+                margin-top: 6px;
+                padding-top: 6px;
+            }
+            .learning-check-body {
+                padding: 8px 9px;
+            }
+            .learning-check-result.success {
+                padding: 10px 11px;
+            }
+        }
+
+
+        /* CODE2PLAIN LINE BREAKDOWN PANEL */
+        .line-breakdown-trigger {
+            display: flex;
+            width: fit-content;
+            margin: 8px 0 0 auto;
+            padding: 5px 8px;
+            border:
+                1px solid rgba(17, 101, 231, 0.16);
+            border-radius: 8px;
+            background:
+                rgba(17, 101, 231, 0.06);
+            color:
+                var(--c2p-navy);
+            font-family:
+                inherit;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .line-breakdown-trigger:hover {
+            background:
+                rgba(17, 101, 231, 0.11);
+        }
+        .line-breakdown-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background:
+                rgba(4, 20, 47, 0.40);
+            backdrop-filter:
+                blur(9px);
+            -webkit-backdrop-filter:
+                blur(9px);
+        }
+        .line-breakdown-panel {
+            width: min(560px, 100%);
+            max-height: 78vh;
+            overflow-y: auto;
+            padding: 18px;
+            border:
+                1px solid rgba(255, 255, 255, 0.58);
+            border-radius: 18px;
+            background:
+                rgba(255, 255, 255, 0.94);
+            box-shadow:
+                0 24px 70px
+                rgba(4, 20, 47, 0.28);
+            color:
+                var(--c2p-text);
+        }
+        .line-breakdown-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .line-breakdown-title {
+            font-size: 15px;
+            font-weight: 800;
+        }
+        .line-breakdown-close {
+            margin: 0;
+            padding: 4px 8px;
+            border-radius: 8px;
+            background:
+                rgba(8, 31, 70, 0.07);
+            color:
+                var(--c2p-navy);
+            font-size: 16px;
+            line-height: 1;
+        }
+        .line-breakdown-summary {
+            margin-bottom: 12px;
+            padding: 10px 11px;
+            border-radius: 10px;
+            background:
+                var(--c2p-surface-blue);
+            font-size: 13px;
+            line-height: 1.45;
+        }
+        .line-breakdown-part {
+            display: grid;
+            grid-template-columns:
+                minmax(120px, 0.8fr)
+                1.5fr;
+            gap: 10px;
+            padding: 9px 0;
+            border-bottom:
+                1px solid
+                rgba(104, 124, 153, 0.13);
+        }
+        .line-breakdown-part:last-child {
+            border-bottom: 0;
+        }
+        .line-breakdown-code {
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color:
+                var(--c2p-blue);
+        }
+        .line-breakdown-meaning {
+            font-size: 12px;
+            line-height: 1.45;
+            color:
+                var(--c2p-muted);
+        }
+        @media (max-width: 640px) {
+            .line-breakdown-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+            .line-breakdown-panel {
+                width: 100%;
+                max-height: 82vh;
+                padding:
+                    16px 15px
+                    calc(
+                        18px
+                        + env(safe-area-inset-bottom)
+                    );
+                border-radius:
+                    20px 20px 0 0;
+            }
+            .line-breakdown-title {
+                font-size: 16px;
+            }
+            .line-breakdown-summary {
+                font-size: 14px;
+            }
+            .line-breakdown-part {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+            .line-breakdown-code {
+                font-size: 13px;
+            }
+            .line-breakdown-meaning {
+                font-size: 13px;
+            }
+        }
+
+
+        /* CODE2PLAIN BLOCK OVERVIEW */
+        .block-overview-trigger {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: fit-content;
+            margin: 0 0 8px auto;
+            padding: 6px 9px;
+            border:
+                1px solid rgba(17, 101, 231, 0.18);
+            border-radius: 9px;
+            background:
+                rgba(255, 255, 255, 0.72);
+            color:
+                var(--c2p-navy);
+            font-size: 11px;
+            font-weight: 750;
+            cursor: pointer;
+            backdrop-filter:
+                blur(8px);
+            -webkit-backdrop-filter:
+                blur(8px);
+        }
+        .block-overview-trigger:hover {
+            background:
+                rgba(17, 101, 231, 0.08);
+        }
+        .block-overview-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+        .block-overview-step {
+            display: grid;
+            grid-template-columns:
+                28px 1fr;
+            gap: 9px;
+            align-items: start;
+            padding: 9px 10px;
+            border:
+                1px solid rgba(104, 124, 153, 0.12);
+            border-radius: 10px;
+            background:
+                rgba(245, 249, 255, 0.72);
+        }
+        .block-overview-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            background:
+                rgba(17, 101, 231, 0.10);
+            color:
+                var(--c2p-blue);
+            font-size: 11px;
+            font-weight: 800;
+        }
+        .block-overview-step-title {
+            margin-bottom: 2px;
+            color:
+                var(--c2p-text);
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .block-overview-step-detail {
+            color:
+                var(--c2p-muted);
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        @media (max-width: 640px) {
+            .block-overview-trigger {
+                margin-bottom: 6px;
+                font-size: 12px;
+            }
+            .block-overview-step-title {
+                font-size: 13px;
+            }
+            .block-overview-step-detail {
+                font-size: 13px;
+            }
+        }
+
+
+        /* CODE2PLAIN ACTIVE MODIFICATION */
+        .line-learning-actions {
+            display: flex;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 7px;
+        }
+        .line-learning-actions .line-breakdown-trigger {
+            margin: 0;
+        }
+        .active-modification-trigger {
+            margin: 0;
+            padding: 5px 8px;
+            border: 1px solid rgba(22, 132, 91, 0.20);
+            border-radius: 8px;
+            background: rgba(22, 132, 91, 0.07);
+            color: var(--c2p-success);
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .active-modification-input {
+            width: 100%;
+            min-height: 82px;
+            margin-top: 10px;
+            padding: 10px 11px;
+            box-sizing: border-box;
+            border: 1px solid var(--c2p-border);
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .active-modification-result {
+            margin-top: 8px;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+        .active-modification-result.success {
+            padding: 10px 11px;
+            border-radius: 10px;
+            background: rgba(22, 132, 91, 0.08);
+            color: var(--c2p-success);
+            font-weight: 700;
+        }
+        .active-modification-result.review {
+            color: var(--c2p-danger);
+        }
+        @media (max-width: 640px) {
+            .active-modification-input {
+                min-height: 96px;
+                font-size: 16px;
+            }
+        }
+
+
+        /* CODE2PLAIN ACTIVE MODIFICATION DETAILS */
+        .active-modification-prompt {
+            margin-bottom: 10px;
+            padding: 10px 11px;
+            border-radius: 10px;
+            background:
+                rgba(22, 132, 91, 0.07);
+            color:
+                var(--c2p-text);
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.45;
+        }
+        .active-modification-original {
+            margin: 0;
+            padding: 9px 10px;
+            border:
+                1px solid rgba(104, 124, 153, 0.14);
+            border-radius: 10px;
+            background:
+                var(--c2p-surface-blue);
+            color:
+                var(--c2p-navy);
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+        @media (max-width: 640px) {
+            .line-learning-actions {
+                justify-content: flex-start;
+            }
+            .active-modification-trigger,
+            .line-learning-actions
+            .line-breakdown-trigger {
+                font-size: 11px;
+            }
+            .active-modification-prompt,
+            .active-modification-result {
+                font-size: 14px;
+            }
+            .active-modification-original {
+                font-size: 13px;
+            }
+        }
+
 </style>
 </head>
 
@@ -3812,6 +4331,242 @@ button.addEventListener(
                 return;
             }
 
+            if (payload.overview) {
+                const overviewButton =
+                    document.createElement(
+                        "button"
+                    );
+                overviewButton.type =
+                    "button";
+                overviewButton.className =
+                    "block-overview-trigger";
+                overviewButton.textContent =
+                    "✨ Entender bloque";
+                overviewButton.addEventListener(
+                    "click",
+                    () => {
+                        const overlay =
+                            document.createElement(
+                                "div"
+                            );
+                        overlay.className =
+                            "line-breakdown-overlay";
+                        const panel =
+                            document.createElement(
+                                "div"
+                            );
+                        panel.className =
+                            "line-breakdown-panel";
+                        panel.setAttribute(
+                            "role",
+                            "dialog"
+                        );
+                        panel.setAttribute(
+                            "aria-modal",
+                            "true"
+                        );
+                        const header =
+                            document.createElement(
+                                "div"
+                            );
+                        header.className =
+                            "line-breakdown-header";
+                        const title =
+                            document.createElement(
+                                "div"
+                            );
+                        title.className =
+                            "line-breakdown-title";
+                        title.textContent =
+                            "✨ "
+                            + payload.overview.title;
+                        const closeButton =
+                            document.createElement(
+                                "button"
+                            );
+                        closeButton.type =
+                            "button";
+                        closeButton.className =
+                            "line-breakdown-close";
+                        closeButton.textContent =
+                            "×";
+                        header.append(
+                            title,
+                            closeButton
+                        );
+                        const summary =
+                            document.createElement(
+                                "div"
+                            );
+                        summary.className =
+                            "line-breakdown-summary";
+                        summary.textContent =
+                            payload.overview.summary;
+                        const flow =
+                            document.createElement(
+                                "div"
+                            );
+                        flow.className =
+                            "block-overview-flow";
+                        payload.overview.steps.forEach(
+                            (step, stepIndex) => {
+                                const row =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                row.className =
+                                    "block-overview-step";
+                                const number =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                number.className =
+                                    "block-overview-number";
+                                number.textContent =
+                                    String(
+                                        stepIndex + 1
+                                    );
+                                const content =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                const stepTitle =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                stepTitle.className =
+                                    "block-overview-step-title";
+                                stepTitle.textContent =
+                                    step.title;
+                                const detail =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                detail.className =
+                                    "block-overview-step-detail";
+                                detail.textContent =
+                                    step.detail;
+                                content.append(
+                                    stepTitle,
+                                    detail
+                                );
+                                row.append(
+                                    number,
+                                    content
+                                );
+                                flow.append(row);
+                            }
+                        );
+                        panel.append(
+                            header,
+                            summary,
+                            flow
+                        );
+                        const closePanel =
+                            () => overlay.remove();
+                        closeButton.addEventListener(
+                            "click",
+                            closePanel
+                        );
+                        overlay.addEventListener(
+                            "click",
+                            event => {
+                                if (
+                                    event.target
+                                    === overlay
+                                ) {
+                                    closePanel();
+                                }
+                            }
+                        );
+                        overlay.append(panel);
+                        document.body.append(overlay);
+                    }
+                );
+                results.append(overviewButton);
+            }
+            function launchModificationConfetti() {
+                if (
+                    window.matchMedia(
+                        "(prefers-reduced-motion: reduce)"
+                    ).matches
+                ) {
+                    return;
+                }
+                const layer =
+                    document.createElement(
+                        "div"
+                    );
+                layer.className =
+                    "learning-confetti-layer";
+                const colors = [
+                    "#1165e7",
+                    "#1aa8d9",
+                    "#16845b",
+                    "#f5b942",
+                    "#ef5da8"
+                ];
+                for (
+                    let i = 0;
+                    i < 42;
+                    i += 1
+                ) {
+                    const piece =
+                        document.createElement(
+                            "span"
+                        );
+                    piece.className =
+                        "learning-confetti-piece";
+                    piece.style.left =
+                        (
+                            Math.random()
+                            * 100
+                        )
+                        + "%";
+                    piece.style.backgroundColor =
+                        colors[
+                            i
+                            % colors.length
+                        ];
+                    piece.style.animationDelay =
+                        (
+                            Math.random()
+                            * 140
+                        )
+                        + "ms";
+                    piece.style.animationDuration =
+                        (
+                            950
+                            + Math.random()
+                            * 650
+                        )
+                        + "ms";
+                    piece.style.setProperty(
+                        "--drift",
+                        (
+                            -100
+                            + Math.random()
+                            * 200
+                        )
+                        + "px"
+                    );
+                    piece.style.setProperty(
+                        "--spin",
+                        (
+                            360
+                            + Math.random()
+                            * 720
+                        )
+                        + "deg"
+                    );
+                    layer.append(piece);
+                }
+                document.body.append(layer);
+                window.setTimeout(
+                    () => layer.remove(),
+                    1900
+                );
+            }
             payload.items.forEach(
                 (item, index) => {
 
@@ -4117,7 +4872,378 @@ button.addEventListener(
                         item.code,
                         conceptText
                     );
+                    const learningActions =
+                        document.createElement(
+                            "div"
+                        );
+                    learningActions.className =
+                        "line-learning-actions";
+                    if (item.breakdown) {
+                        const breakdownButton =
+                            document.createElement(
+                                "button"
+                            );
+                        breakdownButton.type =
+                            "button";
+                        breakdownButton.className =
+                            "line-breakdown-trigger";
+                        breakdownButton.textContent =
+                            "🧩 Desarmar línea";
+                        breakdownButton.addEventListener(
+                            "click",
+                            () => {
+                                const overlay =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                overlay.className =
+                                    "line-breakdown-overlay";
+                                const panel =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                panel.className =
+                                    "line-breakdown-panel";
+                                panel.setAttribute(
+                                    "role",
+                                    "dialog"
+                                );
+                                panel.setAttribute(
+                                    "aria-modal",
+                                    "true"
+                                );
+                                const header =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                header.className =
+                                    "line-breakdown-header";
+                                const title =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                title.className =
+                                    "line-breakdown-title";
+                                title.textContent =
+                                    "🧩 "
+                                    + item.breakdown.title;
+                                const closeButton =
+                                    document.createElement(
+                                        "button"
+                                    );
+                                closeButton.type =
+                                    "button";
+                                closeButton.className =
+                                    "line-breakdown-close";
+                                closeButton.textContent =
+                                    "×";
+                                header.append(
+                                    title,
+                                    closeButton
+                                );
+                                const summary =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                summary.className =
+                                    "line-breakdown-summary";
+                                summary.textContent =
+                                    item.breakdown.summary;
+                                panel.append(
+                                    header,
+                                    summary
+                                );
+                                item.breakdown.parts.forEach(
+                                    part => {
+                                        const row =
+                                            document.createElement(
+                                                "div"
+                                            );
+                                        row.className =
+                                            "line-breakdown-part";
+                                        const code =
+                                            document.createElement(
+                                                "div"
+                                            );
+                                        code.className =
+                                            "line-breakdown-code";
+                                        code.textContent =
+                                            part.code;
+                                        const meaning =
+                                            document.createElement(
+                                                "div"
+                                            );
+                                        meaning.className =
+                                            "line-breakdown-meaning";
+                                        meaning.textContent =
+                                            part.meaning;
+                                        row.append(
+                                            code,
+                                            meaning
+                                        );
+                                        panel.append(
+                                            row
+                                        );
+                                    }
+                                );
+                                const closePanel =
+                                    () => {
+                                        overlay.remove();
+                                    };
+                                closeButton.addEventListener(
+                                    "click",
+                                    closePanel
+                                );
+                                overlay.addEventListener(
+                                    "click",
+                                    event => {
+                                        if (
+                                            event.target
+                                            === overlay
+                                        ) {
+                                            closePanel();
+                                        }
+                                    }
+                                );
+                                overlay.append(panel);
+                                document.body.append(
+                                    overlay
+                                );
+                            }
+                        );
+                        learningActions.append(
+                            breakdownButton
+                        );
+                    }
 
+                    if (item.modification) {
+                        const modificationButton =
+                            document.createElement(
+                                "button"
+                            );
+                        modificationButton.type =
+                            "button";
+                        modificationButton.className =
+                            "active-modification-trigger";
+                        modificationButton.textContent =
+                            "🎯 Modifícalo tú";
+                        modificationButton.addEventListener(
+                            "click",
+                            () => {
+                                const overlay =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                overlay.className =
+                                    "line-breakdown-overlay";
+                                const panel =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                panel.className =
+                                    "line-breakdown-panel";
+                                panel.setAttribute(
+                                    "role",
+                                    "dialog"
+                                );
+                                panel.setAttribute(
+                                    "aria-modal",
+                                    "true"
+                                );
+                                const header =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                header.className =
+                                    "line-breakdown-header";
+                                const title =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                title.className =
+                                    "line-breakdown-title";
+                                title.textContent =
+                                    "🎯 Ahora modifícalo tú";
+                                const closeButton =
+                                    document.createElement(
+                                        "button"
+                                    );
+                                closeButton.type =
+                                    "button";
+                                closeButton.className =
+                                    "line-breakdown-close";
+                                closeButton.textContent =
+                                    "×";
+                                header.append(
+                                    title,
+                                    closeButton
+                                );
+                                const prompt =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                prompt.className =
+                                    "active-modification-prompt";
+                                prompt.textContent =
+                                    item.modification.prompt;
+                                const original =
+                                    document.createElement(
+                                        "pre"
+                                    );
+                                original.className =
+                                    "active-modification-original";
+                                original.textContent =
+                                    item.code;
+                                const answer =
+                                    document.createElement(
+                                        "textarea"
+                                    );
+                                answer.className =
+                                    "active-modification-input";
+                                answer.placeholder =
+                                    "Escribe aquí la línea modificada...";
+                                answer.spellcheck =
+                                    false;
+                                const verify =
+                                    document.createElement(
+                                        "button"
+                                    );
+                                verify.type =
+                                    "button";
+                                verify.className =
+                                    "learning-check-verify";
+                                verify.textContent =
+                                    "Comprobar cambio";
+                                const result =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                result.className =
+                                    "active-modification-result";
+                                result.setAttribute(
+                                    "role",
+                                    "status"
+                                );
+                                result.setAttribute(
+                                    "aria-live",
+                                    "polite"
+                                );
+                                verify.addEventListener(
+                                    "click",
+                                    async () => {
+                                        const value =
+                                            answer.value.trim();
+                                        if (!value) {
+                                            result.textContent =
+                                                "Escribe tu modificación 🙂";
+                                            answer.focus();
+                                            return;
+                                        }
+                                        verify.disabled =
+                                            true;
+                                        const response =
+                                            await fetch(
+                                                "/v1/learning/modification-answer",
+                                                {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Content-Type":
+                                                            "application/json"
+                                                    },
+                                                    body:
+                                                        JSON.stringify({
+                                                            user_id:
+                                                                learningUserId,
+                                                            code:
+                                                                item.code,
+                                                            answer:
+                                                                value,
+                                                            demo_token:
+                                                                demoToken,
+                                                            owner_token:
+                                                                ownerToken
+                                                        })
+                                                }
+                                            );
+                                        const data =
+                                            await response.json();
+                                        verify.disabled =
+                                            false;
+                                        if (!response.ok) {
+                                            result.textContent =
+                                                "No pude comprobar el cambio.";
+                                            return;
+                                        }
+                                        if (data.correct) {
+                                            result.className =
+                                                "active-modification-result "
+                                                + "success";
+                                            result.textContent =
+                                                "🎉 Lo modificaste tú. "
+                                                + "Ya no solo reconoces "
+                                                + "este patrón. 🚀";
+                                            answer.disabled =
+                                                true;
+                                            verify.style.display =
+                                                "none";
+                                            launchModificationConfetti();
+                                        } else {
+                                            result.className =
+                                                "active-modification-result "
+                                                + "review";
+                                            result.textContent =
+                                                "Casi 👀. Revisa qué parte "
+                                                + "controla el límite e "
+                                                + "inténtalo otra vez.";
+                                            answer.focus();
+                                            answer.select();
+                                        }
+                                    }
+                                );
+                                panel.append(
+                                    header,
+                                    prompt,
+                                    original,
+                                    answer,
+                                    verify,
+                                    result
+                                );
+                                const closePanel =
+                                    () => overlay.remove();
+                                closeButton.addEventListener(
+                                    "click",
+                                    closePanel
+                                );
+                                overlay.addEventListener(
+                                    "click",
+                                    event => {
+                                        if (
+                                            event.target
+                                            === overlay
+                                        ) {
+                                            closePanel();
+                                        }
+                                    }
+                                );
+                                overlay.append(panel);
+                                document.body.append(
+                                    overlay
+                                );
+                                answer.focus();
+                            }
+                        );
+                        learningActions.append(
+                            modificationButton
+                        );
+                    }
+                    if (
+                        learningActions.childElementCount
+                        > 0
+                    ) {
+                        snippet.append(
+                            learningActions
+                        );
+                    }
                     const learningCheck =
                         document.createElement(
                             "details"
@@ -4227,6 +5353,98 @@ button.addEventListener(
 
                         resultMessage.className =
                             "learning-check-result";
+                        resultMessage.setAttribute(
+                            "role",
+                            "status"
+                        );
+                        resultMessage.setAttribute(
+                            "aria-live",
+                            "polite"
+                        );
+                        const celebrateLearningSuccess =
+                            () => {
+                                if (
+                                    window.matchMedia(
+                                        "(prefers-reduced-motion: reduce)"
+                                    ).matches
+                                ) {
+                                    return;
+                                }
+                                const layer =
+                                    document.createElement(
+                                        "div"
+                                    );
+                                layer.className =
+                                    "learning-confetti-layer";
+                                const colors = [
+                                    "#1165e7",
+                                    "#1aa8d9",
+                                    "#7ad7f2",
+                                    "#16845b",
+                                    "#f5b942",
+                                    "#ef5da8"
+                                ];
+                                for (
+                                    let i = 0;
+                                    i < 42;
+                                    i += 1
+                                ) {
+                                    const piece =
+                                        document.createElement(
+                                            "span"
+                                        );
+                                    piece.className =
+                                        "learning-confetti-piece";
+                                    piece.style.left =
+                                        (
+                                            Math.random()
+                                            * 100
+                                        )
+                                        + "%";
+                                    piece.style.backgroundColor =
+                                        colors[
+                                            i
+                                            % colors.length
+                                        ];
+                                    piece.style.animationDelay =
+                                        (
+                                            Math.random()
+                                            * 160
+                                        )
+                                        + "ms";
+                                    piece.style.animationDuration =
+                                        (
+                                            950
+                                            + Math.random()
+                                            * 650
+                                        )
+                                        + "ms";
+                                    piece.style.setProperty(
+                                        "--drift",
+                                        (
+                                            -100
+                                            + Math.random()
+                                            * 200
+                                        )
+                                        + "px"
+                                    );
+                                    piece.style.setProperty(
+                                        "--spin",
+                                        (
+                                            360
+                                            + Math.random()
+                                            * 720
+                                        )
+                                        + "deg"
+                                    );
+                                    layer.append(piece);
+                                }
+                                document.body.append(layer);
+                                window.setTimeout(
+                                    () => layer.remove(),
+                                    1900
+                                );
+                            };
 
                         verifyButton.addEventListener(
                             "click",
@@ -4298,23 +5516,186 @@ button.addEventListener(
                                         : "review"
                                     );
 
-                                resultMessage.textContent =
-                                    (
-                                        data.correct
-                                        ? "✓ Correcto. "
-                                        : "↻ Repasar. "
-                                    )
-                                    + data.explanation;
+                                if (data.correct) {
+                                    resultMessage.textContent =
+                                        "🎉 ¡Correcto! Lo lograste 🚀 "
+                                        + data.explanation;
+                                    celebrateLearningSuccess();
+                                    verifyButton.style.display =
+                                        "none";
+                                    optionInputs.forEach(
+                                        input => {
+                                            input.disabled =
+                                                true;
+                                        }
+                                    );
+                                } else {
+                                    resultMessage.textContent =
+                                        "↻ Casi. Revisa la explicación "
+                                        + "e inténtalo otra vez. "
+                                        + data.explanation;
+                                    verifyButton.disabled =
+                                        false;
+                                }
+                                if (
+                                    data.correct
+                                    && item.exercise
+                                ) {
+                                    const exercise =
+                                        document.createElement(
+                                            "div"
+                                        );
 
-                                verifyButton.style.display =
-                                    "none";
+                                    exercise.className =
+                                        "learning-check";
 
-                                optionInputs.forEach(
-                                    input => {
-                                        input.disabled =
-                                            true;
-                                    }
-                                );
+                                    const exerciseTitle =
+                                        document.createElement(
+                                            "div"
+                                        );
+
+                                    exerciseTitle.className =
+                                        "learning-check-summary";
+
+                                    exerciseTitle.textContent =
+                                        "Mini reto · Completa la línea";
+
+                                    const exerciseBody =
+                                        document.createElement(
+                                            "div"
+                                        );
+
+                                    exerciseBody.className =
+                                        "learning-check-body";
+
+                                    const prompt =
+                                        document.createElement(
+                                            "pre"
+                                        );
+
+                                    prompt.textContent =
+                                        item.exercise.prompt;
+
+                                    exerciseBody.append(
+                                        prompt
+                                    );
+
+                                    const answerInput =
+                                        document.createElement(
+                                            "input"
+                                        );
+                                    answerInput.type = "text";
+                                    answerInput.autocomplete = "off";
+                                    answerInput.spellcheck = false;
+                                    answerInput.placeholder =
+                                        "Escribe lo que falta...";
+                                    answerInput.className =
+                                        "learning-check-input";
+                                    const exerciseButton =
+                                        document.createElement(
+                                            "button"
+                                        );
+                                    exerciseButton.type = "button";
+                                    exerciseButton.className =
+                                        "learning-check-verify";
+                                    exerciseButton.textContent =
+                                        "Comprobar";
+                                    const exerciseResult =
+                                        document.createElement(
+                                            "div"
+                                        );
+                                    exerciseResult.className =
+                                        "learning-check-result";
+                                    exerciseButton.addEventListener(
+                                        "click",
+                                        async () => {
+                                            const answer =
+                                                answerInput.value.trim();
+                                            if (!answer) {
+                                                exerciseResult.textContent =
+                                                    "Escribe una respuesta 🙂";
+                                                answerInput.focus();
+                                                return;
+                                            }
+                                            exerciseButton.disabled = true;
+                                            const response =
+                                                await fetch(
+                                                    "/v1/learning/exercise-answer",
+                                                    {
+                                                        method: "POST",
+                                                        headers: {
+                                                            "Content-Type":
+                                                                "application/json"
+                                                        },
+                                                        body:
+                                                            JSON.stringify({
+                                                                user_id:
+                                                                    learningUserId,
+                                                                code:
+                                                                    item.code,
+                                                                answer:
+                                                                    answer,
+                                                                demo_token:
+                                                                    demoToken,
+                                                                owner_token:
+                                                                    ownerToken
+                                                            })
+                                                    }
+                                                );
+                                            const data =
+                                                await response.json();
+                                            exerciseButton.disabled = false;
+                                            if (!response.ok) {
+                                                exerciseResult.textContent =
+                                                    "No pude comprobarlo.";
+                                                return;
+                                            }
+                                            exerciseResult.className =
+                                                "learning-check-result "
+                                                + (
+                                                    data.correct
+                                                    ? "success"
+                                                    : "review"
+                                                );
+                                            if (data.correct) {
+                                                exerciseResult.textContent =
+                                                    "🎉 ¡Correcto! Lo lograste 🚀 "
+                                                    + data.explanation;
+                                                celebrateLearningSuccess();
+                                                answerInput.disabled = true;
+                                                exerciseButton.style.display =
+                                                    "none";
+                                            } else {
+                                                exerciseResult.textContent =
+                                                    "Casi 👀. Inténtalo otra vez.";
+                                                answerInput.focus();
+                                                answerInput.select();
+                                            }
+                                        }
+                                    );
+                                    answerInput.addEventListener(
+                                        "keydown",
+                                        event => {
+                                            if (event.key === "Enter") {
+                                                exerciseButton.click();
+                                            }
+                                        }
+                                    );
+                                    exerciseBody.append(
+                                        answerInput,
+                                        exerciseButton,
+                                        exerciseResult
+                                    );
+
+                                    exercise.append(
+                                        exerciseTitle,
+                                        exerciseBody
+                                    );
+
+                                    learningCheck.after(
+                                        exercise
+                                    );
+                                }
                             }
                         );
 

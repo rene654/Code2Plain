@@ -1,5 +1,9 @@
 from dataclasses import dataclass
 
+from code2plain.detection.microlearning import (
+    MicroLearningPlan,
+    MicroLearningPlanner,
+)
 from code2plain.detection.models import (
     ContentCandidate,
 )
@@ -9,10 +13,6 @@ from code2plain.detection.pipeline import (
 from code2plain.detection.relevance import (
     CodeRelevanceEngine,
     RelevantCodePart,
-)
-from code2plain.detection.microlearning import (
-    MicroLearningPlan,
-    MicroLearningPlanner,
 )
 
 

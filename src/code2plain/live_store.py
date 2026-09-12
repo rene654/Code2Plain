@@ -6,7 +6,6 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-
 DEFAULT_SESSION_ID = "default"
 
 _SESSION_PATTERN = re.compile(

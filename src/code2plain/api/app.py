@@ -1,30 +1,36 @@
 from __future__ import annotations
 
-from code2plain.web.app import router as web_router
-
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, Query, HTTPException
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from code2plain.service import Code2PlainService
-from code2plain.feedback.service import FeedbackService
+from code2plain.active_modification import active_modification_engine
+from code2plain.adaptive_human_learning import adaptive_human_learning
+from code2plain.adaptive_learning import AdaptiveLearningEngine
+from code2plain.adaptive_teaching_policy import (
+    adaptive_teaching_policy,
+)
+from code2plain.beginner_exercises import beginner_exercise_engine
+from code2plain.block_overview import block_overview_engine
+from code2plain.block_teaching import context_block_teaching
+from code2plain.context_learning import context_aware_teaching
+from code2plain.demo_access import (
+    demo_access_service,
+)
+from code2plain.detection.confidence import ExplanationConfidenceAssessor
 from code2plain.detection.learning_pipeline import AutomaticLearningPipeline
 from code2plain.detection.models import ContentCandidate
-from code2plain.detection.confidence import ExplanationConfidenceAssessor
-from code2plain.learning_interaction import LearningInteractionBuilder
-from code2plain.learning_memory import learning_memory
-from code2plain.learning_memory_store import learning_memory_store
-from code2plain.adaptive_learning import AdaptiveLearningEngine
-from code2plain.line_learning import line_by_line_explainer
-from code2plain.context_learning import context_aware_teaching
-from code2plain.block_teaching import context_block_teaching
-from code2plain.adaptive_human_learning import adaptive_human_learning
+from code2plain.feedback.service import FeedbackService
+from code2plain.github_file_reader import GitHubFileReader
 from code2plain.human_skill_detection import (
     primary_human_skill,
+)
+from code2plain.human_skill_memory import (
+    human_skill_memory,
 )
 from code2plain.human_skills import (
     get_human_skill,
@@ -32,21 +38,17 @@ from code2plain.human_skills import (
 from code2plain.learning_checks import (
     learning_check_engine,
 )
-from code2plain.adaptive_teaching_policy import (
-    adaptive_teaching_policy,
-)
-from code2plain.human_skill_memory import (
-    human_skill_memory,
-)
-from code2plain.github_file_reader import GitHubFileReader
-from code2plain.version import __version__
-from code2plain.demo_access import (
-    demo_access_service,
-)
+from code2plain.learning_interaction import LearningInteractionBuilder
+from code2plain.learning_memory import learning_memory
+from code2plain.learning_memory_store import learning_memory_store
+from code2plain.line_breakdown import line_breakdown_engine
+from code2plain.line_learning import line_by_line_explainer
 from code2plain.owner_access import (
     owner_access_service,
 )
-
+from code2plain.service import Code2PlainService
+from code2plain.version import __version__
+from code2plain.web.app import router as web_router
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -253,9 +255,10 @@ app.include_router(web_router)
 
 
 @app.get("/")
-def visual_learning_ui() -> FileResponse:
-    return FileResponse(
-        WEB_DIR / "index.html"
+def visual_learning_ui() -> RedirectResponse:
+    return RedirectResponse(
+        url="/learn",
+        status_code=307,
     )
 
 
@@ -361,9 +364,8 @@ def explain_code(
 # LIVE LEARNING CHANNEL
 # ============================================================
 
-from code2plain.live_store import live_store
 from code2plain.api.apple_push import router as apple_push_router
-
+from code2plain.live_store import live_store
 
 _live_store = live_store
 
@@ -501,30 +503,46 @@ def learn_github_file(
                         else None
                     ),
                 "check":
-                    (
-                        lambda check: {
-                            "question":
-                                check.question,
-                            "options":
-                                list(
-                                    check.options
-                                ),
-                            "explanation":
-                                check.explanation,
-                        }
-                    )(
-                        learning_check_engine.build(
-                            code=item.code,
-                            input_from=item.input_from,
-                            output_to=item.output_to,
-                        )
-                    ),
+                    {
+                        "question":
+                            (
+                                check := learning_check_engine.build(
+                                    code=item.code,
+                                    input_from=item.input_from,
+                                    output_to=item.output_to,
+                                )
+                            ).question,
+                        "options":
+                            list(
+                                check.options
+                            ),
+                        "explanation":
+                            check.explanation,
+                    },
             }
             for item in items
         ],
     }
 
 
+class ActiveModificationAnswerRequest(BaseModel):
+    user_id: str | None = None
+    code: str
+    answer: str = Field(
+        min_length=1,
+        max_length=1000,
+    )
+    demo_token: str | None = None
+    owner_token: str | None = None
+class BeginnerExerciseAnswerRequest(BaseModel):
+    user_id: str | None = None
+    code: str
+    answer: str = Field(
+        min_length=1,
+        max_length=100,
+    )
+    demo_token: str | None = None
+    owner_token: str | None = None
 @app.post("/v1/learning/check-answer")
 def check_learning_answer(
     request: LearningCheckAnswerRequest,
@@ -614,6 +632,65 @@ def record_learning_answer(
     }
 
 
+@app.post("/v1/learning/modification-answer")
+def check_active_modification_answer(
+    request: ActiveModificationAnswerRequest,
+) -> dict:
+    _require_valid_access(
+        user_id=request.user_id,
+        demo_token=request.demo_token,
+        owner_token=request.owner_token,
+    )
+    challenge = active_modification_engine.build(
+        code=request.code,
+    )
+    if challenge is None:
+        raise HTTPException(
+            status_code=400,
+            detail="No modification challenge available.",
+        )
+    correct = active_modification_engine.verify(
+        original_code=request.code,
+        answer=request.answer,
+    )
+    return {
+        "correct": correct,
+        "message":
+            (
+                "Entendiste cómo modificar este filtro."
+                if correct
+                else
+                "La estructura todavía no produce el cambio pedido."
+            ),
+    }
+@app.post("/v1/learning/exercise-answer")
+def check_beginner_exercise_answer(
+    request: BeginnerExerciseAnswerRequest,
+) -> dict:
+    _require_valid_access(
+        user_id=request.user_id,
+        demo_token=request.demo_token,
+        owner_token=request.owner_token,
+    )
+    exercise = beginner_exercise_engine.build_fill_blank(
+        code=request.code,
+    )
+    if exercise is None:
+        raise HTTPException(
+            status_code=400,
+            detail="No exercise available.",
+        )
+    expected = exercise.options[
+        exercise.correct_index
+    ]
+    correct = (
+        request.answer.strip().casefold()
+        == expected.strip().casefold()
+    )
+    return {
+        "correct": correct,
+        "explanation": exercise.explanation,
+    }
 @app.post("/v1/context-block-learn")
 def context_block_learn(
     request: LineByLineRequest,
@@ -667,6 +744,16 @@ def context_block_learn(
             output_to=item.output_to,
         )
 
+        exercise = beginner_exercise_engine.build_fill_blank(
+            code=item.code,
+        )
+
+        breakdown = line_breakdown_engine.build(
+            code=item.code,
+        )
+        modification = active_modification_engine.build(
+            code=item.code,
+        )
         response_items.append(
             {
                 "start_line":
@@ -723,13 +810,90 @@ def context_block_learn(
                                 check.options
                             ),
                     },
+                "exercise":
+                    (
+                        {
+                            "kind":
+                                exercise.kind,
+                            "concept":
+                                exercise.concept,
+                            "prompt":
+                                exercise.prompt,
+                            "options":
+                                list(
+                                    exercise.options
+                                ),
+                        }
+                        if exercise
+                        else None
+                    ),
+                "modification":
+                    (
+                        {
+                            "kind":
+                                modification.kind,
+                            "concept":
+                                modification.concept,
+                            "prompt":
+                                modification.prompt,
+                        }
+                        if modification
+                        else None
+                    ),
+                "breakdown":
+                    (
+                        {
+                            "title":
+                                breakdown.title,
+                            "summary":
+                                breakdown.summary,
+                            "parts":
+                                [
+                                    {
+                                        "code":
+                                            part.code,
+                                        "meaning":
+                                            part.meaning,
+                                    }
+                                    for part
+                                    in breakdown.parts
+                                ],
+                        }
+                        if breakdown
+                        else None
+                    ),
             }
         )
 
+    overview = block_overview_engine.build(
+        code=request.code,
+    )
     return {
         "total_ideas": len(
             response_items
         ),
+        "overview":
+            (
+                {
+                    "title":
+                        overview.title,
+                    "summary":
+                        overview.summary,
+                    "steps":
+                        [
+                            {
+                                "title":
+                                    step.title,
+                                "detail":
+                                    step.detail,
+                            }
+                            for step
+                            in overview.steps
+                        ],
+                }
+                if overview
+                else None
+            ),
         "items": response_items,
     }
 
