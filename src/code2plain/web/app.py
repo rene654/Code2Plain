@@ -1,5 +1,9 @@
+import os
+
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
+
+from code2plain.web.maintenance import MAINTENANCE_HTML
 
 router = APIRouter()
 
@@ -9,6 +13,14 @@ router = APIRouter()
     response_class=HTMLResponse,
 )
 def learning_page():
+    maintenance = os.getenv(
+        "CODE2PLAIN_MAINTENANCE",
+        "",
+    ).lower() in {"1", "true", "yes"}
+    if maintenance:
+        return HTMLResponse(
+            MAINTENANCE_HTML
+        )
     return HTMLResponse(
         r"""
 <!doctype html>
